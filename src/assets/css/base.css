@@ -1,0 +1,11 @@
+/* 普通匹配项高亮 */
+.search-highlight {
+    background-color: #ffff54;
+    color: black;
+}
+
+/* 当前匹配项高亮 */
+.current-search-highlight {
+    background-color: #f19b4a;
+    color: black;
+}

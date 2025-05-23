@@ -1,0 +1,99 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "*"
+  ],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "fs:default",
+    "fs:read-all",
+    "fs:write-all",
+    "fs:allow-watch",
+    "fs:allow-unwatch",
+    {
+      "identifier": "fs:allow-watch",
+      "allow": [{ "path": "**/*" }]
+    },
+    {
+      "identifier": "fs:allow-unwatch",
+      "allow": [{ "path": "**/*" }]
+    },
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        "**/*"
+      ]
+    },
+    "dialog:default",
+    "log:default",
+    "os:default",
+    "core:window:default",
+    "core:window:allow-create",
+    "core:window:allow-center",
+    "core:window:allow-request-user-attention",
+    "core:window:allow-set-resizable",
+    "core:window:allow-set-maximizable",
+    "core:window:allow-set-minimizable",
+    "core:window:allow-set-closable",
+    "core:window:allow-set-title",
+    "core:window:allow-maximize",
+    "core:window:allow-unmaximize",
+    "core:window:allow-minimize",
+    "core:window:allow-unminimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-close",
+    "core:window:allow-set-decorations",
+    "core:window:allow-set-always-on-top",
+    "core:window:allow-set-content-protected",
+    "core:window:allow-set-size",
+    "core:window:allow-set-min-size",
+    "core:window:allow-set-max-size",
+    "core:window:allow-set-position",
+    "core:window:allow-set-fullscreen",
+    "core:window:allow-set-focus",
+    "core:window:allow-set-icon",
+    "core:window:allow-set-skip-taskbar",
+    "core:window:allow-set-cursor-grab",
+    "core:window:allow-set-cursor-visible",
+    "core:window:allow-set-cursor-icon",
+    "core:window:allow-set-cursor-position",
+    "core:window:allow-set-ignore-cursor-events",
+    "core:window:allow-start-dragging",
+    "core:window:allow-theme",
+    "core:window:allow-set-theme",
+    "core:webview:default",
+    "core:webview:allow-create-webview",
+    "core:webview:allow-create-webview-window",
+    "core:webview:allow-webview-show",
+    "core:webview:allow-webview-hide",
+    "core:webview:allow-set-webview-focus",
+    "core:webview:allow-print",
+    "core:webview:allow-set-webview-zoom",
+    "opener:allow-open-url",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "**/*"
+        }
+      ]
+    },
+    "http:default",
+    "http:allow-fetch",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "http{s}?://*.*:*/*"
+        }
+      ]
+    },
+    "core:menu:default",
+    "window-state:default"
+  ]
+}

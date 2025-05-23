@@ -1,0 +1,30 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 渐变背景（极浅色） -->
+  <rect width="256" height="256" rx="32" fill="url(#bg_gradient)"/>
+  
+  <!-- 主M形状（加粗填充+负空间切割） -->
+  <path fill-rule="evenodd" clip-rule="evenodd" 
+        d="M128 32C128 32 192 96 192 192H160V120L128 152L96 120V192H64C64 96 128 32 128 32Z" 
+        fill="url(#main_gradient)"/>
+  
+  <!-- 高光细节（顶部线条） -->
+  <path d="M96 120L128 152L160 120" 
+        stroke="white" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-opacity="0.8"/>
+  
+  <defs>
+    <!-- 背景渐变 -->
+    <linearGradient id="bg_gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFF"/>
+      <stop offset="100%" stop-color="#E6F0FF"/>
+    </linearGradient>
+    
+    <!-- 主色渐变 -->
+    <linearGradient id="main_gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6DD5FF"/>
+      <stop offset="100%" stop-color="#88C0D0"/>
+    </linearGradient>
+  </defs>
+</svg>

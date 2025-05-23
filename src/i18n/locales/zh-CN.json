@@ -1,0 +1,344 @@
+{
+  "app": {
+    "title": "FlowMark",
+    "exit": "退出"
+  },
+  "menu": {
+    "separator": "分隔符",
+    "file": "文件",
+    "FileMenu": {
+      "newWindow": "新建窗口",
+      "newFile": "新建文件",
+      "openFile": "打开文件",
+      "openFolder": "打开文件夹",
+      "save": "保存",
+      "saveAs": "另存为",
+      "export": "导出",
+      "exportPdf": "导出为PDF",
+      "exportHtml": "导出为HTML",
+      "recentFiles": "最近文件",
+      "clearCache": "清除缓存",
+      "clearRecentFiles":"清除最近文件"
+    },
+    "edit": "编辑",
+    "EditMenu": {
+      "undo": "撤销",
+      "redo": "重做",
+      "cut": "剪切",
+      "copy": "复制",
+      "paste": "粘贴",
+      "find": "查找",
+      "replace": "替换",
+      "selectAll": "全选"
+    },
+    "format": "格式",
+    "FormatMenu": {
+      "heading": "标题",
+      "heading1": "标题1",
+      "heading2": "标题2",
+      "heading3": "标题3",
+      "heading4": "标题4",
+      "heading5": "标题5",
+      "heading6": "标题6",
+      "noHeading": "无标题",
+      "bold": "加粗",
+      "italic": "斜体",
+      "strikeThrough": "删除线",
+      "code": "代码",
+      "quote": "引用",
+      "blockquote": "块引用",
+      "unorderedList": "无序列表",
+      "orderedList": "有序列表",
+      "taskList": "任务列表",
+      "checkList": "勾选列表",
+      "link": "链接",
+      "image": "图片",
+      "table": "表格",
+      "horizontalRule": "分割线",
+      "codeBlock": "代码块",
+      "math": "数学公式",
+      "diagram": "图表",
+      "emoji": "表情符号",
+      "inlineCode": "行内代码",
+      "divider": "分割线"
+    },
+    "view": "视图",
+    "ViewMenu": {
+      "sidebar": "侧边栏",
+      "viewMode": "视图模式",
+      "closeTab": "关闭标签页"
+    },
+    "help": "帮助",
+    "HelpMenu": {
+      "about": "关于"
+    }
+  },
+  "editor": {
+    "placeholder": "开始输入...",
+    "tabs": {}
+  },
+  "sidebar": {
+    "outline": {
+      "label": "大纲",
+      "empty": "无大纲"
+    },
+    "version": {
+      "label": "版本",
+      "title": "版本历史",
+      "empty": "无版本历史",
+      "current": "当前版本",
+      "history": "历史版本",
+      "restore": "恢复",
+      "saveMessage": "保存消息（可选）",
+      "create": "创建版本",
+      "noMessage": "无保存消息",
+      "compare": "对比",
+      "message": "消息",
+      "delete": "删除"
+    },
+    "filetree": {
+      "label": "文件",
+      "openFolder": "打开文件夹",
+      "openFile": "打开文件",
+      "newFile": "新建文件",
+      "newFolder": "新建文件夹",
+      "rename": "重命名",
+      "delete": "删除",
+      "upload": "上传",
+      "download": "下载",
+      "copy": "复制",
+      "move": "移动",
+      "paste": "粘贴",
+      "properties": "属性",
+      "refresh": "刷新",
+      "empty": "空文件夹",
+      "search": "搜索",
+      "emptySearch": "未找到匹配的文件"
+    }
+  },
+  "settings": {
+    "label": "设置",
+    "general": {
+      "label": "通用设置",
+      "language": {
+        "label": "语言",
+        "system": "系统默认",
+        "english": "英文",
+        "chinese": "中文"
+      },
+      "restoreSession": {
+        "label": "恢复上次会话"
+      },
+      "conflictResolution": {
+        "label": "冲突解决",
+        "ask": "询问",
+        "overwrite": "覆盖",
+        "keep_both": "保留两者"
+      }
+    },
+    "appearance": {
+      "label": "外观设置",
+      "theme": {
+        "label": "主题",
+        "system": "系统默认",
+        "light": "浅色模式",
+        "dark": "深色模式"
+      },
+      "tabBehavior": {
+        "label": "标签页行为",
+        "new": "新标签打开",
+        "replace": "替换当前标签"
+      },
+      "fontSize": {
+        "label": "字体大小"
+      }
+    },
+    "file": {
+      "label": "文件设置",
+      "save": {
+        "label": "保存设置",
+        "autoSave": {
+          "label": "自动保存",
+          "interval": "自动保存间隔",
+          "seconds": "秒"
+        }
+      },
+      "history": {
+        "label": "历史设置",
+        "autoSave": {
+          "label": "自动保存",
+          "interval": "自动保存间隔",
+          "minutes": "分钟"
+        },
+        "maxVersionNumber": "最大版本数量"
+      }
+    },
+    "keymap": {
+      "label": "快捷键设置",
+      "clickToRecord": "点击开始录制",
+      "preset": "预设",
+      "reset": "重置",
+      "customize": "自定义",
+      "shortcut": "快捷键",
+      "command": {
+        "label": "命令",
+        "toggleSidebar": "切换侧边栏",
+        "find": "查找",
+        "replace": "替换"
+      }
+    },
+    "editor": {
+      "label": "编辑器设置",
+      "font": {
+        "label": "字体&排版",
+        "fontFamily": "字体",
+        "defaultFont": "默认字体",
+        "lineHeight": "行高",
+        "lineWidth": "行宽"
+      },
+      "defaultView": {
+        "label": "默认视图",
+        "source": "源代码模式",
+        "readonly": "只读模式",
+        "split": "分屏模式",
+        "wysiwyg": "所见即所得模式"
+      },
+      "showLineNumbers": {
+        "label": "显示行号"
+      },
+      "indent": {
+        "label": "缩进设置",
+        "unit": "缩进单位",
+        "useTab": "使用Tab缩进"
+      }
+    },
+    "markdown": {
+      "label": "Markdown设置",
+      "extensions": "Markdown扩展",
+      "enableMath": {
+        "label": "启用数学公式"
+      },
+      "enableDiagram": {
+        "label": "启用图表"
+      },
+      "enableEmoji": {
+        "label": "启用表情符号"
+      },
+      "toc": {
+        "label": "目录",
+        "depth": "目录深度"
+      },
+      "codeBlock": {
+        "label": "代码块",
+        "syntaxHighlighting": "语法高亮",
+        "lineNumbers": "显示行号",
+        "codeCompletionAndFolding": "代码完成与折叠"
+      }
+    },
+    "webdav": {
+      "label": "WebDAV设置",
+      "serverUrl": {
+        "label": "服务器URL",
+        "placeholder": "https://example.com/webdav/"
+      },
+      "username": {
+        "label": "用户名",
+        "placeholder": "请输入用户名"
+      },
+      "password": {
+        "label": "密码",
+        "placeholder": "请输入密码"
+      },
+      "autoConnect": {
+        "label": "自动连接"
+      },
+      "autoSync": {
+        "label": "自动同步"
+      },
+      "syncInterval": {
+        "label": "同步间隔"
+      },
+      "connect": "连接",
+      "testConnection": "测试连接",
+      "connecting": "连接中...",
+      "testing": "测试中...",
+      "resetConnection":"重置连接"
+    }
+  },
+  "dialog": {
+    "button": {
+      "confirm": "确认",
+      "cancel": "取消",
+      "close": "关闭",
+      "ok": "确定",
+      "yes": "是",
+      "no": "否",
+      "save": "保存",
+      "continueSave": "继续保存",
+      "create": "创建",
+      "discard": "放弃"
+    },
+    "unsavedChanges": {
+      "title": "未保存的更改",
+      "message": "你有未保存的更改。是否在继续前保存？"
+    },
+    "deleteFile": {
+      "title": "删除文件",
+      "message": "确定要删除{msg}吗？"
+    },
+    "newVersion": {
+      "title": "创建新版本",
+      "message": "版本备注"
+    },
+    "deleteVersion": {
+      "title": "删除版本",
+      "message": "确定要删除版本{msg}吗？"
+    },
+    "deleteFolder": {
+      "title": "删除文件夹",
+      "message": "确定要删除文件夹{msg}及其所有内容吗？"
+    },
+    "restoreVersion": {
+      "title": "恢复版本",
+      "message": "确定要恢复版本{msg}吗？"
+    },
+    "versionConflict": {
+      "title": "版本冲突",
+      "message": "你编辑的文本被其他程序修改过，点击“继续保存”按钮会覆盖现在的版本。"
+    },
+    "saveAs": {
+      "title": "另存为"
+    },
+    "clearCache":{
+      "title": "清除缓存",
+      "message": "确定要清除缓存吗？"
+    },
+    "resetConnection":{
+      "title":"重置连接",
+      "message":"确定要重置连接吗？"
+    }
+  },
+  "notify": {
+    "errors": {
+      "fileNotFound": "找不到文件",
+      "permissionDenied": "权限被拒绝",
+      "unknownError": "发生未知错误",
+      "saveFailed": "保存失败",
+      "missingCredentials": "请填写服务器URL和用户名",
+      "connectionFailed": "连接失败，请检查您的设置",
+      "connectionError": "连接失败：{error}"
+    },
+    "success": {
+      "save": "保存成功",
+      "createVersion": "创建版本成功",
+      "deleteFile": "删除文件成功",
+      "connectionSuccess": "连接成功！"
+    },
+    "warning": {
+      "deleteFile": "删除文件将永久删除该文件，且不可恢复。"
+    },
+    "info": {
+      "newTabEffect": "打开新标签页时生效"
+    }
+  }
+}
