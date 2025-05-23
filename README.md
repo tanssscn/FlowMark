@@ -1,13 +1,5 @@
 # FlowMark - Markdown Editor
 
-## TODO
-<!-- 历史版本清理 -->
-1. 懒加载文件树
-2. i18n全部适配
-3. 打包后输入框 在输入左右箭头按键时会出现未知字符
-4. 在菜单中清空最近文件没有立刻刷新
-5. 网络pdf打开乱码
-6. 解决milkdown自动插入转译字符导致文件打开就自动保存两次和粘贴的markdown语法无法识别渲染。
 
 ## 项目概述
 
@@ -17,36 +9,29 @@ FlowMark 是一款基于 Vue 3、Tauri 2 和 Milkdown 开发的跨平台 Markdow
 
 ```
 FlowMark/
-├── src/                       # Vue 前端源代码
+├── src/                       # 前端源代码
 │   ├── assets/                # 静态资源
 │   ├── components/            # Vue 组件
-│   │   └── layout/            # 布局组件
-│   │       ├── HeaderBar/     # 顶部导航栏
-│   │       ├── SidePanel/     # 侧边面板
-│   │       ├── EditorArea/    # 编辑区域
-│   │       └── SettingsModal/ # 设置弹窗
-│   ├── composable/            # Vue 组合式函数
-│   ├── i18n/                  # 国际化配置
-│   ├── services/              # 服务层
-│   │   ├── files/             # 文件相关服务
-│   │   ├── fileService.ts     # 文件服务
-│   │   ├── deviceService.ts   # 设备服务
-│   │   └── routerService.ts   # 路由服务
+│   │   ├── layout/            # 布局相关
+│   │   ├── editor/            # 编辑器相关
+│   │   ├── filetree/          # 文件树
+│   │   ├── header/            # 顶部导航
+│   │   ├── outline/           # 大纲视图
+│   │   ├── settings/          # 设置面板
+│   │   └── version/           # 版本管理
+│   ├── composable/            # 组合式函数
+│   ├── i18n/                  # 国际化
+│   ├── services/              # 服务层（文件、设备、路由、WebDAV等）
 │   ├── stores/                # Pinia 状态管理
-│   │   ├── editorStore.ts     # 编辑器状态
-│   │   ├── fileStore.ts       # 文件状态
-│   │   ├── settingsStore.ts   # 设置状态
-│   │   ├── uiStore.ts         # UI 状态
-│   │   └── versionStore.ts    # 版本控制状态
 │   ├── types/                 # 类型定义
 │   ├── utils/                 # 工具函数
 │   ├── App.vue                # 主应用组件
 │   └── main.ts                # 入口文件
-├── src-tauri/                 # Tauri 桌面应用源码
-│   ├── capabilities/          # Tauri 权限配置
+├── src-tauri/                 # Tauri 桌面端源码（Rust）
+│   ├── capabilities/          # 权限配置
 │   ├── icons/                 # 应用图标
 │   ├── src/                   # Rust 源码
-│   ├── Cargo.toml             # Rust 依赖配置
+│   ├── Cargo.toml             # Rust 依赖
 │   └── tauri.conf.json        # Tauri 配置
 ├── public/                    # 公共静态资源
 ├── vite.config.ts             # Vite 配置
@@ -67,7 +52,7 @@ FlowMark/
 
 - **基于 Milkdown 的编辑器**：现代化的 Markdown WYSIWYG 编辑体验
 - **代码语法高亮**：支持多种编程语言的代码块语法高亮
-- **数学公式**：支持 KaTeX 数学公式渲染
+- **数学公式**：支持 Latex 数学公式渲染
 - **表情符号**：支持在文档中插入表情符号
 - **剪贴板功能**：支持复制、粘贴文本和图片
 - **历史记录**：撤销/重做编辑操作
@@ -136,5 +121,3 @@ FlowMark 采用三栏式布局设计：
 - **桌面应用**：Tauri (Rust)
 - **版本控制**：Isomorphic Git
 - **国际化**：Vue I18n
-
-"build": "vue-tsc --noEmit && vite build",
