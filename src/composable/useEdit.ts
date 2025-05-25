@@ -60,7 +60,7 @@ export function useEdit() {
   }
   const _saveVersion = useDebounceFn((fileInfo: AppFileInfo, content: string, message?: string) => {
     // 创建版本记录
-    saveVersion(fileInfo,content, message);
+    saveVersion(fileInfo, content, message);
   }, 60 * 1000 * settingsStore.state.file.history.autoSaveInterval)
   async function _saveFile(
     tab: EditorTab,
@@ -70,7 +70,7 @@ export function useEdit() {
     if (!fileInfo) return false;
     try {
       if (settingsStore.state.file.history.autoSave) {
-        _saveVersion(fileInfo,content, options?.versionMessage)
+        _saveVersion(fileInfo, content, options?.versionMessage)
       }
       // 检查版本是否一致
       let stat = await fileService.getStat(fileInfo);
@@ -181,8 +181,12 @@ export function useEdit() {
     if (!fileInfo) {
       throw new CodeError(statusCode.FILE_NOT_FOUND)
     };
-    const content = await fileService.readTextFile(fileInfo);
-    return content;
+    try {
+      const content = await fileService.readTextFile(fileInfo);
+      return content;
+    } catch (e) {
+      throw new CodeError(statusCode.FILE_NOT_FOUND)
+    }
   }
   const closeTab = async (tabId: string) => {
     const tab = tabStore.state[tabId];

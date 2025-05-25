@@ -22,6 +22,7 @@ import { ViewMode, type EditorTab } from '@/types/app-types.ts';
 import { ref, PropType, computed, watch, onMounted } from 'vue'
 import CodeMirrorEditor from "./codemirror/CodeMirrorEditor.vue";
 import SplitPane from '@/components/common/splitPanel/SplitPanel.vue'
+import { dialogService } from "@/services/dialog/dialogService";
 
 let content = ""
 const milkdownEditorRef = ref()
@@ -80,6 +81,8 @@ const initial = ref(false)
 readFileByTabId(props.tab.id).then((_content) => {
   content = _content
   initial.value = true
+}).catch((res) => {
+  dialogService.notifyError(res)
 })
 </script>
 <style>

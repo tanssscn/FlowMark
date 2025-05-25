@@ -94,8 +94,7 @@ const menuItems = [
     id: 'rename',
     label: '重命名',
     icon: Edit,
-    // all
-    visible: () => true,
+    visible: (data: FileEntry | null) => !data?.isRoot,
     action: (data: FileEntry) => emit('rename', data)
   },
   {

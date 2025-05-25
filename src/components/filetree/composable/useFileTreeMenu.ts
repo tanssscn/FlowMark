@@ -187,16 +187,13 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
       message: isDirectory ? t('dialog.createFolder.message') : t('dialog.createFile.message'),
       inputValidator: (value) => {
         if (!value) {
-          console.log('inputValidator', t('notify.errors.nameCannotBeEmpty'))
           return t('notify.errors.nameCannotBeEmpty')
         }
         if (isValidFilePath(value)) {
           const path = getJoin(data.path, normalizeString(value, false))
-          console.log('inputValidator', path)
           if (fileStore.get(path)) {
             return t('notify.errors.fileExists')
           } else {
-            console.log('inputValidator', true)
             value = path;
             return true
           }
@@ -232,7 +229,8 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
       if (isDirectory) {
         node.expanded = true
       }
-      refresh(data, true)
+      console.log('create', data)
+      refresh(data, false)
     }).catch((error) => {
       dialogService.error(
         error,

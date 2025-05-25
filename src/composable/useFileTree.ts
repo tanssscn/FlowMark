@@ -140,7 +140,11 @@ export function useFileTree() {
    */
   async function remove(fileEntry: AppFileInfo) {
     await fileService.delete(fileEntry);
-    refresh(fileEntry)
+    if(fileEntry.isRoot){
+      removeFromTree(fileEntry)
+    }else{
+      refresh(fileEntry)
+    }
     tabStore.updatePath(fileEntry.path, null)
   }
   /**
