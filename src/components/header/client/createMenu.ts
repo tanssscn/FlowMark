@@ -1,5 +1,5 @@
 import { Menu, MenuItem, Submenu, CheckMenuItem, PredefinedMenuItem } from '@tauri-apps/api/menu';
-import { MenuConfig, useMenuConfig } from '../menuConfig';
+import { MenuConfig, useMenuConfig } from '../composable/menuConfig';
 import { computed, watch } from 'vue';
 import { useTabStore } from '@/stores/tabStore'
 import { useWindowStore } from '@/stores/windowStore';
@@ -13,7 +13,6 @@ const { t } = i18n.global
  * 将 MenuConfig 转换为 Tauri 菜单
  * @param configs 菜单配置对象 { [menuName: string]: MenuConfig[] }
  */
-
 export function menuWatch(menu: Menu | undefined): () => void {
   const tabStore = useTabStore()
   const windowStore = useWindowStore()
@@ -95,7 +94,7 @@ export function menuWatch(menu: Menu | undefined): () => void {
     unwatchRecentFiles()
   }
 }
-export async function createTauriMenu(platform:Platform): Promise<Menu | undefined> {
+export async function createTauriMenu(platform: Platform): Promise<Menu | undefined> {
   const menuConfig = useMenuConfig()
   const menuItems = await createSubmenu(menuConfig);
   const systemMenu = await Menu.default();
@@ -113,9 +112,9 @@ export async function createTauriMenu(platform:Platform): Promise<Menu | undefin
   }
 
   const menu = await Menu.new({ items: items })
-  if(platform === 'windows' || platform === 'linux'){
+  if (platform === 'windows' || platform === 'linux') {
     await menu.setAsWindowMenu()
-  }else if (platform === 'macos') {
+  } else if (platform === 'macos') {
     await menu.setAsAppMenu()
   }
   return menu;
@@ -203,5 +202,5 @@ const preMenu = async () => {
     item: 'Separator',
   });
 
-  return [copy, paste, cut,selectALL ,separator]
+  return [copy, paste, cut, selectALL, separator]
 }

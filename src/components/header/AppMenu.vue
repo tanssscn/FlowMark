@@ -1,7 +1,7 @@
 <!-- src/components/header/AppMenu.vue -->
 <script setup lang="ts">
 import { useWindowStore } from '@/stores/windowStore';
-import { useMenuConfig } from './menuConfig'
+import { useMenuConfig } from './composable/menuConfig'
 import SubMenu from './SubMenu.vue';
 import { ref, watch } from 'vue';
 import { useTabStore } from '@/stores/tabStore';

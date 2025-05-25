@@ -9,18 +9,17 @@ import { useEdit } from '@/composable/useEdit'
 import { useWindowRoute } from '@/composable/useWindowRoute'
 import { useRecentStore } from '@/stores/recentStore'
 import { ViewMode } from '@/types/app-types'
+import { HotKey } from '@/utils/hotkeys'
 const { t } = i18n.global
-export interface MenuConfig {
-  id?: string,
+
+export interface MenuConfig extends HotKey {
   name: string,
-  action?: string | (() => void),
-  shortcut?: string,
   submenu?: MenuConfig[]
   enabled?: boolean,
   checked?: boolean,
   icon?: string,
 }
-export const useMenuConfig = () => {
+export const useMenuConfig = (): MenuConfig[] => {
   const { openFolder, openFile } = useFileTree()
   const { clearCache } = useWindowRoute()
   const { saveAsFile } = useEdit()
@@ -319,18 +318,18 @@ export const useMenuConfig = () => {
               tabStore.switchViewMode(tabStore.activeId!, ViewMode.READONLY)
             }
           },
-        },{
-          id:'split',
+        }, {
+          id: 'split',
           name: t('settings.editor.defaultView.split'),
           enabled: tabStore.activeSession !== undefined,
-          checked: tabStore.activeSession?.viewMode ==='split',
+          checked: tabStore.activeSession?.viewMode === 'split',
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.activeId!,ViewMode.SPLIT)
+              tabStore.switchViewMode(tabStore.activeId!, ViewMode.SPLIT)
             }
           }
-        },{
-          id:'source',
+        }, {
+          id: 'source',
           name: t('settings.editor.defaultView.source'),
           enabled: tabStore.activeSession !== undefined,
           checked: tabStore.activeSession?.viewMode === ViewMode.SOURCE,
