@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/stores/settingsStore'
-import { ViewMode } from '@/types/app-types'
+import { ViewMode } from '@/types/appTypes'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 

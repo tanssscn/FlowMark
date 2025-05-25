@@ -1,4 +1,4 @@
-import type { FileEntry, AppFileInfo, StorageLocation } from '@/types/app-types.ts';
+import type { FileEntry, AppFileInfo, StorageLocation } from '@/types/appTypes';
 import { localFileService } from './local/localFileService';
 import { webdavFileService } from '@/services/files/webdav/webdavFileService';
 
@@ -19,7 +19,7 @@ export class FileService {
   async readFile(fileInfo: Pick<AppFileInfo, 'path' | 'storageLocation'>): Promise<ArrayBuffer> {
     return await this.getService(fileInfo.storageLocation).readFile(fileInfo);
   }
-  async  readTextFile(fileInfo: Pick<AppFileInfo, 'path' |'storageLocation'>): Promise<string> {
+  async readTextFile(fileInfo: Pick<AppFileInfo, 'path' | 'storageLocation'>): Promise<string> {
     return await this.getService(fileInfo.storageLocation).readTextFile(fileInfo);
   }
 
@@ -71,12 +71,12 @@ export class FileService {
  */
   async create(fileInfo: Pick<FileEntry, 'path' | 'storageLocation' | 'isDir'>, recursive?: boolean): Promise<void> {
     if (fileInfo.isDir) {
-      await this.getService(fileInfo.storageLocation).createDirectory(fileInfo,recursive);
+      await this.getService(fileInfo.storageLocation).createDirectory(fileInfo, recursive);
     } else {
       await this.getService(fileInfo.storageLocation).createFile(fileInfo);
     }
   }
-  async writeFile(fileInfo: Pick<AppFileInfo, 'path' | 'storageLocation'>, file: File|Blob|ArrayBuffer): Promise<void> {
+  async writeFile(fileInfo: Pick<AppFileInfo, 'path' | 'storageLocation'>, file: File | Blob | ArrayBuffer): Promise<void> {
     await this.getService(fileInfo.storageLocation).writeFile(fileInfo, file);
   }
 

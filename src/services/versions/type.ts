@@ -1,4 +1,4 @@
-import { AppFileInfo } from "@/types/app-types.ts";
+import { AppFileInfo } from "@/types/appTypes";
 
 /**
  * 文件系统操作接口，由客户端实现

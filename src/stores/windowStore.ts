@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { SidePanel, WindowState } from '@/types/app-types.ts';
+import type { SidePanel, WindowState } from '@/types/appTypes';
 import { reactive } from 'vue';
 
 export const useWindowStore = defineStore('window', () => {

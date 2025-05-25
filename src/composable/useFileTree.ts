@@ -1,6 +1,6 @@
 import { useFileStore } from '@/stores/fileStore';
 import { fileService } from '../services/files/fileService';
-import type { AppFileInfo, FileEntry } from '@/types/app-types.ts';
+import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { useRecentStore } from '@/stores/recentStore';
 import { localFileService } from '@/services/files/local/localFileService';
 import { CodeError } from '@/services/codeService';
@@ -140,9 +140,9 @@ export function useFileTree() {
    */
   async function remove(fileEntry: AppFileInfo) {
     await fileService.delete(fileEntry);
-    if(fileEntry.isRoot){
+    if (fileEntry.isRoot) {
       removeFromTree(fileEntry)
-    }else{
+    } else {
       refresh(fileEntry)
     }
     tabStore.updatePath(fileEntry.path, null)

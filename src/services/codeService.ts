@@ -11,11 +11,11 @@ export class CodeError extends Error {
   public readonly message: string;
   public readonly detail?: string;
 
-  constructor(statusCode: StatusCode, detail?: string) {
-    super(statusCode.message);
+  constructor(statusCode: StatusCode, options?: { cause?: unknown, detail?: string, }) {
+    super(statusCode.message, { cause: options?.cause });
     this.code = statusCode.code;
     this.message = statusCode.message;
-    this.detail = detail;
+    this.detail = options?.detail;
     // 保持正确的原型链
     Object.setPrototypeOf(this, CodeError.prototype);
   }

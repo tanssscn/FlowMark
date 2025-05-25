@@ -32,7 +32,7 @@ class WebDAVClient {
     this.baseUrl = options.baseUrl.endsWith('/')
       ? options.baseUrl.slice(0, -1)
       : options.baseUrl;
-      // 直接提取 fetch 方法调用（丢失 this 绑定）
+    // 直接提取 fetch 方法调用（丢失 this 绑定）
     this._fetch = options._fetch ?? window.fetch.bind(window);;
     // 初始化headers
     this.headers = {
@@ -155,7 +155,7 @@ class WebDAVClient {
         headers
       });
       if (!response.ok) {
-        throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, `${response.status} , ${response.statusText}`);
+        throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, { detail: `${response.status} , ${response.statusText}` });
       }
     } catch (e: any) {
       console.log(e)
@@ -216,7 +216,7 @@ class WebDAVClient {
     const result = this.xmlParser.parse(text);
     // 确保响应结构标准化
     if (!result.multistatus) {
-      throw new CodeError(statusCode.INVALID_RESPONSE, 'No root multistatus found');
+      throw new CodeError(statusCode.INVALID_RESPONSE, { detail: 'No root multistatus found' });
     }
 
     // 确保 response 是数组
@@ -234,14 +234,14 @@ class WebDAVClient {
     const response = result.multistatus.response[0];
 
     if (!response?.propstat) {
-      throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, 'Failed getting item stat');
+      throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, { detail: 'Failed getting item stat' });
     }
 
     const { prop, status } = response.propstat;
     const [_, code] = status.split(' ', 2);
 
     if (parseInt(code, 10) >= 400) {
-      throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, status);
+      throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, { detail: status });
     }
 
     return this.prepareFileFromProps(prop, filename, isDetailed);

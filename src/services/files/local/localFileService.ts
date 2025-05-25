@@ -1,6 +1,6 @@
 import { browserFileService } from './browserFileService';
 import { getDeviceInfo } from '@/services/deviceService';
-import type { AppFileInfo, FileEntry } from '@/types/app-types.ts';
+import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { tauriLocalFileService } from './tauriLocalFileService';
 // 代理实现
 export class LocalFileService {
@@ -86,7 +86,7 @@ export class LocalFileService {
     return await this.getService().openFile(options);
   }
 
-  async writeFile(fileInfo: Pick<FileEntry, 'path'>, file: File|Blob|ArrayBuffer): Promise<void> {
+  async writeFile(fileInfo: Pick<FileEntry, 'path'>, file: File | Blob | ArrayBuffer): Promise<void> {
     return await this.getService().writeFile(fileInfo, file);
   }
   async openPathInFinder(path: string) {

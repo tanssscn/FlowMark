@@ -1,5 +1,5 @@
 import { CodeError } from '@/services/codeService';
-import type { FileEntry } from '@/types/app-types.ts';
+import type { FileEntry } from '@/types/appTypes';
 import { statusCode } from '@/utils/statusCodes';
 
 /**

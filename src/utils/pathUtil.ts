@@ -1,7 +1,7 @@
 import { basename, dirname, extname, isAbsolute, join, sep } from 'pathe';
 import { convertFileSrc, isTauri } from "@tauri-apps/api/core";
 import { fileService } from '@/services/files/fileService';
-import { AppFileInfo } from '@/types/app-types';
+import { AppFileInfo } from '@/types/appTypes';
 import { CodeError } from '@/services/codeService';
 import { statusCode } from './statusCodes';
 
@@ -225,24 +225,24 @@ export function isSameOrigin(url1: string, url2: string): boolean {
 
 
 export function isValidFilePath(pathStr: string): boolean {
-    // 去除路径字符串两端的空白字符
-    const trimmedPath = pathStr.trim();
-    
-    // 定义路径中不允许的非法字符
-    const illegalChars = /[:*?"<>|]/;
-    
-    // 检查路径是否包含非法字符
-    if (illegalChars.test(trimmedPath)) {
-        return false;
+  // 去除路径字符串两端的空白字符
+  const trimmedPath = pathStr.trim();
+
+  // 定义路径中不允许的非法字符
+  const illegalChars = /[:*?"<>|]/;
+
+  // 检查路径是否包含非法字符
+  if (illegalChars.test(trimmedPath)) {
+    return false;
+  }
+
+  // 检查路径中的每个部分是否符合文件系统命名规则
+  const pathParts = trimmedPath.split(sep).filter(part => part !== '');
+  for (let part of pathParts) {
+    if (illegalChars.test(part)) {
+      return false;
     }
-    
-    // 检查路径中的每个部分是否符合文件系统命名规则
-    const pathParts = trimmedPath.split(sep).filter(part => part !== '');
-    for (let part of pathParts) {
-        if (illegalChars.test(part)) {
-            return false;
-        }
-    }
-    
-    return true;
+  }
+
+  return true;
 }

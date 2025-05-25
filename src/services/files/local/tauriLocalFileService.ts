@@ -17,7 +17,7 @@ import {
   watch,
 } from '@tauri-apps/plugin-fs';
 import { join, basename } from '@tauri-apps/api/path';
-import type { AppFileInfo, FileEntry } from '@/types/app-types.ts';
+import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { save } from '@tauri-apps/plugin-dialog';
 import { filterFileEntries } from '@/utils/fileUtil';

@@ -1,16 +1,14 @@
 <template>
-  <el-menu-item
-    :index="actionKey"
-    :disabled="enabled === false"
-    @click="handleClick"
-  >
+  <el-menu-item :index="actionKey" :disabled="enabled === false" @click="handleClick">
     <div class="flex justify-between items-center w-full">
       <div class="flex items-center">
         <i v-if="icon" :class="icon" class="mr-1"></i>
         <span>{{ label }}</span>
       </div>
       <div class="flex items-center ml-8">
-        <el-icon v-if="checked"><Check /></el-icon>
+        <el-icon v-if="checked">
+          <Check />
+        </el-icon>
         <!-- <span v-if="shortcut" class="text-gray-400 text-xs">
           {{ shortcut }}
         </span> -->
@@ -21,7 +19,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import {Check} from '@element-plus/icons-vue'
+import { Check } from '@element-plus/icons-vue'
 const props = defineProps({
   id: { type: String, default: undefined },
   label: { type: String, required: true },
@@ -32,7 +30,7 @@ const props = defineProps({
   icon: { type: String, default: '' }
 })
 
-const actionKey = computed(() => 
+const actionKey = computed(() =>
   typeof props.id ? props.id : props.label
 )
 

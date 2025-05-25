@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n';
 import zh_CN from './locales/zh-CN.json';
-import { Language } from '@/types/app-settings';
+import { Language } from '@/types/appSettings';
 import { getSettingsLanguage } from '@/services/persistService';
 
 // 定义语言类型
@@ -41,7 +41,7 @@ function getSavedLanguage(): Language {
   return converLanguage(language)
 }
 const savedLanguage = getSavedLanguage()
-export const initI18n = async() => {
+export const initI18n = async () => {
   await setLanguage(savedLanguage);
 }
 // 创建 i18n 实例

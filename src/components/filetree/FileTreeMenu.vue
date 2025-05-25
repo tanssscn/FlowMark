@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useEdit } from '@/composable/useEdit'
 import { useFileTree } from '@/composable/useFileTree'
-import { AppFileInfo, FileEntry } from '@/types/app-types.ts'
+import { AppFileInfo, FileEntry } from '@/types/appTypes'
 import { FolderOpened, InfoFilled, Remove, FolderAdd, Document, DocumentAdd, Delete, Edit } from '@element-plus/icons-vue'
 import { ContextMenuState } from './composable/useFileTreeMenu'
 import { localFileService } from '@/services/files/local/localFileService'

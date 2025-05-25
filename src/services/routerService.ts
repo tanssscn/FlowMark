@@ -1,7 +1,7 @@
 
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { getDeviceInfo } from './deviceService';
-import { AppFileInfo } from '@/types/app-types.ts';
+import { AppFileInfo } from '@/types/appTypes';
 import { getAllWebviews } from '@tauri-apps/api/webview';
 import { Window } from "@tauri-apps/api/window"
 

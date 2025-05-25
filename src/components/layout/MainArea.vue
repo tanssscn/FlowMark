@@ -12,7 +12,7 @@ import { useWindowStore } from '@/stores/windowStore';
 import TableSelector from '../editor/table/TableSelector.vue';
 import { useFileStore } from '@/stores/fileStore';
 import { UnwatchFn } from '@tauri-apps/plugin-fs';
-import { TabType } from '@/types/app-types.ts';
+import { TabType } from '@/types/appTypes';
 import { useEdit } from "@/composable/useEdit";
 import { useSettingsStore } from '@/stores/settingsStore';
 const { closeTab } = useEdit()

@@ -18,7 +18,7 @@
 import { useEdit } from "@/composable/useEdit";
 import MilkdownEditor from '@/components/editor/milkdown/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue';
-import { ViewMode, type EditorTab } from '@/types/app-types.ts';
+import { ViewMode, type EditorTab } from '@/types/appTypes';
 import { ref, PropType, computed, watch, onMounted } from 'vue'
 import CodeMirrorEditor from "./codemirror/CodeMirrorEditor.vue";
 import SplitPane from '@/components/common/splitPanel/SplitPanel.vue'

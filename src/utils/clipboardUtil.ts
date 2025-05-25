@@ -1,15 +1,13 @@
 import { nanoid } from "nanoid";
 import { nowFormatDate } from "./formatUtil";
 import { fetch } from '@tauri-apps/plugin-http';
-import { CodeError } from "@/services/codeService";
-import { statusCode } from "./statusCodes";
 import { fileService } from "@/services/files/fileService";
 import {
   filename,
 } from "pathe/utils";
 import { getDirname, getJoin } from "./pathUtil";
 import { MilkdownEditorInstance } from "@/components/editor/composable/milkdownEditor";
-import { AppFileInfo } from "@/types/app-types";
+import { AppFileInfo } from "@/types/appTypes";
 
 function getImageExtension(mimeType: string): string {
   const extensions: Record<string, string> = {

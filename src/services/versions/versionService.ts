@@ -3,7 +3,7 @@ import { FileSystemAdapter } from './type';
 import { getDeviceInfo } from '../deviceService';
 import { BrowserFs } from './browserFs';
 import { TauriFsClient } from './localFs';
-import { VersionInfo } from '@/types/app-types.ts';
+import { VersionInfo } from '@/types/appTypes';
 import { customAlphabet } from 'nanoid';
 import { getExtname, getJoin } from '@/utils/pathUtil';
 const fileSafeAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-';

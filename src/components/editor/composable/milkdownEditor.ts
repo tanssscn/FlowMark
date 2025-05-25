@@ -8,7 +8,7 @@ import { useEdit } from "@/composable/useEdit";
 import { createCodeBlockCommand, insertHrCommand, insertImageCommand, toggleEmphasisCommand, toggleInlineCodeCommand, toggleStrongCommand, turnIntoTextCommand, wrapInBlockquoteCommand, wrapInBulletListCommand, wrapInHeadingCommand, wrapInOrderedListCommand } from '@milkdown/preset-commonmark';
 import { callCommand, getHTML, replaceAll } from '@milkdown/utils';
 import { fileService } from "@/services/files/fileService";
-import { AppFileInfo, OutlineItem } from "@/types/app-types.ts";
+import { AppFileInfo, OutlineItem } from "@/types/appTypes";
 import { emoji } from '@milkdown/plugin-emoji';
 import { indentConfig, IndentConfigOptions } from '@milkdown/plugin-indent'
 import { historyKeymap, redoCommand, undoCommand } from "@milkdown/plugin-history";
@@ -20,7 +20,7 @@ import { insertTableCommand, toggleStrikethroughCommand } from '@milkdown/preset
 import { codeBlockMemory, codeBlockMemoryPluginKey } from "./codeLangMemory";
 import { useFileStore } from "@/stores/fileStore";
 import { useDebounceFn } from '@vueuse/core';
-import { AppSettings } from "@/types/app-settings";
+import { AppSettings } from "@/types/appSettings";
 import { closeImageSource, createFileInnerSrc } from "@/utils/pathUtil";
 import { uploadImage } from "@/utils/clipboardUtil";
 import { useTabStore } from "@/stores/tabStore";

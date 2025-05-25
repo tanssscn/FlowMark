@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { FileSystemState, FileEntry } from '@/types/app-types.ts';
+import type { FileSystemState, FileEntry } from '@/types/appTypes';
 import { computed, reactive, readonly } from 'vue';
 import { restoreApp, RestoreApp } from '@/services/persistService';
 

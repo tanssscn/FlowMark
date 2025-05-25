@@ -3,7 +3,7 @@ import { useFileTree } from '@/composable/useFileTree';
 import { CodeError } from '@/services/codeService';
 import { fileService } from '@/services/files/fileService';
 import { useFileStore } from '@/stores/fileStore';
-import type { AppFileInfo, FileEntry } from '@/types/app-types.ts';
+import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { isEqualStatusCode, statusCode } from '@/utils/statusCodes';
 import { nextTick } from 'vue';
 import type Node from 'element-plus/es/components/tree/src/model/node'

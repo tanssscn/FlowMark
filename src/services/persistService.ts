@@ -1,4 +1,4 @@
-import { AppSettings, Language, ThemeMode } from '@/types/app-settings';
+import { AppSettings, Language, ThemeMode } from '@/types/appSettings';
 import { windowRouter } from "./routerService";
 
 function getSettings(): AppSettings | undefined {

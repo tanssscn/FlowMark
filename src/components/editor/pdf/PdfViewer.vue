@@ -6,7 +6,7 @@
 import { ref, onMounted, PropType, onUnmounted } from 'vue'
 import { useFileStore } from '@/stores/fileStore'
 import { closeImageSource, createFileSrc } from '@/utils/pathUtil'
-import { EditorTab } from '@/types/app-types'
+import { EditorTab } from '@/types/appTypes'
 const fileStore = useFileStore()
 
 const props = defineProps({

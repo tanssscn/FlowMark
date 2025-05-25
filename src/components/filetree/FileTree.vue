@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useFileStore } from '@/stores/fileStore'
-import type { FileEntry } from '@/types/app-types.ts'
+import type { FileEntry } from '@/types/appTypes'
 import FileTreeMenu from './FileTreeMenu.vue'
 import { FolderOpened, Folder, Document } from '@element-plus/icons-vue'
 import { ContextMenuState, DragState, fileTree, RenameState, TreeProps } from './composable/useFileTreeMenu'

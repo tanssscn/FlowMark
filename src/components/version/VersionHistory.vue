@@ -49,7 +49,7 @@ import { useI18n } from 'vue-i18n'
 import { useTabStore } from '@/stores/tabStore'
 import { computed, ref ,reactive} from 'vue'
 import { versionService } from '@/services/versions/versionService';
-import { VersionInfo } from '@/types/app-types.ts'
+import { VersionInfo } from '@/types/appTypes'
 import { useFileStore } from '@/stores/fileStore'
 import { dialogService } from '@/services/dialog/dialogService'
 import { asyncComputed } from '@vueuse/core'

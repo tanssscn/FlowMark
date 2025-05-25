@@ -5,7 +5,7 @@ import VersionHistory from '@/components/version/VersionHistory.vue'
 import { useWindowStore } from '@/stores/windowStore'
 import FileTree from '@/components/filetree/FileTree.vue'
 import { useI18n } from 'vue-i18n'
-import { SidePanel } from '@/types/app-types.ts'
+import { SidePanel } from '@/types/appTypes'
 
 const { t } = useI18n()
 const uiStore = useWindowStore()

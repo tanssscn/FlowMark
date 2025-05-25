@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFileTree } from '@/composable/useFileTree';
 import { useRecentStore } from '@/stores/recentStore';
-import { AppFileInfo } from '@/types/app-types.ts';
+import { AppFileInfo } from '@/types/appTypes';
 import { getFilename } from '@/utils/pathUtil';
 import IconCustomPin from "~icons/custom/pin"
 import IconCustomPinFill from "~icons/custom/pin-fill"

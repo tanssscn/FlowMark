@@ -2,10 +2,10 @@ import { defineStore } from 'pinia';
 import { nanoid } from 'nanoid';
 import { computed, reactive, readonly, ref, version } from 'vue';
 import { restoreApp, RestoreApp } from '@/services/persistService';
-import { TabBehavior } from '@/types/app-settings';
+import { TabBehavior } from '@/types/appSettings';
 import { getFilename } from '@/utils/pathUtil';
-import { EditorSession, EditorTab, OutlineItem, ViewMode } from '@/types/app-types.ts';
-import { TabType } from '@/types/app-types.ts';
+import { EditorSession, EditorTab, OutlineItem, ViewMode } from '@/types/appTypes';
+import { TabType } from '@/types/appTypes';
 import { enableEditTab, getTabType } from '@/utils/fileUtil';
 import { useSettingsStore } from './settingsStore';
 

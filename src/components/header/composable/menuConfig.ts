@@ -8,7 +8,7 @@ import { windowRouter } from '@/services/routerService'
 import { useEdit } from '@/composable/useEdit'
 import { useWindowRoute } from '@/composable/useWindowRoute'
 import { useRecentStore } from '@/stores/recentStore'
-import { ViewMode } from '@/types/app-types'
+import { ViewMode } from '@/types/appTypes'
 import { HotKey } from '@/utils/hotkeys'
 const { t } = i18n.global
 

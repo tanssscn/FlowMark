@@ -3,7 +3,7 @@ import type {
   AppSettings,
   ThemeMode,
   TabBehavior,
-} from '@/types/app-settings';
+} from '@/types/Settings';
 import { computed, reactive, readonly } from 'vue';
 
 export const defaultSettings: AppSettings = {

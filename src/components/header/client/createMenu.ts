@@ -6,7 +6,7 @@ import { useWindowStore } from '@/stores/windowStore';
 import { useRecentStore } from '@/stores/recentStore';
 import { useFileTree } from '@/composable/useFileTree';
 import i18n from '@/i18n';
-import { Platform } from '@/types/app-types';
+import { Platform } from '@/types/appTypes';
 const { t } = i18n.global
 
 /**

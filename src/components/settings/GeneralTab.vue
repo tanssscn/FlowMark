@@ -4,7 +4,7 @@ import { useSettingsStore } from '@/stores/settingsStore'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { rebuildMenu } from '../header/client/tauriMenu'
-import { Language } from '@/types/app-settings'
+import { Language } from '@/types/appSettings'
 
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)

@@ -1,4 +1,4 @@
-import type { AppFileInfo, FileEntry } from '@/types/app-types.ts';
+import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { fetch } from '@tauri-apps/plugin-http';
 import { getDeviceInfo } from '@/services/deviceService';
 import WebDAVClient, { createClient } from './webdav';

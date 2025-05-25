@@ -1,8 +1,7 @@
 import { fileService } from '../services/files/fileService';
-import type { AppFileInfo, EditorTab, ViewMode } from '@/types/app-types.ts';
+import type { AppFileInfo, EditorTab, ViewMode } from '@/types/appTypes';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useTabStore } from '@/stores/tabStore';
-import { TabBehavior } from '@/types/app-settings';
 import { useVersion } from '@/components/version/useVersion';
 import { useFileStore } from '@/stores/fileStore';
 import { dialogService } from '@/services/dialog/dialogService';
@@ -14,6 +13,7 @@ import { Mutex } from 'async-mutex';
 import { CodeError } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { getExtname, getFilename } from '@/utils/pathUtil';
+import { TabBehavior } from '@/types/appSettings';
 
 const fileLocks = new Map<string, Mutex>();
 

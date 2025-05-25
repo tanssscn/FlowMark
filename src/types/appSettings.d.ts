@@ -1,4 +1,4 @@
-import { ViewMode } from './app-types';
+import { ViewMode } from './appTypes';
 export type ConflictResolution = 'ask' | 'overwrite' | 'keep_both';
 export type TabBehavior = 'new_tab' | 'replace_tab';
 export type ThemeMode = 'system' | 'light' | 'dark';

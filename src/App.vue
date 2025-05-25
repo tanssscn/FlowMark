@@ -38,24 +38,17 @@ onMounted(async () => {
     <HeaderMenu v-if="isBrowser" id="mainHeader"
       class="h-12 transform transition-transform duration-300 sticky top-0 z-50 bg-white dark:bg-black nonprintable" />
     <SplitPane leftAbsolute v-model:left-width="windowStore.state.sidebar.width" :min-left-width="200"
-    :show-left="windowStore.state.sidebar.visible" left-class="nonprintable" right-class="print-panel"
+      :show-left="windowStore.state.sidebar.visible" left-class="nonprintable" right-class="print-panel"
       :max-right-width="600"> <!-- 左侧边栏 -->
       <template #left="{ width }">
-        <SidePanel class="overflow-hidden transition-all duration-200 fixed top-0 w-full" :style="{ width: `${width}px` }" v-if="windowStore.state.sidebar.visible" id="sidebar"/>
+        <SidePanel class="overflow-hidden transition-all duration-200 fixed top-0 w-full"
+          :style="{ width: `${width}px` }" v-if="windowStore.state.sidebar.visible" id="sidebar" />
       </template>
       <!-- 主编辑区 -->
       <template #right="{ width }">
-        <MainArea :width="width"  v-if="isInitialized" class="flex-1 main-area" />
+        <MainArea :width="width" v-if="isInitialized" class="flex-1 main-area" />
       </template>
     </SplitPane>
     <SettingsModal class="nonprintable" v-model="windowStore.state.showSettingsModal" />
   </div>
 </template>
-
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-</style>

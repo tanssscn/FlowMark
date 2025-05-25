@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { AppFileInfo, RecentFile } from '@/types/app-types.ts'
+import type { AppFileInfo, RecentFile } from '@/types/appTypes'
 
 export const useRecentStore = defineStore('recent', () => {
   const recentFiles = ref<RecentFile[]>([])

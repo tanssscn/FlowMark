@@ -1,8 +1,8 @@
-import type { AppFileInfo, VersionInfo } from '@/types/app-types.ts';
+import type { AppFileInfo, VersionInfo } from '@/types/appTypes';
 import { versionService } from '@/services/versions/versionService';
 import { milkdownManager } from '@/services/milkdownManager';
 import { useSettingsStore } from '@/stores/settingsStore';
-export interface VersionContextMenuState{
+export interface VersionContextMenuState {
   visible: boolean;
   version: VersionInfo;
   path: string;

@@ -9,7 +9,7 @@
 <script lang="ts" setup>
 import { ref, PropType, onMounted, onUnmounted } from 'vue'
 import panzoom, { PanzoomObject } from '@panzoom/panzoom'
-import type { EditorTab } from '@/types/app-types.ts';
+import type { EditorTab } from '@/types/appTypes';
 import { useFileStore } from '@/stores/fileStore'
 import { closeImageSource, createFileSrc } from '@/utils/pathUtil';
 import { useEventListener } from '@vueuse/core';

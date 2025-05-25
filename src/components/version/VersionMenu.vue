@@ -4,7 +4,7 @@ import { RefreshLeft, Notebook, Delete } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
 import { VersionContextMenuState} from '@/components/version/useVersion'
 import { versionService } from '@/services/versions/versionService';
-import { VersionInfo } from '@/types/app-types.ts'
+import { VersionInfo } from '@/types/appTypes'
 import { dialogService } from '@/services/dialog/dialogService'
 import { computed, onUnmounted, ref } from 'vue'
 import { onClickOutside } from '@vueuse/core'

@@ -43,7 +43,7 @@ import { RefreshLeft, Close } from '@element-plus/icons-vue'
 import { milkdownManager } from '@/services/milkdownManager'
 import { ref, PropType } from 'vue'
 import { versionService } from '@/services/versions/versionService';
-import { VersionInfo } from '@/types/app-types.ts'
+import { VersionInfo } from '@/types/appTypes'
 
 const { t } = useI18n()
 const iconSize = "large"
