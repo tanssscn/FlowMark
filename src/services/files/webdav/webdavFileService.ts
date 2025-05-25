@@ -190,7 +190,7 @@ export class WebDAVFileService {
   /**
    * 创建目录
    */
-  async createDirectory(fileInfo: Pick<FileEntry, 'path'>, recursive: boolean = true): Promise<void> {
+  async createDirectory(fileInfo: Pick<FileEntry, 'path'>, recursive: boolean = false): Promise<void> {
     this.ensureConnected()
     await this.client!.createDirectory(fileInfo.path, { recursive });
   }

@@ -25,7 +25,7 @@ const tabs = computed(() => [
 </script>
 
 <template>
-  <el-dialog show-close append-to-body>
+  <el-dialog show-close append-to-body width="600">
     <template #header>
       <div class="flex justify-between items-center py-2">
         <h2 class="text-xl font-medium m-0">{{ t('settings.label') }}</h2>
@@ -33,7 +33,7 @@ const tabs = computed(() => [
     </template>
 
     <div class="flex overflow-hidden">
-      <div class="settings-sidebar overflow-y-auto w-48 border-r p-2">
+      <div class="settings-sidebar overflow-y-auto border-r p-2">
         <el-menu :default-active="activeTab" class="h-full border-0 bg-transparent"
           @select="(key: string) => activeTab = key">
           <el-menu-item v-for="tab in tabs" :key="tab.id" :index="tab.id"

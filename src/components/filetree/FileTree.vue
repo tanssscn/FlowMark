@@ -67,7 +67,7 @@ const { handleNodeClick,
   handleDrop,
   startRename,
   cancelRename,
-  finishRename, createAndRename } = fileTree(renameState, contextMenu, dragState, treeProps)
+  finishRename, create } = fileTree(renameState, contextMenu, dragState, treeProps)
 </script>
 
 <template>
@@ -112,8 +112,8 @@ const { handleNodeClick,
     <!-- teleport 组件可以将组件渲染到 body 元素下，避免被组件内部的样式影响  -->
     <teleport to="body">
       <file-tree-menu :contextMenu="contextMenu" @rename="startRename" @show-properties="showProperties"
-        @new-file="(node: Node, data: FileEntry) => createAndRename(node, data, false)"
-        @new-folder="(node: Node, data: FileEntry) => createAndRename(node, data, true)" 
+        @new-file="(node: Node, data: FileEntry) => create(node, data, false)"
+        @new-folder="(node: Node, data: FileEntry) => create(node, data, true)" 
         @close="contextMenu.visible = false"/>
     </teleport>
       <FilePropertiesPanel v-model="showPropertiesPanel" :file="propertiesFile" @close="showPropertiesPanel = false"/>

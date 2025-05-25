@@ -1,10 +1,9 @@
-import { basename, dirname, extname, isAbsolute, join } from 'pathe';
+import { basename, dirname, extname, isAbsolute, join, sep } from 'pathe';
 import { convertFileSrc, isTauri } from "@tauri-apps/api/core";
 import { fileService } from '@/services/files/fileService';
 import { AppFileInfo } from '@/types/app-types';
 import { CodeError } from '@/services/codeService';
 import { statusCode } from './statusCodes';
-import { isRelativePath, isSameOrigin } from './fileUtil';
 
 export async function createFileInnerSrc(fileInfo: AppFileInfo, url: string): Promise<string> {
   if (!url) return url; // 空路径，用户可能还没有输入完成
@@ -51,15 +50,6 @@ export function closeImageSource(src: string) {
   if (src.startsWith('blob:')) {
     URL.revokeObjectURL(src);
   }
-}
-
-export function calculateDataLength(data: string | ArrayBuffer): number {
-  if (data instanceof ArrayBuffer || ArrayBuffer.isView(data)) {
-    return (<ArrayBuffer>data).byteLength;
-  } else if (typeof data === "string") {
-    return data.length;
-  }
-  throw new CodeError(statusCode.TYPE_ERROR);
 }
 
 /**
@@ -178,4 +168,81 @@ export function getExtname(path: string): string {
 }
 export function normalizedPath(path: string): string {
   return path.replace(/\/+$/, '');
+}
+/**
+ * ./ 或../ 开头的路径为相对路径，不能是绝对路径。
+ * 不允许的非法字符（如 :, *, ?, ", <, >, | 等）。
+ * @param path 要判断的路径
+ * @returns 
+ */
+export function isRelativePath(pathStr: string): boolean {
+  // 去除路径字符串两端的空白字符
+  const trimmedPath = pathStr.trim();
+
+  // 定义路径中不允许的非法字符
+  const illegalChars = /[:*?"<>|]/;
+
+  // 检查路径是否包含非法字符
+  if (illegalChars.test(trimmedPath)) {
+    return false;
+  }
+
+  // 使用 path.isAbsolute 检查路径是否为绝对路径
+  if (isAbsolute(trimmedPath)) {
+    return false;
+  }
+
+  // 检查路径中的每个部分是否符合文件系统命名规则
+  const pathParts = trimmedPath.split(sep);
+  for (let part of pathParts) {
+    if (part === '' || part === '.' || part === '..') {
+      continue;
+    }
+    if (illegalChars.test(part)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function getNormalizedOrigin(u: URL): string {
+  const defaultPort = (u.protocol === 'http:' && u.port === '') ? '80' :
+    (u.protocol === 'https:' && u.port === '') ? '443' :
+      u.port;
+  return `${u.protocol}//${u.hostname}:${defaultPort}`;
+}
+
+export function isSameOrigin(url1: string, url2: string): boolean {
+  try {
+    const u1 = new URL(url1);
+    const u2 = new URL(url2);
+    return getNormalizedOrigin(u1) === getNormalizedOrigin(u2);
+  } catch {
+    return false;
+  }
+}
+
+
+export function isValidFilePath(pathStr: string): boolean {
+    // 去除路径字符串两端的空白字符
+    const trimmedPath = pathStr.trim();
+    
+    // 定义路径中不允许的非法字符
+    const illegalChars = /[:*?"<>|]/;
+    
+    // 检查路径是否包含非法字符
+    if (illegalChars.test(trimmedPath)) {
+        return false;
+    }
+    
+    // 检查路径中的每个部分是否符合文件系统命名规则
+    const pathParts = trimmedPath.split(sep).filter(part => part !== '');
+    for (let part of pathParts) {
+        if (illegalChars.test(part)) {
+            return false;
+        }
+    }
+    
+    return true;
 }

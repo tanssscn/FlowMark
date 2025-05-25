@@ -15,7 +15,10 @@ export interface MessageBoxOptions {
   type?: NotificationType
   confirmButtonText?: string
   cancelButtonText?: string
-  showCancelButton?: boolean
+  showCancelButton?: boolean,
+  inputValidator?: (value: string) => boolean|string
+  inputPattern?: RegExp,
+  inputErrorMessage?: string
 }
 
 export interface DialogPlatform {

@@ -316,6 +316,14 @@
     "resetConnection":{
       "title":"重置连接",
       "message":"确定要重置连接吗？"
+    },
+    "createFile":{
+      "title":"新建文件",
+      "message":"请输入文件名"
+    },
+    "createFolder":{
+      "title":"新建文件夹",
+      "message":"请输入文件夹名"
     }
   },
   "notify": {
@@ -326,7 +334,11 @@
       "saveFailed": "保存失败",
       "missingCredentials": "请填写服务器URL和用户名",
       "connectionFailed": "连接失败，请检查您的设置",
-      "connectionError": "连接失败：{error}"
+      "connectionError": "连接失败：{error}",
+      "nameCannotBeEmpty": "名称不能为空",
+      "fileExists": "文件已存在",
+      "nameInvalid": "名称无效",
+      "createFailed": "创建失败"
     },
     "success": {
       "save": "保存成功",

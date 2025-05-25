@@ -24,7 +24,7 @@ export async function macMenu() {
 
 async function onWindowFocused(): Promise<() => void> {
   // 处理窗口激活事件
-  const menu = await createTauriMenu();
+  const menu = await createTauriMenu('macos');
   const unMenuWatch = menuWatch(menu);
   return unMenuWatch;
 }

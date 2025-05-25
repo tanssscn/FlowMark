@@ -5,9 +5,10 @@ import {
   PutFileContentsOptions, CopyFileOptions, MoveOptions, CreateDirectoryOptions, DeleteOptions
 } from './type';
 import { basename } from 'pathe';
-import { calculateDataLength, isSubPath } from '@/utils/pathUtil';
+import { isSubPath } from '@/utils/pathUtil';
 import { CodeError } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
+import { calculateDataLength } from '@/utils/fileUtil';
 
 
 

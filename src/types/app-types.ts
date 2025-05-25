@@ -10,6 +10,7 @@ export enum ViewMode {
 }
 export type FileStatus = 'saved' | 'modified' | 'error';
 export type Platform = 'browser' | _Platform
+export type SyncStatus = 'synced' | 'pending' | 'conflict' | 'error';
 
 
 export type SidePanel = 'fileTree' | 'outline' | 'history';

@@ -69,9 +69,9 @@ export class FileService {
   /**
  * 创建新文件/目录
  */
-  async create(fileInfo: Pick<FileEntry, 'path' | 'storageLocation' | 'isDir'>): Promise<void> {
+  async create(fileInfo: Pick<FileEntry, 'path' | 'storageLocation' | 'isDir'>, recursive?: boolean): Promise<void> {
     if (fileInfo.isDir) {
-      await this.getService(fileInfo.storageLocation).createDirectory(fileInfo);
+      await this.getService(fileInfo.storageLocation).createDirectory(fileInfo,recursive);
     } else {
       await this.getService(fileInfo.storageLocation).createFile(fileInfo);
     }

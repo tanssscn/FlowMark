@@ -1,6 +1,8 @@
+import { CodeError } from '@/services/codeService';
 import { getDeviceInfo } from '@/services/deviceService';
 import { Platform, StorageLocation, TabType } from '@/types/app-types.ts';
 import { basename } from 'pathe';
+import { statusCode } from './statusCodes';
 /**
  * 判断是否应该忽略的文件（跨平台实现）
  * @param filename 文件名（不含路径）
@@ -110,23 +112,11 @@ export function enableEditTab(tabType: TabType): boolean {
   return false
 }
 
-export function isRelativePath(path: string): boolean {
-  return /^(\.\/|\.\.\/|[^\/][^:]*$)/.test(path.trim());
-}
-
-function getNormalizedOrigin(u: URL): string {
-  const defaultPort = (u.protocol === 'http:' && u.port === '') ? '80' :
-                      (u.protocol === 'https:' && u.port === '') ? '443' :
-                      u.port;
-  return `${u.protocol}//${u.hostname}:${defaultPort}`;
-}
-
-export function isSameOrigin(url1: string, url2: string): boolean {
-  try {
-    const u1 = new URL(url1);
-    const u2 = new URL(url2);
-    return getNormalizedOrigin(u1) === getNormalizedOrigin(u2);
-  } catch {
-    return false;
+export function calculateDataLength(data: string | ArrayBuffer): number {
+  if (data instanceof ArrayBuffer || ArrayBuffer.isView(data)) {
+    return (<ArrayBuffer>data).byteLength;
+  } else if (typeof data === "string") {
+    return data.length;
   }
+  throw new CodeError(statusCode.TYPE_ERROR);
 }

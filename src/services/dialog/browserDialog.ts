@@ -36,12 +36,7 @@ export class ElementPlatform implements DialogPlatform {
 
   async prompt(options: MessageBoxOptions): Promise<string | null> {
     try {
-      const result = await ElMessageBox.prompt(
-        options.message, 
-        options.title || '', {
-        confirmButtonText: options.confirmButtonText,
-        cancelButtonText: options.cancelButtonText
-      })
+      const result = await ElMessageBox.prompt(options.message,options.title || '',options)
       return result.value
     } catch {
       return null

@@ -6,6 +6,7 @@ import { useWindowStore } from '@/stores/windowStore';
 import { useRecentStore } from '@/stores/recentStore';
 import { useFileTree } from '@/composable/useFileTree';
 import i18n from '@/i18n';
+import { Platform } from '@/types/app-types';
 const { t } = i18n.global
 
 /**
@@ -94,7 +95,7 @@ export function menuWatch(menu: Menu | undefined): () => void {
     unwatchRecentFiles()
   }
 }
-export async function createTauriMenu(): Promise<Menu | undefined> {
+export async function createTauriMenu(platform:Platform): Promise<Menu | undefined> {
   const menuConfig = useMenuConfig()
   const menuItems = await createSubmenu(menuConfig);
   const systemMenu = await Menu.default();
@@ -112,7 +113,11 @@ export async function createTauriMenu(): Promise<Menu | undefined> {
   }
 
   const menu = await Menu.new({ items: items })
-  await menu.setAsAppMenu()
+  if(platform === 'windows' || platform === 'linux'){
+    await menu.setAsWindowMenu()
+  }else if (platform === 'macos') {
+    await menu.setAsAppMenu()
+  }
   return menu;
 }
 

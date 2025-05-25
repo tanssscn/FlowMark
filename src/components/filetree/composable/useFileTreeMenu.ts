@@ -12,6 +12,11 @@ import type {
   NodeDropType,
 } from 'element-plus/es/components/tree/src/tree.type'
 import type { DragEvents } from 'element-plus/es/components/tree/src/model/useDragNode'
+import { dialogService } from '@/services/dialog/dialogService';
+import i18n from '@/i18n';
+import { getDirname, getFilename, getJoin, isRelativePath, isValidFilePath } from '@/utils/pathUtil';
+import { join, normalizeString } from 'pathe';
+const { t } = i18n.global
 
 export interface ContextMenuState {
   visible: boolean
@@ -176,37 +181,64 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
     renameState.isRenaming = false
   }
   // 创建新文件/文件夹并立即进入重命名状态
-  const createAndRename = async (node: any, data: FileEntry, isDirectory: boolean) => {
-    try {
-      // 生成默认名称
-      const defaultName = isDirectory ? '新建文件夹' : '新建文件'
-      let counter = 1
-      let newName = defaultName
-      // 检查名称是否已存在
-      while ((data.children || []).some(child => child.name === newName)) {
-        newName = `${defaultName}(${counter++})`
-      }
-
-      // 创建新文件/文件夹
-      const newEntry = {
-        name: newName,
-        path: `${data.path}/${newName}`,
-        storageLocation: data.storageLocation,
-        isDir: isDirectory,
-        children: isDirectory ? [] : undefined,
-      } as FileEntry
-      fileService.create(newEntry).then(() => {
-        // 展开父节点（如果是文件夹）
-        if (isDirectory) {
-          node.expanded = true
+  const create = async (node: any, data: FileEntry, isDirectory: boolean) => {
+    const newName = await dialogService.prompt({
+      title: isDirectory ? t('dialog.createFolder.title') : t('dialog.createFile.title'),
+      message: isDirectory ? t('dialog.createFolder.message') : t('dialog.createFile.message'),
+      inputValidator: (value) => {
+        if (!value) {
+          console.log('inputValidator', t('notify.errors.nameCannotBeEmpty'))
+          return t('notify.errors.nameCannotBeEmpty')
         }
-        refresh(newEntry, true).then(() => {
-          startRename(newEntry)
-        })
+        if (isValidFilePath(value)) {
+          const path = getJoin(data.path, normalizeString(value, false))
+          console.log('inputValidator', path)
+          if (fileStore.get(path)) {
+            return t('notify.errors.fileExists')
+          } else {
+            console.log('inputValidator', true)
+            value = path;
+            return true
+          }
+        }
+        return t('notify.errors.nameInvalid');
+      }
+    })
+    if (!newName) return
+    const newPath = getJoin(data.path, normalizeString(newName, false))
+    const parentPath = getDirname(newPath)
+    if (!fileStore.get(parentPath)) {
+      await fileService.create({
+        path: getDirname(newPath),
+        storageLocation: data.storageLocation,
+        isDir: true
+      }, true).catch((error) => {
+        dialogService.error(
+          error,
+          t('notify.errors.createFailed')
+        )
       })
-    } catch (error) {
-      console.error('创建失败:', error)
     }
+    // 创建新文件/文件夹
+    const newEntry = {
+      name: getFilename(newPath),
+      path: newPath,
+      storageLocation: data.storageLocation,
+      isDir: isDirectory,
+      children: isDirectory ? [] : undefined,
+    } as FileEntry
+    fileService.create(newEntry).then(() => {
+      // 展开父节点（如果是文件夹）
+      if (isDirectory) {
+        node.expanded = true
+      }
+      refresh(data, true)
+    }).catch((error) => {
+      dialogService.error(
+        error,
+        t('notify.errors.createFailed')
+      )
+    })
   }
 
   return {
@@ -221,6 +253,6 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
     startRename,
     cancelRename,
     finishRename,
-    createAndRename
+    create
   };
 }

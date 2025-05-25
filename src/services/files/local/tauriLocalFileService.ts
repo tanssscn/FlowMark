@@ -21,6 +21,7 @@ import type { AppFileInfo, FileEntry } from '@/types/app-types.ts';
 import { revealItemInDir } from '@tauri-apps/plugin-opener';
 import { save } from '@tauri-apps/plugin-dialog';
 import { filterFileEntries } from '@/utils/fileUtil';
+import { normalize } from 'pathe';
 
 /**
  * 本地文件系统服务
@@ -234,6 +235,7 @@ export class TauriLocalFileService {
     path: string,
     stats: FileInfo
   ): Promise<FileEntry> {
+    path = normalize(path)
     const name = await basename(path);
     return {
       path,

@@ -34,7 +34,7 @@ const { openFolder, openFile, openRecentFile } = useFileTree()
     </div>
 
     <!-- 最近文件列表 -->
-    <div class="w-full mb-8">
+    <div v-if="recentStore.state.length > 0" class="w-full mb-8">
       <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">最近文件</h2>
       <div v-for="file in recentStore.state" :key="file.path">
         <div
@@ -50,7 +50,7 @@ const { openFolder, openFile, openRecentFile } = useFileTree()
         <el-divider />
       </div>
 
-      <el-button text class="w-full" @click="recentStore.clearAll">清空历史记录</el-button>
+      <el-button  text class="w-full" @click="recentStore.clearAll">清空历史记录</el-button>
     </div>
   </div>
 </template>

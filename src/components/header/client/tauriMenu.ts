@@ -1,8 +1,6 @@
 import { getDeviceInfo } from '@/services/deviceService';
 import { macMenu } from './macMenu';
 import { createTauriMenu, menuWatch } from './createMenu';
-import i18n from '@/i18n';
-const { t } = i18n.global
 
 let unwatch: () => void = () => { };
 export async function initTauriMenu() {
@@ -10,7 +8,7 @@ export async function initTauriMenu() {
   if (platform === 'macos') {
     unwatch = await macMenu()
   } else {
-    const menu = await createTauriMenu()
+    const menu = await createTauriMenu(platform)
     unwatch = menuWatch(menu)
   }
 }
