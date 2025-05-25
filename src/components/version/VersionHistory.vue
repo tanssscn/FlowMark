@@ -5,7 +5,7 @@
       <el-icon>
         <Plus />
       </el-icon>
-      {{ t('sidebar.version.create') }}
+      {{ t('version.create') }}
     </el-button>
 
     <!-- 空状态 -->
@@ -14,7 +14,7 @@
         <Document />
       </el-icon>
       <span class="text-gray-500 dark:text-gray-400 text-center">
-        {{ t('sidebar.version.empty') }}
+        {{ t('version.empty') }}
       </span>
     </div>
 
@@ -23,17 +23,17 @@
       <el-timeline>
         <el-timeline-item v-for="version in versions.reverse()" :key="version.id"
           :timestamp="formatDate(version.createdAt, 'YYYY-MM-DD HH:mm:ss').value" placement="top">
-          <el-card @contextmenu="menuHandler($event,version)"
+          <el-card @contextmenu="menuHandler($event, version)"
             class="!border-gray-200 dark:!border-gray-700 hover:!border-blue-500 dark:hover:!border-blue-400 transition-colors">
-              <div class="font-medium text-gray-900 dark:text-gray-100">
-                {{ version.message || t('sidebar.version.noMessage') }}
-              </div>
+            <div class="font-medium text-gray-900 dark:text-gray-100">
+              {{ version.message || t('version.noMessage') }}
+            </div>
           </el-card>
         </el-timeline-item>
       </el-timeline>
     </el-scrollbar>
-    <VersionMenu @restoreVersion="_restoreVersion" :contextMenu="contextMenu"
-    @updateVersions="updateVersions" @close="contextMenu.visible = false" @compareWithCurrent="compareWithCurrent" />
+    <VersionMenu @restoreVersion="_restoreVersion" :contextMenu="contextMenu" @updateVersions="updateVersions"
+      @close="contextMenu.visible = false" @compareWithCurrent="compareWithCurrent" />
     <version-compare ref="versionCompareRef" v-model="compareDialogVisible" :comparedVersion="comparedVersion"
       @restoreVersion="_restoreVersion" @close="compareDialogVisible = false" />
   </div>
@@ -41,13 +41,13 @@
 
 <script setup lang="ts">
 import { formatDate } from '@/utils/formatUtil'
-import { useVersion ,VersionContextMenuState} from '@/components/version/useVersion'
+import { useVersion, VersionContextMenuState } from '@/components/version/useVersion'
 import { Plus, Document } from '@element-plus/icons-vue'
 import VersionCompare from './VersionCompare.vue'
 import VersionMenu from './VersionMenu.vue'
 import { useI18n } from 'vue-i18n'
 import { useTabStore } from '@/stores/tabStore'
-import { computed, ref ,reactive} from 'vue'
+import { computed, ref, reactive } from 'vue'
 import { versionService } from '@/services/versions/versionService';
 import { VersionInfo } from '@/types/appTypes'
 import { useFileStore } from '@/stores/fileStore'
@@ -65,23 +65,23 @@ const fileInfo = computed(() => {
 const versionCompareRef = ref<InstanceType<typeof VersionCompare> | null>(null)
 // 版本数据
 const comparedVersion = ref<VersionInfo>({} as VersionInfo)
-const contextMenu = reactive<VersionContextMenuState>({ 
-  visible: false, 
+const contextMenu = reactive<VersionContextMenuState>({
+  visible: false,
   version: {} as VersionInfo,
   path: '',
-  x:0,
-  y:0
+  x: 0,
+  y: 0
 })
 const updateVersions = async (_versions: VersionInfo[]) => {
-    versions.value = _versions
+  versions.value = _versions
 }
-const menuHandler = (event: MouseEvent,version: VersionInfo) => {
+const menuHandler = (event: MouseEvent, version: VersionInfo) => {
   event.preventDefault()
-      contextMenu.x = event.clientX
-    contextMenu.y = event.clientY
-    contextMenu.version = version
-    contextMenu.visible = true
-    contextMenu.path = fileInfo.value?.path ?? ''
+  contextMenu.x = event.clientX
+  contextMenu.y = event.clientY
+  contextMenu.version = version
+  contextMenu.visible = true
+  contextMenu.path = fileInfo.value?.path ?? ''
 }
 // 对比对话框
 const compareDialogVisible = ref(false)
@@ -112,7 +112,7 @@ const createVersion = () => {
   }).then(result => {
     // 取消保存
     if (result === null) return
-    saveVersion(info,milkdownManager.getContent()?? '', result.trim())
+    saveVersion(info, milkdownManager.getContent() ?? '', result.trim())
       .then((_versions: VersionInfo[]) => {
         versions.value = _versions
       })

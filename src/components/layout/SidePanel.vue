@@ -19,9 +19,9 @@ const handlePanelChange = (panel: SidePanel) => {
 }
 const tabs = computed(() => {
   return [
-    { name: 'fileTree', label: t('sidebar.filetree.label'), component: FileTree },
-    { name: 'outline', label: t('sidebar.outline.label'), component: Outline },
-    { name: 'history', label: t('sidebar.version.label'), component: VersionHistory }
+    { name: 'fileTree', label: t('fileTree.label'), component: FileTree },
+    { name: 'outline', label: t('outline.label'), component: Outline },
+    { name: 'history', label: t('version.label'), component: VersionHistory }
   ]
 })
 </script>

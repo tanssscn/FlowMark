@@ -18,7 +18,7 @@
       "exportHtml": "导出为HTML",
       "recentFiles": "最近文件",
       "clearCache": "清除缓存",
-      "clearRecentFiles":"清除最近文件"
+      "clearRecentFiles": "清除最近文件"
     },
     "edit": "编辑",
     "EditMenu": {
@@ -77,44 +77,54 @@
     "placeholder": "开始输入...",
     "tabs": {}
   },
-  "sidebar": {
-    "outline": {
-      "label": "大纲",
-      "empty": "无大纲"
-    },
-    "version": {
-      "label": "版本",
-      "title": "版本历史",
-      "empty": "无版本历史",
-      "current": "当前版本",
-      "history": "历史版本",
-      "restore": "恢复",
-      "saveMessage": "保存消息（可选）",
-      "create": "创建版本",
-      "noMessage": "无保存消息",
-      "compare": "对比",
-      "message": "消息",
-      "delete": "删除"
-    },
-    "filetree": {
-      "label": "文件",
-      "openFolder": "打开文件夹",
-      "openFile": "打开文件",
-      "newFile": "新建文件",
-      "newFolder": "新建文件夹",
-      "rename": "重命名",
-      "delete": "删除",
-      "upload": "上传",
-      "download": "下载",
-      "copy": "复制",
-      "move": "移动",
-      "paste": "粘贴",
-      "properties": "属性",
-      "refresh": "刷新",
-      "empty": "空文件夹",
-      "search": "搜索",
-      "emptySearch": "未找到匹配的文件"
-    }
+  "outline": {
+    "label": "大纲",
+    "empty": "无大纲"
+  },
+  "version": {
+    "label": "版本",
+    "title": "版本历史",
+    "empty": "无版本历史",
+    "current": "当前版本",
+    "history": "历史版本",
+    "restore": "恢复",
+    "saveMessage": "保存消息（可选）",
+    "create": "创建版本",
+    "noMessage": "无保存消息",
+    "compare": "对比",
+    "message": "消息",
+    "delete": "删除"
+  },
+  "fileTree": {
+    "label": "文件",
+    "openFolder": "打开文件夹",
+    "openFile": "打开文件",
+    "newFile": "新建文件",
+    "newFolder": "新建文件夹",
+    "rename": "重命名",
+    "delete": "删除",
+    "upload": "上传",
+    "download": "下载",
+    "copy": "复制",
+    "move": "移动",
+    "paste": "粘贴",
+    "properties": "属性",
+    "refresh": "刷新",
+    "empty": "空文件夹",
+    "search": "搜索",
+    "emptySearch": "未找到匹配的文件",
+    "storageLocation": "存储位置",
+    "fileType": "类型",
+    "path": "路径",
+    "modifiedTime": "修改时间",
+    "directory": "文件夹",
+    "file": "文件",
+    "name": "名称",
+    "size": "大小",
+    "open": "打开",
+    "openInNewTab": "在新标签页中打开",
+    "revealInExplorer": "在资源管理器中显示",
+    "removeFromTree": "从文件树中移除"
   },
   "settings": {
     "label": "设置",
@@ -159,16 +169,14 @@
         "label": "保存设置",
         "autoSave": {
           "label": "自动保存",
-          "interval": "自动保存间隔",
-          "seconds": "秒"
+          "interval": "自动保存间隔"
         }
       },
       "history": {
         "label": "历史设置",
         "autoSave": {
           "label": "自动保存",
-          "interval": "自动保存间隔",
-          "minutes": "分钟"
+          "interval": "自动保存间隔"
         },
         "maxVersionNumber": "最大版本数量"
       }
@@ -262,7 +270,7 @@
       "testConnection": "测试连接",
       "connecting": "连接中...",
       "testing": "测试中...",
-      "resetConnection":"重置连接"
+      "resetConnection": "重置连接"
     }
   },
   "dialog": {
@@ -309,38 +317,46 @@
     "saveAs": {
       "title": "另存为"
     },
-    "clearCache":{
+    "clearCache": {
       "title": "清除缓存",
       "message": "确定要清除缓存吗？"
     },
-    "resetConnection":{
-      "title":"重置连接",
-      "message":"确定要重置连接吗？"
+    "resetConnection": {
+      "title": "重置连接",
+      "message": "确定要重置连接吗？"
     },
-    "createFile":{
-      "title":"新建文件",
-      "message":"请输入文件名"
+    "createFile": {
+      "title": "新建文件",
+      "message": "请输入文件名"
     },
-    "createFolder":{
-      "title":"新建文件夹",
-      "message":"请输入文件夹名"
+    "createFolder": {
+      "title": "新建文件夹",
+      "message": "请输入文件夹名"
     }
   },
   "notify": {
     "errors": {
-      "fileNotFound": "找不到文件",
-      "permissionDenied": "权限被拒绝",
       "unknownError": "发生未知错误",
+      "notFound": "资源不存在",
+      "permissionDenied": "权限被拒绝",
       "saveFailed": "保存失败",
-      "missingCredentials": "请填写服务器URL和用户名",
       "connectionFailed": "连接失败，请检查您的设置",
       "connectionError": "连接失败：{error}",
       "nameCannotBeEmpty": "名称不能为空",
-      "fileExists": "文件已存在",
       "nameInvalid": "名称无效",
-      "createFailed": "创建失败"
+      "createFailed": "创建失败",
+      "unsupportedOperation": "不支持的操作",
+      "versionNotFound": "版本不存在",
+      "invalidCredentials": "用户名或密码错误",
+      "needConnectServer": "需要连接服务器",
+      "SystemError": "系统错误",
+      "forbidden": "禁止访问",
+      "fileExists": "文件已存在",
+      "fileNotFound": "找不到文件",
+      "missingCredentials": "用户名和密码不能为空"
     },
     "success": {
+      "ok": "成功",
       "save": "保存成功",
       "createVersion": "创建版本成功",
       "deleteFile": "删除文件成功",

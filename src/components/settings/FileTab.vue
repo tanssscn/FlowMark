@@ -30,7 +30,7 @@ const { t } = useI18n()
         <el-form-item v-if="settings.file.save.autoSave" :label="t('settings.file.save.autoSave.interval')">
           <el-input-number v-model="settings.file.save.autoSaveInterval" :min="1" :max="60">
             <template #suffix>
-              <span>{{ t('settings.file.save.autoSave.seconds') }}</span>
+              <span>s</span>
             </template>
           </el-input-number>
         </el-form-item>
@@ -50,7 +50,7 @@ const { t } = useI18n()
         <el-form-item v-if="settings.file.history.autoSave" :label="t('settings.file.history.autoSave.interval')">
           <el-input-number v-model="settings.file.history.autoSaveInterval" :min="1" :max="60">
             <template #suffix>
-              <span>{{ t('settings.file.history.autoSave.minutes') }}</span>
+              <span>min</span>
             </template>
           </el-input-number>
         </el-form-item>

@@ -31,7 +31,7 @@ const tabs = computed(() => [
     </template>
 
     <div class="flex overflow-hidden">
-      <div class="settings-sidebar overflow-y-auto border-r p-2">
+      <div class="settings-sidebar overflow-y-auto p-2">
         <el-menu :default-active="activeTab" class="h-full border-0 bg-transparent"
           @select="(key: string) => activeTab = key">
           <el-menu-item v-for="tab in tabs" :key="tab.id" :index="tab.id"
@@ -40,7 +40,7 @@ const tabs = computed(() => [
           </el-menu-item>
         </el-menu>
       </div>
-      <div class="flex-1 overflow-y-auto !p-6">
+      <div class="flex-1 overflow-y-auto !p-2">
         <component :is="tabs.find(t => t.id === activeTab)?.component" />
       </div>
     </div>

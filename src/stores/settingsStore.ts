@@ -1,9 +1,6 @@
+import { AppSettings, TabBehavior, ThemeMode } from '@/types/appSettings';
+import { ViewMode } from '@/types/appTypes';
 import { defineStore } from 'pinia';
-import type {
-  AppSettings,
-  ThemeMode,
-  TabBehavior,
-} from '@/types/Settings';
 import { computed, reactive, readonly } from 'vue';
 
 export const defaultSettings: AppSettings = {
@@ -41,7 +38,7 @@ export const defaultSettings: AppSettings = {
       indentUnit: 2,
       useTab: false
     },
-    defaultView: 'wysiwyg'
+    defaultView: ViewMode.WYSIWYG
   },
   markdown: {
     tocDepth: [1, 2, 3],

@@ -1,96 +1,75 @@
 import i18n from "@/i18n";
 import { CodeError, StatusCode } from "@/services/codeService";
 const { t } = i18n.global
-
 // statusCode.ts
 export const statusCode = {
   // 成功码 (虽然是错误类，但有时也需要表示成功状态)
   SUCCESS: {
     code: 2000,
-    message: '操作成功'
+    message: t('notify.success.ok')
   },
   // UserError (4xxx)
   UNSUPPORTED_OPERATION: {
     code: 4000,
-    message: '不支持的操作'
-  },
-  VERSION_CREATE_ERROR: {
-    code: 4001,
-    message: '版本创建失败'
-  },
-  VERSION_DELETE_ERROR: {
-    code: 4002,
-    message: '版本删除失败'
-  },
-  VERSION_NOT_FOUND: {
-    code: 4003,
-    message: '版本不存在'
-  },
-  VERSION_OPERATION_NOT_SUPPORTED: {
-    code: 4004,
-    message: '版本操作不支持'
+    message: t('notify.errors.unsupportedOperation')
   },
   INVALID_CREDENTIALS: {
     code: 4005,
-    message: '用户名或密码错误'
+    message: t('notify.errors.invalidCredentials')
   },
   NEED_CONNECT_SERVER: {
     code: 4006,
-    message: '需要连接服务器'
+    message: t('notify.errors.needConnectServer')
   },
   // CONDITIONAL_ERROR (5xxx)
   UNKNOWN_ERROR: {
     code: 5000,
-    message: '未知错误'
+    message: t('notify.errors.unknownError')
   },
   NOT_FOUND: {
     code: 5001,
-    message: '资源不存在'
+    message: t('notify.errors.notFound')
   },
-  WEB_DAV_PATH_ERROR: {
-    code: 5002,
-    message: 'webdav请求路径错误'
-  },
-  // SystemError (6xxx)
+  // SystemError (6xxx)不进行UI展示，后续不需要I18n
   SYSTEM_ERROR: {
     code: 6000,
-    message: '系统错误'
+    message: t('notify.errors.SystemError')
   },
   FORBIDDEN: {
     code: 6001,
-    message: '禁止访问'
+    message: t('notify.errors.forbidden')
   },
   FILE_EXITS: {
     code: 6002,
-    message: '文件已存在'
+    message: t('notify.errors.fileExists')
   },
   FILE_NOT_FOUND: {
     code: 6004,
-    message: '文件不存在'
+    message: t('notify.errors.fileNotFound')
   },
   TYPE_ERROR: {
     code: 6005,
-    message: '类型错误'
+    message: "type error"
   },
   FILE_HANDLE_NOT_FOUND: {
     code: 6006,
-    message: '文件句柄不存在'
+    message: "file handle not found"
   },
   BROWSER_FILE_SYSTEM_ERROR: {
     code: 6007,
-    message: '浏览器文件系统错误'
+    message: "browser file system error"
   },
   AUTHEN_ERROR_NEED_USERNAME_PASSWORD: {
     code: 6008,
-    message: '需要用户名和密码'
+    message: "authen error need username password"
   },
   WEBDAV_REQUEST_FAILED: {
     code: 6009,
-    message: 'webdav请求失败'
+    message: "webdav request failed"
   },
   INVALID_RESPONSE: {
     code: 6010,
-    message: '无效的响应'
+    message: "invalid response"
   },
 } as const;
 

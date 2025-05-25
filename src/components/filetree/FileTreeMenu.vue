@@ -7,10 +7,12 @@ import { ContextMenuState } from './composable/useFileTreeMenu'
 import { localFileService } from '@/services/files/local/localFileService'
 import { getDeviceInfo } from '@/services/deviceService'
 import { dialogService } from '@/services/dialog/dialogService'
-import { computed, onUnmounted, ref, watch } from 'vue'
-import { onClickOutside, useEventListener } from '@vueuse/core'
+import { computed, ref } from 'vue'
+import { onClickOutside } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 const isBrowser = getDeviceInfo().isBrowser;
 const { openFileOnTab } = useEdit()
+const { t } = useI18n()
 
 const { remove, removeFromTree, refresh } = useFileTree()
 const props = defineProps<{
@@ -21,33 +23,40 @@ const emit = defineEmits(['rename', 'showProperties', 'newFile', 'newFolder', 'c
 // 处理菜单项点击
 const handleContextAction = async (index: string) => {
   const data = props.contextMenu.data
-  if(data){
-    const menuItem = menuItems.find(item => item.id === index)
+  if (data) {
+    const menuItem = menuItems.value.find((item: MenuItem) => item.id === index)
     if (menuItem) {
       await menuItem.action(data)
     }
   }
   emit('close')
 }
+interface MenuItem {
+  id: string;
+  label: string;
+  icon: any;
+  visible: (data: FileEntry | null) => boolean;
+  action: (data: FileEntry) => void;
+}
 // 定义菜单项配置
-const menuItems = [
+const menuItems = computed((): MenuItem[] => [
   {
     id: 'open',
-    label: '打开',
+    label: t('fileTree.open'),
     icon: Document,
     visible: (data: FileEntry | null) => !data?.isDir,
     action: (data: FileEntry) => openFileOnTab(data)
   },
   {
     id: 'openInNewTab',
-    label: '在新标签页打开',
+    label: t('fileTree.openInNewTab'),
     icon: FolderAdd,
     visible: (data: FileEntry | null) => !data?.isDir,
     action: (data: FileEntry) => openFileOnTab(data, { tabBehavior: 'new_tab' })
   },
   {
     id: 'revealInExplorer',
-    label: '在文件浏览器中打开',
+    label: t('fileTree.revealInExplorer'),
     icon: FolderOpened,
     // 只能是本地平台（除了浏览器）
     visible: (data: FileEntry | null) => data?.storageLocation === 'local' && (!isBrowser),
@@ -55,67 +64,65 @@ const menuItems = [
   },
   {
     id: 'showProperties',
-    label: '属性',
+    label: t('fileTree.properties'),
     icon: InfoFilled,
     visible: () => true,
     action: (data: FileEntry) => emit('showProperties', data)
   },
   {
     id: 'refresh',
-    label: '刷新',
+    label: t('fileTree.refresh'),
     icon: FolderAdd,
     visible: (data: FileEntry | null) =>
-      data?.isDir && !(data.storageLocation === 'local' && isBrowser),
+      data?.isDir! && !(data.storageLocation === 'local' && isBrowser),
     action: (data: FileEntry) => refresh(data, false)
   },
   {
     id: 'newFile',
-    label: '新建文件',
+    label: t('fileTree.newFile'),
     icon: DocumentAdd,
     // 点击文件夹（除了浏览器平台的本地文件夹）
     visible: (data: FileEntry | null) =>
-      data?.isDir && !(data.storageLocation === 'local' && isBrowser),
+      data?.isDir! && !(data.storageLocation === 'local' && isBrowser),
     action: async (data: FileEntry) => {
       emit('newFile', props.contextMenu.node, data)
     }
   },
   {
     id: 'newFolder',
-    label: '新建文件夹',
+    label: t('newFolder'),
     icon: FolderAdd,
     // 点击文件夹（除了浏览器平台的本地文件夹）
     visible: (data: FileEntry | null) =>
-      data?.isDir && !(data.storageLocation === 'local' && isBrowser),
+      data?.isDir! && !(data.storageLocation === 'local' && isBrowser),
     action: async (data: FileEntry) => {
       emit('newFolder', props.contextMenu.node, data)
     }
   },
   {
     id: 'rename',
-    label: '重命名',
+    label: t('fileTree.rename'),
     icon: Edit,
     visible: (data: FileEntry | null) => !data?.isRoot,
     action: (data: FileEntry) => emit('rename', data)
   },
   {
     id: 'removeFromTree',
-    label: '从文件树中移除',
+    label: t('fileTree.removeFromTree'),
     icon: Remove,
     // 点击根目录
-    visible: (data: FileEntry | null) => data?.isRoot,
+    visible: (data: FileEntry | null) => data?.isRoot!,
     action: (data: FileEntry) => removeFromTree(data)
   },
   {
     id: 'delete',
-    label: '删除',
+    label: t('fileTree.delete'),
     icon: Delete,
     visible: () => true,
     action: async (data: FileEntry) => {
       dialogService.confirm({
-        title: '提示',
-        message: `确定要删除 "${data.name}" 吗?`,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        title: t('dialog.deleteFile.title'),
+        message: t('dialog.deleteFile.message', {msg: data.name}),
         type: 'warning'
       }).then(async (confirm) => {
         if (confirm) {
@@ -124,14 +131,14 @@ const menuItems = [
       })
     }
   }
-]
+])
 const fileTreeMenuRef = ref<HTMLElement | null>(null)
 const marginLeft = computed(() => `${props.contextMenu.x}px`)
 const marginTop = computed((): string => {
   let y = props.contextMenu.y
   if (fileTreeMenuRef.value) {
     // BUG：点击文件树右边缘会导致fileTreeMenuRef.value.offsetHeight为0
-    const componentHeight = Math.max(fileTreeMenuRef.value.offsetHeight,200)
+    const componentHeight = Math.max(fileTreeMenuRef.value.offsetHeight, 200)
     if (props.contextMenu.y + componentHeight > window.innerHeight) {
       y = window.innerHeight - componentHeight
     }

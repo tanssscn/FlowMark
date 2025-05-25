@@ -57,7 +57,7 @@ const toggleAllCollapse = () => {
       </el-tree>
     </el-scrollbar>
     <div v-else class="flex-1 flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
-      <el-empty :description="t('sidebar.outline.empty') || 'No headings found'" :image-size="80" />
+      <el-empty :description="t('outline.empty') || 'No headings found'" :image-size="80" />
     </div>
   </div>
 </template>

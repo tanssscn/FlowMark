@@ -2,7 +2,7 @@
 import { formatDate } from '@/utils/formatUtil'
 import { RefreshLeft, Notebook, Delete } from '@element-plus/icons-vue'
 import { useI18n } from 'vue-i18n'
-import { VersionContextMenuState} from '@/components/version/useVersion'
+import { VersionContextMenuState } from '@/components/version/useVersion'
 import { versionService } from '@/services/versions/versionService';
 import { VersionInfo } from '@/types/appTypes'
 import { dialogService } from '@/services/dialog/dialogService'
@@ -13,12 +13,12 @@ const { t } = useI18n()
 const props = defineProps<{
   contextMenu: VersionContextMenuState
 }>()
-const emit = defineEmits(['restoreVersion', 'close','compareWithCurrent','updateVersions'])
+const emit = defineEmits(['restoreVersion', 'close', 'compareWithCurrent', 'updateVersions'])
 // 右键菜单操作
 // 处理菜单项点击
 const handleContextAction = async (index: string) => {
   const data = props.contextMenu.version
-  if(data){
+  if (data) {
     const menuItem = menuItems.find(item => item.id === index)
     if (menuItem) {
       await menuItem.action(data)
@@ -31,11 +31,11 @@ const deleteHandler = async (version: VersionInfo) => {
   try {
     dialogService.confirm({
       title: t('dialog.deleteVersion.title'),
-      message: t('dialog.deleteVersion.message', { msg: `${version.message ?version.message.slice(0, 10) + '...' : ''}-${formatDate(version.createdAt, "YYYY-MM-DD HH:mm:ss").value}` }),
+      message: t('dialog.deleteVersion.message', { msg: `${version.message ? version.message.slice(0, 10) + '...' : ''}-${formatDate(version.createdAt, "YYYY-MM-DD HH:mm:ss").value}` }),
       type: 'warning'
-    }).then( (res) => {
-      if(!res)return
-       versionService.deleteVersion(props.contextMenu.path?? '', version.id)
+    }).then((res) => {
+      if (!res) return
+      versionService.deleteVersion(props.contextMenu.path ?? '', version.id)
         .then((_versions: VersionInfo[]) => {
           emit('updateVersions', _versions)
         })
@@ -48,19 +48,19 @@ const deleteHandler = async (version: VersionInfo) => {
 const menuItems = [
   {
     id: 'restore',
-    label: computed(()=>t('sidebar.version.restore')),
+    label: computed(() => t('version.restore')),
     icon: RefreshLeft,
-    action: (version: VersionInfo) => emit('restoreVersion',version)
+    action: (version: VersionInfo) => emit('restoreVersion', version)
   },
   {
     id: 'compare',
-    label: computed(()=>t('sidebar.version.compare')),
+    label: computed(() => t('version.compare')),
     icon: Notebook,
-    action: (version: VersionInfo) => emit('compareWithCurrent',version)
+    action: (version: VersionInfo) => emit('compareWithCurrent', version)
   },
   {
     id: 'delete',
-    label: computed(()=>t('sidebar.version.delete')),
+    label: computed(() => t('version.delete')),
     icon: Delete,
     action: (version: VersionInfo) => deleteHandler(version)
   }
@@ -71,7 +71,7 @@ const marginTop = computed((): string => {
   let y = props.contextMenu.y
   if (fileTreeMenuRef.value) {
     // BUG：点击文件树右边缘会导致fileTreeMenuRef.value.offsetHeight为0
-    const componentHeight = Math.max(fileTreeMenuRef.value.offsetHeight,200)
+    const componentHeight = Math.max(fileTreeMenuRef.value.offsetHeight, 200)
     if (props.contextMenu.y + componentHeight > window.innerHeight) {
       y = window.innerHeight - componentHeight
     }

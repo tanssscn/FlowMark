@@ -6,7 +6,9 @@ import { getSettingsLanguage } from '@/services/persistService';
 // 定义语言类型
 // export type I18nSchema = typeof import('./locales/zh.json');
 export type I18nSchema = typeof zh_CN;
-
+declare module 'vue-i18n' {
+  export interface DefineLocaleMessage extends I18nSchema {}
+}
 export const setLanguage = async (lang: Language) => {
   lang = converLanguage(lang)
   console.log('set language', lang);

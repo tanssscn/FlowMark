@@ -4,7 +4,7 @@
     <template #header="{ close, titleId, titleClass }">
       <!-- 标题、恢复按钮、关闭按钮 -->
       <div class="flex justify-between items-center">
-        <h4 :id="titleId" :class="titleClass">{{ t('sidebar.version.compare') }}</h4>
+        <h4 :id="titleId" :class="titleClass">{{ t('version.compare') }}</h4>
         <div>
           <el-button link :size="iconSize" @click="$emit('restoreVersion', comparedVersion, comparedContent)"
             :icon="RefreshLeft" class="!rounded-md" />
@@ -16,7 +16,7 @@
       <!-- 当前版本 -->
       <div class="flex-1 overflow-auto p-4 border-r border-gray-200 dark:border-gray-700">
         <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
-          {{ t('sidebar.version.current') }}
+          {{ t('version.current') }}
         </div>
         <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
           <pre class="whitespace-pre-wrap font-mono text-sm">{{ currentContent }}</pre>
@@ -26,7 +26,7 @@
       <!-- 历史版本 -->
       <div class="flex-1 overflow-auto p-4">
         <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
-          {{ t('sidebar.version.history') }} ({{ formatDate(comparedVersion?.createdAt, "YYYY-MM-DD HH:mm:ss") }})
+          {{ t('version.history') }} ({{ formatDate(comparedVersion?.createdAt, "YYYY-MM-DD HH:mm:ss") }})
         </div>
         <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
           <pre class="whitespace-pre-wrap font-mono text-sm">{{ comparedContent }}</pre>
