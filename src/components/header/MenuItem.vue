@@ -17,7 +17,7 @@
   </el-menu-item>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed } from 'vue'
 import { Check } from '@element-plus/icons-vue'
 const props = defineProps({

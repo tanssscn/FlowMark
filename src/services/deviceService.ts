@@ -1,4 +1,4 @@
-import { Platform } from '@/types/appTypes';
+import type { Platform } from '@/types/appTypes';
 import { platform } from '@tauri-apps/plugin-os';
 
 class DeviceDetector {

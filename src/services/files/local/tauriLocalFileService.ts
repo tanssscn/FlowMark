@@ -10,10 +10,10 @@ import {
   readDir,
   mkdir,
   BaseDirectory,
-  FileInfo,
+  type FileInfo,
   writeFile,
   create,
-  WatchEvent,
+  type WatchEvent,
   watch,
 } from '@tauri-apps/plugin-fs';
 import { join, basename } from '@tauri-apps/api/path';

@@ -1,7 +1,7 @@
 import { getDeviceInfo } from "../deviceService";
 import { BrowserLogger } from "./browserLogger";
 import { tauriLog } from "./tauriLogger";
-import { ILogger } from "./type";
+import type { ILogger } from "./type";
 
 class LoggerService implements ILogger {
   private logger;

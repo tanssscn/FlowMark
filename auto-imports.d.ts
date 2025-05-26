@@ -6,12 +6,5 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const ElMees: typeof import('element-plus/es')['ElMees']
-  const ElMessage: typeof import('element-plus/es')['ElMessage']
-  const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
-  const ElTag: typeof import('element-plus/es')['ElTag']
-  const mapToAppFileInfo: typeof import('~icons/map/to-app-file-info')['default']
-  const mimeType: typeof import('~icons/mi/me-type')['default']
-  const width: typeof import('~icons/wi/dth')['default']
-  const window: typeof import('~icons/wi/ndow')['default']
+
 }

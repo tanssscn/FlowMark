@@ -1,9 +1,9 @@
 import crypto from 'crypto-js';
-import { FileSystemAdapter } from './type';
+import type { FileSystemAdapter } from './type';
 import { getDeviceInfo } from '../deviceService';
 import { BrowserFs } from './browserFs';
 import { TauriFsClient } from './localFs';
-import { VersionInfo } from '@/types/appTypes';
+import type { VersionInfo } from '@/types/appTypes';
 import { customAlphabet } from 'nanoid';
 import { getExtname, getJoin } from '@/utils/pathUtil';
 const fileSafeAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-';
@@ -38,19 +38,16 @@ export class VersionService {
   /**
    * 获取文件的版本目录路径
    */
-  private getVersionDir(filePath: string): string {
+  private async getVersionDir(filePath: string): Promise<string> {
     const hashHex = crypto.SHA256(filePath).toString().substring(0, 11);
     const versionDir = getJoin(this.rootPath, hashHex);
-    this.fs.exists(versionDir).then(res => {
-      if (!res) {
-        console.log('versionDir', versionDir);
-        this.fs.mkdir(versionDir)
-      }
-    })
+    if (!await this.fs.exists(versionDir)) {
+      await this.fs.mkdir(versionDir)
+    }
     return versionDir;
   }
-  private getMetaFilePath(filePath: string): string {
-    const versionDir = this.getVersionDir(filePath);
+  private async getMetaFilePath(filePath: string): Promise<string> {
+    const versionDir = await this.getVersionDir(filePath);
     return `${versionDir}/${this.metadataFileName}`;
   }
   /**
@@ -59,15 +56,15 @@ export class VersionService {
   private generateVersionId(path: string): string {
     return `${nanoid()}${getExtname(path)}`
   }
-  private getVersionFilePath(filePath: string, versionId: string): string {
-    const versionDir = this.getVersionDir(filePath);
+  private async getVersionFilePath(filePath: string, versionId: string): Promise<string> {
+    const versionDir = await this.getVersionDir(filePath);
     return `${versionDir}/${versionId}`;
   }
   /**
    * 加载元数据
    */
   private async loadMetadata(filePath: string): Promise<VersionHistory> {
-    const metadataPath = this.getMetaFilePath(filePath);
+    const metadataPath = await this.getMetaFilePath(filePath);
 
     try {
       if (await this.fs.exists(metadataPath)) {
@@ -82,7 +79,7 @@ export class VersionService {
     return newMetadata;
   }
   private async saveMetadata(filePath: string, metadata: VersionHistory): Promise<void> {
-    const metadataPath = this.getMetaFilePath(filePath);
+    const metadataPath = await this.getMetaFilePath(filePath);
     const content = JSON.stringify(metadata);
     await this.fs.writeFile(metadataPath, content);
   }
@@ -97,7 +94,7 @@ export class VersionService {
   }): Promise<VersionInfo[]> {
     const { filePath, content, message, maxNum } = options;
     const versionId = this.generateVersionId(filePath);
-    const versionFile = this.getVersionFilePath(filePath, versionId);
+    const versionFile = await this.getVersionFilePath(filePath, versionId);
     const metadata = await this.loadMetadata(filePath);
 
     // 添加新版本信息
@@ -111,7 +108,7 @@ export class VersionService {
     if (maxNum && metadata.entries.length > maxNum) {
       const numToDelete = metadata.entries.splice(0, metadata.entries.length - maxNum)
       // 异步删除旧版本文件
-      Promise.all(numToDelete.map(v => this.fs.unlink(this.getVersionFilePath(filePath, v.id))));
+      Promise.all(numToDelete.map(v => this.getVersionFilePath(filePath, v.id).then((path) => this.fs.unlink(path))));
     }
     console.log(`Creating new version ${versionId} for ${versionFile}`);
     // 保存元数据和版本文件
@@ -141,7 +138,7 @@ export class VersionService {
       return null;
     }
 
-    const versionFile = this.getVersionFilePath(filePath, versionId);
+    const versionFile = await this.getVersionFilePath(filePath, versionId);
 
     try {
       return await this.fs.readFile(versionFile);
@@ -164,7 +161,7 @@ export class VersionService {
 
     // 立即删除文件
     try {
-      const versionFile = this.getVersionFilePath(filePath, versionId);
+      const versionFile = await this.getVersionFilePath(filePath, versionId);
       await this.fs.unlink(versionFile);
     } catch (error) {
       console.error(`Failed to delete version file ${versionId}:`, error);

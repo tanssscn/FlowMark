@@ -7,7 +7,7 @@ import {
   BaseDirectory,
   exists,
 } from '@tauri-apps/plugin-fs';
-import { FileSystemAdapter } from './type';
+import type { FileSystemAdapter } from './type';
 
 const baseDir = BaseDirectory.AppData;
 export class TauriFsClient implements FileSystemAdapter {

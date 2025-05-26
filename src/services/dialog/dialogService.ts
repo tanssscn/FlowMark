@@ -1,4 +1,4 @@
-import { DialogPlatform, MessageBoxOptions, NotifyOptions } from './type'
+import type { DialogPlatform, MessageBoxOptions, NotifyOptions } from './type'
 import { TauriPlatform } from './tauriDialog'
 import { ElementPlatform } from './browserDialog'
 import i18n from '@/i18n'

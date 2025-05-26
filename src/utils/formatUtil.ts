@@ -1,5 +1,5 @@
 import { getCurrentLanguage } from '@/i18n';
-import { useDateFormat, UseDateFormatReturn, useNow } from '@vueuse/core'
+import { useDateFormat, useNow, type UseDateFormatReturn } from '@vueuse/core'
 type DateFormat = "YYYY-MM-DD HH:mm:ss" | "YYYYMMDDHHmmss" | "YYYY-MM-DD" | "HH:mm:ss" | "HH:mm" | "mm:ss" | "mm";
 // 格式化日期
 export const formatDate = (timestamp: number, formatStr: DateFormat): UseDateFormatReturn => {

@@ -8,23 +8,23 @@ import { useEdit } from "@/composable/useEdit";
 import { createCodeBlockCommand, insertHrCommand, insertImageCommand, toggleEmphasisCommand, toggleInlineCodeCommand, toggleStrongCommand, turnIntoTextCommand, wrapInBlockquoteCommand, wrapInBulletListCommand, wrapInHeadingCommand, wrapInOrderedListCommand } from '@milkdown/preset-commonmark';
 import { callCommand, getHTML, replaceAll } from '@milkdown/utils';
 import { fileService } from "@/services/files/fileService";
-import { AppFileInfo, OutlineItem } from "@/types/appTypes";
+import type { AppFileInfo, OutlineItem } from "@/types/appTypes";
 import { emoji } from '@milkdown/plugin-emoji';
-import { indentConfig, IndentConfigOptions } from '@milkdown/plugin-indent'
+import { indentConfig, type IndentConfigOptions } from '@milkdown/plugin-indent'
 import { historyKeymap, redoCommand, undoCommand } from "@milkdown/plugin-history";
 import { TextSelection } from "@milkdown/prose/state";
 import { searchPlugin, searchPluginKey } from "./searchPlugin";
-import { FindResult, IMilkdownEditor } from "./types";
+import type { FindResult, IMilkdownEditor } from "./types";
 import { getDeviceInfo } from "@/services/deviceService";
 import { insertTableCommand, toggleStrikethroughCommand } from '@milkdown/preset-gfm';
 import { codeBlockMemory, codeBlockMemoryPluginKey } from "./codeLangMemory";
 import { useFileStore } from "@/stores/fileStore";
 import { useDebounceFn } from '@vueuse/core';
-import { AppSettings } from "@/types/appSettings";
+import type { AppSettings } from "@/types/appSettings";
 import { closeImageSource, createFileInnerSrc } from "@/utils/pathUtil";
 import { uploadImage } from "@/utils/clipboardUtil";
 import { useTabStore } from "@/stores/tabStore";
-import { Ref, watch } from "vue";
+import { type Ref, watch } from "vue";
 
 /**
  * TODO：图像块在客户端不一致

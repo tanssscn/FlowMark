@@ -32,12 +32,14 @@
   </el-sub-menu>
 </template>
 
-<script setup>
+<script lang="ts" setup >
+import { PropType } from 'vue';
 import MenuItem from './MenuItem.vue'
+import { MenuConfig } from './composable/menuConfig';
 const props = defineProps({
   id: { type: String, default: undefined },
   label: { type: String, required: true },
-  submenu: { type: Array, required: true },
+  submenu: { type: Array as PropType<MenuConfig[]>, required: true },
   enabled: { type: Boolean, default: undefined },
   icon: { type: String, default: '' }
 })

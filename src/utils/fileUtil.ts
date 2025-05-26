@@ -1,6 +1,6 @@
 import { CodeError } from '@/services/codeService';
 import { getDeviceInfo } from '@/services/deviceService';
-import { Platform, StorageLocation, TabType } from '@/types/appTypes';
+import { TabType, type Platform, type StorageLocation } from '@/types/appTypes';
 import { basename } from 'pathe';
 import { statusCode } from './statusCodes';
 /**

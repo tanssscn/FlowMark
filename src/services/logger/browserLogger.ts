@@ -1,4 +1,4 @@
-import { ILogger } from "./type";
+import type { ILogger } from "./type";
 
 export class BrowserLogger implements ILogger {
   trace(message: string): void {

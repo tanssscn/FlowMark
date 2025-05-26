@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTabStore } from '@/stores/tabStore'
-import { OutlineItem } from '@/types/appTypes'
+import type { OutlineItem } from '@/types/appTypes'
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { milkdownManager } from "@/services/milkdownManager";

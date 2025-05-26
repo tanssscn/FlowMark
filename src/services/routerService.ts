@@ -1,9 +1,9 @@
 
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { getDeviceInfo } from './deviceService';
-import { AppFileInfo } from '@/types/appTypes';
 import { getAllWebviews } from '@tauri-apps/api/webview';
 import { Window } from "@tauri-apps/api/window"
+import type { AppFileInfo } from '@/types/appTypes';
 
 function getUniqueName(name: string, existingNames: string[]): string {
   const pattern = /^(.*?)(_(\d+))?$/;

@@ -1,5 +1,5 @@
 import { createTauriMenu, menuWatch } from "./createMenu"
-import { useMenuConfig, MenuConfig } from '../composable/menuConfig';
+import { useMenuConfig, type MenuConfig } from '../composable/menuConfig';
 import { addHotkey } from "@/utils/hotkeys";
 
 function createHotkey(configs: MenuConfig[]) {

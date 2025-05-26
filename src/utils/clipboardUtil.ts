@@ -7,7 +7,7 @@ import {
 } from "pathe/utils";
 import { getDirname, getJoin } from "./pathUtil";
 import { MilkdownEditorInstance } from "@/components/editor/composable/milkdownEditor";
-import { AppFileInfo } from "@/types/appTypes";
+import type { AppFileInfo } from "@/types/appTypes";
 
 function getImageExtension(mimeType: string): string {
   const extensions: Record<string, string> = {

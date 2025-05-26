@@ -1,5 +1,5 @@
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import {
+import type {
   FileStat, Headers, GetDirectoryContentsOptions, ResponseDataDetailed, StatOptions, WebDAVParsingContext,
   DAVResult, DAVResultResponseProps, DAVResultResponse, WebDAVClientOptions, FetchFunction, GetFileContentsOptions,
   PutFileContentsOptions, CopyFileOptions, MoveOptions, CreateDirectoryOptions, DeleteOptions

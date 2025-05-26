@@ -2,7 +2,7 @@ import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { fetch } from '@tauri-apps/plugin-http';
 import { getDeviceInfo } from '@/services/deviceService';
 import WebDAVClient, { createClient } from './webdav';
-import { FileStat } from './type';
+import type { FileStat } from './type';
 import { httpJoin } from '@/utils/pathUtil';
 import { CodeError } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';

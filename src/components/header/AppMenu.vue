@@ -2,12 +2,12 @@
 <script setup lang="ts">
 import { useWindowStore } from '@/stores/windowStore';
 import { useMenuConfig } from './composable/menuConfig'
-import SubMenu from './SubMenu.vue';
 import { ref, watch } from 'vue';
 import { useTabStore } from '@/stores/tabStore';
 import { useRecentStore } from '@/stores/recentStore';
 import { useFileTree } from '@/composable/useFileTree';
 import { getCurrentLanguage } from '@/i18n';
+import SubMenu from './SubMenu.vue'
 const windowStore = useWindowStore()
 const tabStore = useTabStore()
 const recentStore = useRecentStore();

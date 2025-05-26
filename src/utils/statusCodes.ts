@@ -1,5 +1,5 @@
 import i18n from "@/i18n";
-import { CodeError, StatusCode } from "@/services/codeService";
+import { CodeError, type StatusCode } from "@/services/codeService";
 const { t } = i18n.global
 // statusCode.ts
 export const statusCode = {

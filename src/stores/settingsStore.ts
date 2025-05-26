@@ -1,4 +1,4 @@
-import { AppSettings, TabBehavior, ThemeMode } from '@/types/appSettings';
+import type { AppSettings, TabBehavior, ThemeMode } from '@/types/appSettings';
 import { ViewMode } from '@/types/appTypes';
 import { defineStore } from 'pinia';
 import { computed, reactive, readonly } from 'vue';

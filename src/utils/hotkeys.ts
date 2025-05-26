@@ -48,7 +48,11 @@ function convertAcceleratorToHotkeys(accelerator: string): string {
 
   return combos.map(c => c.join('+')).join(', ')
 }
-
+/**
+ * hotkeys-js 内部是直接在浏览器的 document 或 window 上注册事件监听器
+ * @param hotkey 
+ * @returns 
+ */
 export const addHotkey = (hotkey: HotKey) => {
   if (!hotkey.shortcut) return
   const shortcut = convertAcceleratorToHotkeys(hotkey.shortcut)

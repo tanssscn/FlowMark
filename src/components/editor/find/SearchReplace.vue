@@ -76,7 +76,7 @@ import {
 import IconCustomReplace from "~icons/custom/replace"
 import IconCustomReplaceAll from "~icons/custom/replace-all"
 import { milkdownManager } from '@/services/milkdownManager'
-import { FindOptions } from '../composable/types'
+import type { FindOptions } from '../composable/types'
 import { useWindowStore } from '@/stores/windowStore'
 import { useDebounceFn, watchPausable } from '@vueuse/core'
 const windowStore = useWindowStore()

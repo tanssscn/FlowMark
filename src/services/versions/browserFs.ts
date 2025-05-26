@@ -1,5 +1,5 @@
 import fs, { PromisifiedFS } from '@isomorphic-git/lightning-fs';
-import { FileSystemAdapter } from "./type";
+import type { FileSystemAdapter } from "./type";
 import { join } from 'pathe';
 export class BrowserFs implements FileSystemAdapter {
   private fs: PromisifiedFS;

@@ -1,9 +1,7 @@
 import { basename, dirname, extname, isAbsolute, join, sep } from 'pathe';
 import { convertFileSrc, isTauri } from "@tauri-apps/api/core";
 import { fileService } from '@/services/files/fileService';
-import { AppFileInfo } from '@/types/appTypes';
-import { CodeError } from '@/services/codeService';
-import { statusCode } from './statusCodes';
+import type { AppFileInfo } from '@/types/appTypes';
 
 export async function createFileInnerSrc(fileInfo: AppFileInfo, url: string): Promise<string> {
   if (!url) return url; // 空路径，用户可能还没有输入完成

@@ -1,5 +1,5 @@
 import { debug, error, info, trace, warn } from '@tauri-apps/plugin-log'
-import { ILogger } from "./type";
+import type { ILogger } from "./type";
 
 export class tauriLog implements ILogger{
   info(message: string) {

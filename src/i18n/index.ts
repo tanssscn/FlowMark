@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n';
 import zh_CN from './locales/zh-CN.json';
-import { Language } from '@/types/appSettings';
+import type { Language } from '@/types/appSettings';
 import { getSettingsLanguage } from '@/services/persistService';
 
 // 定义语言类型

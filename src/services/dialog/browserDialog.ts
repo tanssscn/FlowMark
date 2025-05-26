@@ -1,5 +1,5 @@
 import { ElNotification, ElMessageBox } from 'element-plus'
-import { DialogPlatform, MessageBoxOptions, NotifyOptions } from './type'
+import type { DialogPlatform, MessageBoxOptions, NotifyOptions } from './type'
 
 export class ElementPlatform implements DialogPlatform {
   async notify(options: NotifyOptions): Promise<void> {

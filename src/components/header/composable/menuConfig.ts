@@ -9,7 +9,7 @@ import { useEdit } from '@/composable/useEdit'
 import { useWindowRoute } from '@/composable/useWindowRoute'
 import { useRecentStore } from '@/stores/recentStore'
 import { ViewMode } from '@/types/appTypes'
-import { HotKey } from '@/utils/hotkeys'
+import {type HotKey } from '@/utils/hotkeys'
 const { t } = i18n.global
 
 export interface MenuConfig extends HotKey {

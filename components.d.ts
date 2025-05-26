@@ -68,7 +68,7 @@ declare module 'vue' {
     WebDAVTab: typeof import('./src/components/settings/WebDAVTab.vue')['default']
     WelcomePanel: typeof import('./src/components/editor/welcome/WelcomePanel.vue')['default']
   }
-  export interface ComponentCustomProperties {
+  export interface GlobalDirectives {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

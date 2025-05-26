@@ -1,4 +1,4 @@
-import { Platform as _Platform } from '@tauri-apps/plugin-os';
+import type { Platform as _Platform } from '@tauri-apps/plugin-os';
 
 // 导出应用类型供直接导入使用
 export type StorageLocation = 'local' | 'webdav';

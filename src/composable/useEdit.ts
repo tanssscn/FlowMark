@@ -13,7 +13,7 @@ import { Mutex } from 'async-mutex';
 import { CodeError } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { getExtname, getFilename } from '@/utils/pathUtil';
-import { TabBehavior } from '@/types/appSettings';
+import type { TabBehavior } from '@/types/appSettings';
 
 const fileLocks = new Map<string, Mutex>();
 

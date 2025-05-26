@@ -1,12 +1,12 @@
 import { Menu, MenuItem, Submenu, CheckMenuItem, PredefinedMenuItem } from '@tauri-apps/api/menu';
-import { MenuConfig, useMenuConfig } from '../composable/menuConfig';
+import {type MenuConfig, useMenuConfig } from '../composable/menuConfig';
 import { computed, watch } from 'vue';
 import { useTabStore } from '@/stores/tabStore'
 import { useWindowStore } from '@/stores/windowStore';
 import { useRecentStore } from '@/stores/recentStore';
 import { useFileTree } from '@/composable/useFileTree';
 import i18n from '@/i18n';
-import { Platform } from '@/types/appTypes';
+import { type Platform } from '@/types/appTypes';
 const { t } = i18n.global
 
 /**

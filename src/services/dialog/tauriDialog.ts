@@ -1,5 +1,5 @@
 import { ElementPlatform } from "./browserDialog";
-import { DialogPlatform, MessageBoxOptions, NotificationType, NotifyOptions } from "./type"
+import type { DialogPlatform, MessageBoxOptions, NotificationType, NotifyOptions } from "./type"
 import { confirm, message } from '@tauri-apps/plugin-dialog';
 
 export class TauriPlatform implements DialogPlatform {

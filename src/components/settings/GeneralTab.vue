@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { I18nSchema, setLanguage } from '@/i18n'
+import { type I18nSchema, setLanguage } from '@/i18n'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import { rebuildMenu } from '../header/client/tauriMenu'
-import { Language } from '@/types/appSettings'
+import type { Language } from '@/types/appSettings'
 
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)

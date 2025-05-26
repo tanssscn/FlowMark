@@ -3,7 +3,7 @@ import { Plugin, PluginKey } from '@milkdown/prose/state';
 import { Decoration, DecorationSet } from '@milkdown/prose/view';
 import { Ctx } from '@milkdown/ctx';
 import { Transaction, EditorState } from '@milkdown/prose/state';
-import { FindOptions } from './types';
+import type { FindOptions } from './types';
 
 interface MatchPosition {
   from: number;

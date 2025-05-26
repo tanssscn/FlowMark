@@ -7,7 +7,7 @@ import { restoreApp } from '@/services/persistService';
 import { initTauriMenu } from '@/components/header/client/tauriMenu'
 import { getDeviceInfo } from '@/services/deviceService';
 import { nextTick } from 'vue';
-import { AppFileInfo } from '@/types/appTypes';
+import type { AppFileInfo } from '@/types/appTypes';
 import { useEventListener, useThrottleFn } from '@vueuse/core';
 import { dialogService } from '@/services/dialog/dialogService';
 import i18n from '@/i18n';
