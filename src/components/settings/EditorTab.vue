@@ -25,7 +25,6 @@ const viewModeOptions = [
   <div style="display: flex; flex-direction: column; gap: 10px;">
     <h3 class="mb-5 text-lg font-mediu">{{ t('settings.editor.label') }}</h3>
 
-
     <div class="mb-4 flex items-center">
       <label class="w-36 text-sm">{{ t('settings.editor.font.fontFamily') }}</label>
       <el-select v-model="settings.editor.font.fontFamily" class="max-w-[300px] flex-1">
@@ -47,20 +46,17 @@ const viewModeOptions = [
         <el-option v-for="option in viewModeOptions" :key="option.value" :label="option.label" :value="option.value" />
       </el-select>
     </div>
-    <div class="space-y-4">
-      <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+    <div>
+      <h4 class="mb-2 text-base">
         {{ t('settings.editor.indent.label') }}
       </h4>
-      <div class="mb-4 flex items-center">
-        <label class="w-36 text-sm ">{{ t('settings.editor.indent.useTab') }}</label>
+      <el-form-item :label="t('settings.editor.indent.useTab')">
         <el-switch v-model="settings.editor.indent.useTab" />
-      </div>
-
-      <div class="mb-4 flex items-center">
-        <label class="w-36 text-sm ">{{ t('settings.editor.indent.unit') }}</label>
+      </el-form-item>
+      <el-form-item :label="t('settings.editor.indent.unit')">
         <el-input-number v-model="settings.editor.indent.indentUnit" :min="2" :max="8" :step="2"
-          controls-position="right" class="w-32" />
-      </div>
+          controls-position="right" class="w-32" /> 
+        </el-form-item>
     </div>
 
   </div>

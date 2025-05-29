@@ -1,6 +1,6 @@
 import { useEdit } from '@/composable/useEdit';
 import { useFileTree } from '@/composable/useFileTree';
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import { fileService } from '@/services/files/fileService';
 import { useFileStore } from '@/stores/fileStore';
 import type { AppFileInfo, FileEntry } from '@/types/appTypes';
@@ -116,7 +116,6 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
    * @param type 
    */
   const handleDrop = async (draggingNode: Node, dropNode: Node, type: AllowDropType, event: DragEvent) => {
-    console.log('drop', draggingNode, dropNode, type)
     try {
       let targetPath = dropNode.data.path
       if (type === 'inner') {

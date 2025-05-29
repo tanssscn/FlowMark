@@ -166,67 +166,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
     }
   }
 
-  public cut(): void {
-    if (this.editor) {
-      this.editor.action((ctx) => {
-        const view = ctx.get(editorViewCtx)
-        const { state } = view
-
-        // 先执行复制
-        this.copy()
-
-        // 删除选区内容
-        const tr = state.tr.deleteSelection()
-        view.dispatch(tr)
-      })
-    }
-  }
-
-  public copy(): void {
-    if (this.editor) {
-      // 无格式化内容
-      // const view = this.editor.action((ctx) => ctx.get(editorViewCtx))
-      // if (!view || !view.state.selection.empty) {
-      //   const text = view.state.doc.textBetween(
-      //     view.state.selection.from,
-      //     view.state.selection.to,
-      //     '\n'
-      //   )
-      //   navigator.clipboard.writeText(text)
-      // }
-
-      // this.editor.action((ctx) => {
-      //   const view = ctx.get(editorViewCtx)
-      //   const node = view.state.doc.copy(view.state.selection.content().content)
-      //   // 检查有效选区
-      //   if (!view || !view.state.selection.empty) {
-      //     const serializer = ctx.get(serializerCtx)
-      //     const markdown = serializer(node)
-      //     console.log('版本',markdown)
-      //     // 写入剪贴板
-      //     navigator.clipboard.writeText(markdown)
-      //   }
-      // })
-    }
-  }
-
-  public async paste(): Promise<void> {
-    if (this.editor) {
-      // const text = await navigator.clipboard.readText()
-      // this.editor.action((ctx) => {
-      //   const view = ctx.get(editorViewCtx)
-      //   const { state } = view
-      //   // 删除选区内容
-      //   let tr = state.tr.deleteSelection()
-      //   const { from } = state.selection
-      //   // 创建事务插入文本
-      //   console.log(text)
-      //   tr.insertText(text, from)
-      //   view.dispatch(tr)
-      // })
-    }
-  }
-
   public find(text: string, options: {
     matchCase: false,
     wholeWord: false,
@@ -477,20 +416,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
     <style>
       /* Milkdown 主题样式 */
       ${themeStyles}
-      
-      /* 基础样式增强 */
-      .milkdown {
-        padding: 20px;
-        background: var(--background, #fff);
-        color: var(--text, #333);
-      }
-      .ProseMirror {
-        outline: none;
-      }
-      /* 确保图片等资源使用绝对路径 */
-      img {
-        max-width: 100%;
-      }
     </style>
   </head>
   <body class="milkdown">
@@ -499,7 +424,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
     </div>
   </body>
   </html>`;
-
       // 处理文件保存
       fileService.saveFileDialog({
         title: '导出 HTML 文件',
@@ -620,12 +544,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   public toggleLink() {
     this.editor?.action(callCommand(toggleStrongCommand.key))
   }
-  /**
-   * moveRowCommand `: $Command`
-   * moveColCommand `: $Command`
-   * selectRowCommand `: $Command`
-   * selectColCommand `: $Command`
-   */
   public insertTable(row: number, col: number) {
     this.editor?.action(callCommand(insertTableCommand.key, { row: row || 3, col: col || 3 }));
   }

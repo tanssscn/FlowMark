@@ -1,4 +1,4 @@
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import { getDeviceInfo } from '@/services/deviceService';
 import { TabType, type Platform, type StorageLocation } from '@/types/appTypes';
 import { basename } from 'pathe';
@@ -118,5 +118,5 @@ export function calculateDataLength(data: string | ArrayBuffer): number {
   } else if (typeof data === "string") {
     return data.length;
   }
-  throw new CodeError(statusCode.TYPE_ERROR);
+  throw new ErrorStatus(statusCode.TYPE_ERROR);
 }

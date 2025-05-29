@@ -25,12 +25,13 @@ export const defaultSettings: AppSettings = {
       maxNum: 50
     },
     image: {
-      networkImage: true
+      imagePathTypeOptions: "relative",
+      externImagePathOptions: "keep"
     }
   },
   editor: {
     font: {
-      fontFamily: "'Helvetica Neue', Arial, sans-serif",
+      fontFamily: "Helvetica Neue, Arial, sans-serif",
       lineHeight: 1.6,
       lineWidth: 80
     },

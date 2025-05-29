@@ -11,12 +11,10 @@ declare module 'vue-i18n' {
 }
 export const setLanguage = async (lang: Language) => {
   lang = converLanguage(lang)
-  console.log('set language', lang);
   try {
     const messages = await getMessage(lang);
     i18n.global.mergeLocaleMessage(lang, messages.default);
     i18n.global.locale.value = lang;
-    console.log('language changed to', i18n.global.locale.value);
   } catch (error) {
     console.error('Failed to load language file', error);
   }

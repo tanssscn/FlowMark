@@ -2,7 +2,7 @@ import type { DialogPlatform, MessageBoxOptions, NotifyOptions } from './type'
 import { TauriPlatform } from './tauriDialog'
 import { ElementPlatform } from './browserDialog'
 import i18n from '@/i18n'
-import { CodeError } from '../codeService'
+import { ErrorStatus } from '../codeService'
 const { t } = i18n.global
 
 class DialogService {
@@ -88,7 +88,7 @@ class DialogService {
   info(message: string, title?: string) {
     this.notify({ message, title, type: 'info' })
   }
-  notifyError(error: CodeError) {
+  notifyError(error: ErrorStatus) {
     this.error(`${error.message}${error.detail ? `(${error.detail})` : ''}`)
   }
 }

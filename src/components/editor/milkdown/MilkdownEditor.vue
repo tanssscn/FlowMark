@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { watch, onUnmounted, ref } from "vue";
+import { watch, onUnmounted, ref, onMounted, onBeforeMount } from "vue";
 import { Milkdown } from "@milkdown/vue";
 import { MilkdownEditorInstance } from "@/components/editor/composable/milkdownEditor";
 import { milkdownManager } from "@/services/milkdownManager";
-import {handlePaste} from "@/utils/clipboardUtil";
+import { handlePaste } from "@/utils/clipboardUtil";
 
 const props = defineProps<{
   tabId: string
@@ -22,10 +22,15 @@ onUnmounted(() => {
 defineExpose({
   milkdownEditor
 })
+onMounted(() => {
+  document.getElementById('milkdownPaste')?.addEventListener('paste', (event: ClipboardEvent) => {
+    handlePaste(event, milkdownEditor)
+  }, true);
+})
 </script>
 
 <template>
-  <Milkdown @paste="handlePaste($event,milkdownEditor)"/>
+  <Milkdown id="milkdownPaste" />
 </template>
 <style scoped>
 :deep(.ProseMirror) {

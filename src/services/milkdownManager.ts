@@ -60,15 +60,6 @@ export class MilkdownEditorManager {
   public redo(): void {
     this.getActiveEditor()?.redo();
   }
-  public cut(): void {
-    this.getActiveEditor()?.cut();
-  }
-  public copy(): void {
-    this.getActiveEditor()?.copy();
-  }
-  public paste(): void {
-    this.getActiveEditor()?.paste();
-  }
   public find(text: string, options: FindOptions): FindResult | undefined {
     return this.getActiveEditor()?.find(text, options);
   }

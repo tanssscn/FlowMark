@@ -18,7 +18,7 @@ const { t } = useI18n()
     <el-form label-position="top" class="space-y-4">
       <!-- Extensions Section -->
       <div class="space-y-4">
-        <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+        <h4 class="mb-2 text-base">
           {{ t('settings.markdown.extensions') }}
         </h4>
 
@@ -60,7 +60,7 @@ const { t } = useI18n()
 
       <!-- TOC Section -->
       <div class="space-y-4">
-        <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+        <h4 class="mb-2 text-base">
           {{ t('settings.markdown.toc.depth') }}
         </h4>
 

@@ -37,8 +37,7 @@ const { openFolder, openFile, openRecentFile } = useFileTree()
     <div v-if="recentStore.state.length > 0" class="w-full mb-8">
       <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">最近文件</h2>
       <div v-for="file in recentStore.state" :key="file.path">
-        <div
-          class="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center"
+        <div class="hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center"
           @click="openRecentFile({ path: file.path, isDir: file.isDir, storageLocation: file.storageLocation } as AppFileInfo)">
           <el-button :icon="file.pinned ? IconCustomPinFill : IconCustomPin"
             @click.stop="recentStore.togglePin(file.path)" text />
@@ -50,7 +49,7 @@ const { openFolder, openFile, openRecentFile } = useFileTree()
         <el-divider />
       </div>
 
-      <el-button  text class="w-full" @click="recentStore.clearAll">清空历史记录</el-button>
+      <el-button text class="w-full" @click="recentStore.clearAll">清空历史记录</el-button>
     </div>
   </div>
 </template>

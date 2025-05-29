@@ -3,7 +3,7 @@ import { fileService } from '../services/files/fileService';
 import type { AppFileInfo, FileEntry } from '@/types/appTypes';
 import { useRecentStore } from '@/stores/recentStore';
 import { localFileService } from '@/services/files/local/localFileService';
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import { isUserError, statusCode } from '@/utils/statusCodes';
 import { useTabStore } from '@/stores/tabStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -128,7 +128,7 @@ export function useFileTree() {
     const newFileInfo = { ...fileEntry, path: newPath, name: getFilename(newPath) }
     const isExists = await fileService.exists(newFileInfo)
     if (isExists) {
-      throw new CodeError(statusCode.FILE_EXITS)
+      throw new ErrorStatus(statusCode.FILE_EXITS)
     }
     await fileService.rename(fileEntry, newPath);
     refresh(fileEntry)

@@ -2,7 +2,7 @@
 import { useSettingsStore } from '@/stores/settingsStore'
 import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
-
+import { ImagePathTypeOptions, ExternImagePathOptions } from "@/types/appSettingsConst"
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
 const { t } = useI18n()
@@ -10,21 +10,21 @@ const { t } = useI18n()
 
 <template>
   <div class="space-y-6">
-    <h3 class="text-xl !pb-3 text-gray-900 dark:text-gray-100">
+    <h3 class="mb-5 text-lg">
       {{ t('settings.file.label') }}
     </h3>
-    <el-form label-width="auto">
+    <el-form label-width="auto" label-position="left">
       <!-- Save Settings -->
       <div>
-        <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+        <h4 class="mb-2 text-base">
           {{ t('settings.file.save.label') }}
         </h4>
 
         <el-form-item>
-            <el-switch v-model="settings.file.save.autoSave" />
-            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
-              {{ t('settings.file.save.autoSave.label') }}
-            </span>
+          <el-switch v-model="settings.file.save.autoSave" />
+          <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+            {{ t('settings.file.save.autoSave.label') }}
+          </span>
         </el-form-item>
 
         <el-form-item v-if="settings.file.save.autoSave" :label="t('settings.file.save.autoSave.interval')">
@@ -37,16 +37,15 @@ const { t } = useI18n()
       </div>
       <!-- history Settings -->
       <div>
-        <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+        <h4 class="mb-2 text-base">
           {{ t('settings.file.history.label') }}
         </h4>
         <el-form-item>
-            <el-switch v-model="settings.file.history.autoSave" />
-            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
-              {{ t('settings.file.history.autoSave.label') }}
-            </span>
+          <el-switch v-model="settings.file.history.autoSave" />
+          <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+            {{ t('settings.file.history.autoSave.label') }}
+          </span>
         </el-form-item>
-
         <el-form-item v-if="settings.file.history.autoSave" :label="t('settings.file.history.autoSave.interval')">
           <el-input-number v-model="settings.file.history.autoSaveInterval" :min="1" :max="60">
             <template #suffix>
@@ -55,35 +54,27 @@ const { t } = useI18n()
           </el-input-number>
         </el-form-item>
         <el-form-item v-if="settings.file.history.autoSave" :label="t('settings.file.history.maxVersionNumber')">
-          <el-input-number v-model="settings.file.history.maxNum" :min="1" :max="100"/>
+          <el-input-number v-model="settings.file.history.maxNum" :min="1" :max="100" />
         </el-form-item>
       </div>
       <!-- Image Settings -->
-      <!-- <div class="space-y-4">
-        <h4 class="text-md font-medium text-gray-800 dark:text-gray-200">
+      <div>
+        <h4 class="mb-2 text-base">
           {{ t('settings.file.image.label') }}
-        </h4> -->
-
-      <!-- <el-form-item :label="t('settings.file.image.maxWidth.label')">
-          <el-input-number
-            v-model="settings.file.image.maxWidth"
-            :min="100"
-            :max="2000"
-            :step="50"
-            controls-position="right"
-          />
-        </el-form-item> -->
-
-      <!-- <el-form-item :label="t('settings.file.image.quality.label')">
-            <el-slider
-              v-model="settings.file.image.quality"
-              :min="10"
-              :max="100"
-              :step="5"
-              class="flex-1 max-w-xs"
-            />
-        </el-form-item> -->
-      <!-- </div> -->
+        </h4>
+        <el-form-item :label="t('settings.file.image.imagePath')">
+          <el-radio-group v-model="settings.file.image.imagePathTypeOptions">
+            <el-radio :value="ImagePathTypeOptions.ABSOULUTE">{{ t('settings.file.image.absolute') }}</el-radio>
+            <el-radio :value="ImagePathTypeOptions.RELATIVE">{{ t('settings.file.image.relative') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item :label="t('settings.file.image.externImagePath')">
+          <el-radio-group v-model="settings.file.image.externImagePathOptions">
+            <el-radio :value="ExternImagePathOptions.KEEP">{{ t('settings.file.image.keepPath') }}</el-radio>
+            <el-radio :value="ExternImagePathOptions.TRANSFER">{{ t('settings.file.image.transfer') }}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </div>
     </el-form>
   </div>
 </template>

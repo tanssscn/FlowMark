@@ -1,4 +1,4 @@
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import type { FileEntry } from '@/types/appTypes';
 import { statusCode } from '@/utils/statusCodes';
 
@@ -16,24 +16,24 @@ export class BrowserFileService {
     try {
       const handle = this.fileHandles.get(fileInfo.path);
       if (!handle) {
-        throw new CodeError(statusCode.FILE_HANDLE_NOT_FOUND);
+        throw new ErrorStatus(statusCode.FILE_HANDLE_NOT_FOUND);
       }
       const file = await handle.getFile();
       return await file.arrayBuffer();
     } catch (error) {
-      throw new CodeError(statusCode.BROWSER_FILE_SYSTEM_ERROR);
+      throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
   async readTextFile(fileInfo: Pick<FileEntry, 'path'>): Promise<string> {
     try {
       const handle = this.fileHandles.get(fileInfo.path);
       if (!handle) {
-        throw new CodeError(statusCode.FILE_HANDLE_NOT_FOUND);
+        throw new ErrorStatus(statusCode.FILE_HANDLE_NOT_FOUND);
       }
       const file = await handle.getFile();
       return await file.text();
     } catch (error) {
-      throw new CodeError(statusCode.BROWSER_FILE_SYSTEM_ERROR);
+      throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
   /**
@@ -43,13 +43,13 @@ export class BrowserFileService {
     try {
       const handle = this.fileHandles.get(fileInfo.path);
       if (!handle) {
-        throw new CodeError(statusCode.FILE_HANDLE_NOT_FOUND);
+        throw new ErrorStatus(statusCode.FILE_HANDLE_NOT_FOUND);
       }
       const writable = await handle.createWritable();
       await writable.write(content);
       await writable.close();
     } catch (error) {
-      throw new CodeError(statusCode.BROWSER_FILE_SYSTEM_ERROR);
+      throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
 
@@ -79,7 +79,7 @@ export class BrowserFileService {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return null; // 用户取消
       }
-      throw new CodeError(statusCode.BROWSER_FILE_SYSTEM_ERROR);
+      throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
   private async openFileFromPicker(): Promise<FileEntry | null> {
@@ -105,7 +105,7 @@ export class BrowserFileService {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return null; // 用户取消了选择
       }
-      throw new CodeError(statusCode.BROWSER_FILE_SYSTEM_ERROR);
+      throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
   private async _scanDirectoryRecursive(
@@ -208,7 +208,7 @@ export class BrowserFileService {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return null; // 用户取消了选择
       }
-      throw new CodeError(statusCode.BROWSER_FILE_SYSTEM_ERROR);
+      throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
 
@@ -216,7 +216,7 @@ export class BrowserFileService {
    * 浏览器环境下无法实现的功能
    */
   private unsupported(): never {
-    throw new CodeError(statusCode.UNSUPPORTED_OPERATION)
+    throw new ErrorStatus(statusCode.UNSUPPORTED_OPERATION)
   }
 
   // 以下方法在浏览器环境下不支持

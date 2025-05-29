@@ -179,6 +179,15 @@
           "interval": "自动保存间隔"
         },
         "maxVersionNumber": "最大版本数量"
+      },
+      "image": {
+        "label": "图片设置",
+        "imagePath": "图片路径",
+        "externImagePath": "外链图片路径",
+        "absolute": "绝对路径",
+        "relative": "相对路径",
+        "keepPath": "保持原路径",
+        "transfer": "转存"
       }
     },
     "keymap": {

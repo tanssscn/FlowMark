@@ -90,7 +90,7 @@ const menuItems = computed((): MenuItem[] => [
   },
   {
     id: 'newFolder',
-    label: t('newFolder'),
+    label: t('fileTree.newFolder'),
     icon: FolderAdd,
     // 点击文件夹（除了浏览器平台的本地文件夹）
     visible: (data: FileEntry | null) =>

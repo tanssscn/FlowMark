@@ -29,7 +29,6 @@ onMounted(async () => {
     isInitialized.value = true
   }
 })
-
 </script>
 
 <template>

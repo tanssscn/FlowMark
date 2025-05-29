@@ -181,6 +181,15 @@
           "minutes": "Minutes"
         },
         "maxVersionNumber": "Max Version Number"
+      },
+      "image": {
+        "label": "Image Settings",
+        "imagePath": "Image Path",
+        "externImagePath": "External Image URL",
+        "absolute": "Absolute Path",
+        "relative": "Relative Path",
+        "keepPath": "Keep Original Path",
+        "transfer": "Transfer"
       }
     },
     "keymap": {

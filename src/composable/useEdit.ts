@@ -10,7 +10,7 @@ import i18n from '@/i18n';
 import { milkdownManager } from '@/services/milkdownManager';
 const { t } = i18n.global
 import { Mutex } from 'async-mutex';
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { getExtname, getFilename } from '@/utils/pathUtil';
 import type { TabBehavior } from '@/types/appSettings';
@@ -175,17 +175,17 @@ export function useEdit() {
   }
   async function readFileByTabId(id: string): Promise<string> {
     if (!tabStore.state[id].filePath) {
-      throw new CodeError(statusCode.FILE_NOT_FOUND)
+      throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     }
     const fileInfo = fileStore.get(tabStore.state[id].filePath)
     if (!fileInfo) {
-      throw new CodeError(statusCode.FILE_NOT_FOUND)
+      throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     };
     try {
       const content = await fileService.readTextFile(fileInfo);
       return content;
     } catch (e) {
-      throw new CodeError(statusCode.FILE_NOT_FOUND)
+      throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     }
   }
   const closeTab = async (tabId: string) => {

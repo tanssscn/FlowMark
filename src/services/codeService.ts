@@ -6,7 +6,7 @@ export interface StatusCode {
   message: string;
 }
 
-export class CodeError extends Error {
+export class ErrorStatus extends Error {
   public readonly code: number;
   public readonly message: string;
   public readonly detail?: string;
@@ -17,7 +17,7 @@ export class CodeError extends Error {
     this.message = statusCode.message;
     this.detail = options?.detail;
     // 保持正确的原型链
-    Object.setPrototypeOf(this, CodeError.prototype);
+    Object.setPrototypeOf(this, ErrorStatus.prototype);
   }
   writeLog() {
     logService.error(`${this.message} ${this.detail}`);

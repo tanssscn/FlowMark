@@ -1,9 +1,12 @@
 import { ViewMode } from './appTypes';
+import { ExternImagePathOptions, ImagePathTypeOptions } from './appSettings'
 export type ConflictResolution = 'ask' | 'overwrite' | 'keep_both';
 export type TabBehavior = 'new_tab' | 'replace_tab';
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type Language = 'en-US' | 'zh-CN' | 'system';
 
+export type ImagePathTypeOptions = typeof ImagePathTypeOptions[keyof typeof ImagePathTypeOptions];
+export type ExternImagePathOptions = typeof ExternImagePathOptions[keyof typeof ExternImagePathOptions];
 // ============== 应用设置 ==============
 // 常规设置
 export interface GeneralSettings {
@@ -23,7 +26,8 @@ export interface SaveSettings {
   autoSaveInterval: number;
 }
 export interface ImageSettings {
-  networkImage: boolean; // 网络图片
+  imagePathTypeOptions: ImagePathTypeOptions; // 绝对路径
+  externImagePathOptions: ExternImagePathOptions; // 保留原路径
 }
 export interface HistorySettings {
   autoSave: boolean; // 是否记录历史

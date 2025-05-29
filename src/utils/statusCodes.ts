@@ -1,5 +1,5 @@
 import i18n from "@/i18n";
-import { CodeError, type StatusCode } from "@/services/codeService";
+import { ErrorStatus, type StatusCode } from "@/services/codeService";
 const { t } = i18n.global
 // statusCode.ts
 export const statusCode = {
@@ -78,8 +78,8 @@ export const statusCode = {
  * @param error 
  * @returns 
  */
-export function isStatusCodeError(error: unknown): error is CodeError {
-  return error instanceof CodeError;
+export function isStatusCodeError(error: unknown): error is ErrorStatus {
+  return error instanceof ErrorStatus;
 }
 
 export function isEqualStatusCode(statusCode: StatusCode | unknown, targetStatusCode: StatusCode): boolean {
@@ -89,7 +89,7 @@ export function isEqualStatusCode(statusCode: StatusCode | unknown, targetStatus
   return false;
 }
 
-export function isUserError(error: unknown): error is CodeError {
+export function isUserError(error: unknown): error is ErrorStatus {
   // 这里可以写一些业务逻辑判断是否是用户错误
   if (isStatusCodeError(error)) {
     return error.code >= 4000 && error.code < 5000;
@@ -97,7 +97,7 @@ export function isUserError(error: unknown): error is CodeError {
   return false;
 }
 
-export function isSystemError(error: unknown): error is CodeError {
+export function isSystemError(error: unknown): error is ErrorStatus {
   // 这里可以写一些业务逻辑判断是否是系统错误
   if (isStatusCodeError(error)) {
     return error.code >= 6000 && error.code < 7000;
@@ -105,13 +105,13 @@ export function isSystemError(error: unknown): error is CodeError {
   return false;
 }
 
-export function isConditionalError(error: unknown): error is CodeError {
+export function isConditionalError(error: unknown): error is ErrorStatus {
   if (isStatusCodeError(error)) {
     return error.code >= 5000 && error.code < 6000;
   }
   return false;
 }
-export function isSuccess(error: unknown): error is CodeError {
+export function isSuccess(error: unknown): error is ErrorStatus {
   if (isStatusCodeError(error)) {
     return error.code < 3000;
   }

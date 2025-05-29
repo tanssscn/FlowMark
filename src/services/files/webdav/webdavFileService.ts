@@ -3,9 +3,9 @@ import { fetch } from '@tauri-apps/plugin-http';
 import { getDeviceInfo } from '@/services/deviceService';
 import WebDAVClient, { createClient } from './webdav';
 import type { FileStat } from './type';
-import { httpJoin } from '@/utils/pathUtil';
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
+import { getJoin } from '@/utils/pathUtil';
 
 /**
  * WebDAV 文件系统服务
@@ -21,7 +21,7 @@ export class WebDAVFileService {
    */
   private ensureConnected(): void {
     if (!this.isConnected()) {
-      throw new CodeError(statusCode.NEED_CONNECT_SERVER)
+      throw new ErrorStatus(statusCode.NEED_CONNECT_SERVER)
     }
   }
   /**
@@ -156,7 +156,7 @@ export class WebDAVFileService {
       // 非递归只需读取当前目录内容
       const contents = await this.client!.getDirectoryContents(fileInfo.path) as FileStat[];
       dirEntry.children = contents.map(item => {
-        const path = httpJoin(fileInfo.path, item.basename);
+        const path = getJoin(fileInfo.path, item.basename);
         return this.mapToAppFileInfo(path, item)
       }
       );
@@ -172,7 +172,7 @@ export class WebDAVFileService {
       // 处理目录中的每一项
       dirEntry.children = await Promise.all(
         contents.map(async (item) => {
-          const childPath = httpJoin(path, item.basename);
+          const childPath = getJoin(path, item.basename);
           const childEntry = this.mapToAppFileInfo(childPath, item);
           // 如果是目录，则递归处理
           if (item.isDir) {

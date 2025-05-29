@@ -1,8 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
   createFileInnerSrc,
-  httpJoin,
-  relativeHttpPath,
   isSubPath,
   getDirname,
   getFilename,
@@ -32,27 +30,6 @@ describe('pathUtil', () => {
 
       const src = await createFileInnerSrc(mockFileInfo, '/path/to/file.assets/image.png')
       expect(src).toBe('localhost:///path/to/file.assets/image.png')
-    })
-  })
-
-  describe('httpJoin', () => {
-    it('should join HTTP paths correctly', () => {
-      expect(httpJoin('https://example.com', 'api', 'v1')).toBe('https://example.com/api/v1')
-      expect(httpJoin('https://example.com/', '/api/', '/v1/')).toBe('https://example.com/api/v1')
-    })
-
-    it('should handle query parameters', () => {
-      expect(httpJoin('https://example.com', 'api?param=1')).toBe('https://example.com/api?param=1')
-    })
-  })
-
-  describe('relativeHttpPath', () => {
-    it('should return relative path for subpaths', () => {
-      expect(relativeHttpPath('https://example.com/api', 'https://example.com/api/v1')).toBe('v1')
-    })
-
-    it('should return empty string for non-subpaths', () => {
-      expect(relativeHttpPath('https://example.com/api', 'https://other.com')).toBe('')
     })
   })
 

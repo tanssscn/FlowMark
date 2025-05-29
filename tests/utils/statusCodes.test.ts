@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { statusCode, isStatusCodeError, isUserError, isSystemError, isConditionalError, isSuccess } from '@/utils/statusCodes'
-import { CodeError } from '@/services/codeService'
+import { ErrorStatus } from '@/services/codeService'
 
 describe('statusCodes', () => {
   describe('statusCode constants', () => {
@@ -15,10 +15,10 @@ describe('statusCodes', () => {
   })
 
   describe('type guards', () => {
-    const successError = new CodeError(statusCode.SUCCESS)
-    const userError = new CodeError(statusCode.INVALID_CREDENTIALS)
-    const systemError = new CodeError(statusCode.SYSTEM_ERROR)
-    const conditionalError = new CodeError(statusCode.UNKNOWN_ERROR)
+    const successError = new ErrorStatus(statusCode.SUCCESS)
+    const userError = new ErrorStatus(statusCode.INVALID_CREDENTIALS)
+    const systemError = new ErrorStatus(statusCode.SYSTEM_ERROR)
+    const conditionalError = new ErrorStatus(statusCode.UNKNOWN_ERROR)
     const nonCodeError = new Error('Regular error')
 
     it('isStatusCodeError should identify CodeError', () => {

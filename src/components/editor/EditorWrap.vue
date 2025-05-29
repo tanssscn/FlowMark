@@ -28,7 +28,6 @@ let content = ""
 const milkdownEditorRef = ref()
 const codemirrorEditorRef = ref()
 const updateMilkdown = (content: string) => {
-  console.log('content')
   milkdownEditorRef.value?.milkdownEditor.updateContent(content)
 }
 const updateMirrorEditor = () => {

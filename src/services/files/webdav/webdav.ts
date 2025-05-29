@@ -6,7 +6,7 @@ import type {
 } from './type';
 import { basename } from 'pathe';
 import { isSubPath } from '@/utils/pathUtil';
-import { CodeError } from '@/services/codeService';
+import { ErrorStatus } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { calculateDataLength } from '@/utils/fileUtil';
 
@@ -105,7 +105,7 @@ class WebDAVClient {
     switch (options.authType) {
       case 'basic':
         if (!options.username || !options.password) {
-          throw new CodeError(statusCode.AUTHEN_ERROR_NEED_USERNAME_PASSWORD);
+          throw new ErrorStatus(statusCode.AUTHEN_ERROR_NEED_USERNAME_PASSWORD);
         }
         const credentials = btoa(`${options.username}:${options.password}`);
         this.headers['Authorization'] = `Basic ${credentials}`;
@@ -134,7 +134,7 @@ class WebDAVClient {
     } else {
       url = `${this.baseUrl}/${rawPath}`;
     }
-    url = encodeURI(url);
+    // url = encodeURI(url);
     // 智能处理结尾斜杠
     if (isDir) {
       return url.endsWith('/') ? url : `${url}/`;
@@ -148,14 +148,16 @@ class WebDAVClient {
       ...this.headers,
       ...(options.headers || {})
     };
+    console.log(path)
     let response: Response;
     try {
       response = await this._fetch(path, {
         ...options,
         headers
       });
+      console.log(response)
       if (!response.ok) {
-        throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, { detail: `${response.status} , ${response.statusText}` });
+        throw new ErrorStatus(statusCode.WEBDAV_REQUEST_FAILED, { detail: `${response.status} , ${response.statusText}` });
       }
     } catch (e: any) {
       console.log(e)
@@ -216,7 +218,7 @@ class WebDAVClient {
     const result = this.xmlParser.parse(text);
     // 确保响应结构标准化
     if (!result.multistatus) {
-      throw new CodeError(statusCode.INVALID_RESPONSE, { detail: 'No root multistatus found' });
+      throw new ErrorStatus(statusCode.INVALID_RESPONSE, { detail: 'No root multistatus found' });
     }
 
     // 确保 response 是数组
@@ -234,14 +236,14 @@ class WebDAVClient {
     const response = result.multistatus.response[0];
 
     if (!response?.propstat) {
-      throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, { detail: 'Failed getting item stat' });
+      throw new ErrorStatus(statusCode.WEBDAV_REQUEST_FAILED, { detail: 'Failed getting item stat' });
     }
 
     const { prop, status } = response.propstat;
     const [_, code] = status.split(' ', 2);
 
     if (parseInt(code, 10) >= 400) {
-      throw new CodeError(statusCode.WEBDAV_REQUEST_FAILED, { detail: status });
+      throw new ErrorStatus(statusCode.WEBDAV_REQUEST_FAILED, { detail: status });
     }
 
     return this.prepareFileFromProps(prop, filename, isDetailed);

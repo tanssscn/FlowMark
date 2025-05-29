@@ -1,13 +1,12 @@
 import { nanoid } from "nanoid";
 import { nowFormatDate } from "./formatUtil";
-import { fetch } from '@tauri-apps/plugin-http';
 import { fileService } from "@/services/files/fileService";
-import {
-  filename,
-} from "pathe/utils";
-import { getDirname, getJoin } from "./pathUtil";
+import { filename } from "pathe/utils";
+import { getDirname, getJoin, getRelative } from "./pathUtil";
 import { MilkdownEditorInstance } from "@/components/editor/composable/milkdownEditor";
 import type { AppFileInfo } from "@/types/appTypes";
+import { useSettingsStore } from '@/stores/settingsStore.ts';
+import { ExternImagePathOptions, ImagePathTypeOptions } from "@/types/appSettingsConst";
 
 function getImageExtension(mimeType: string): string {
   const extensions: Record<string, string> = {
@@ -20,12 +19,9 @@ function getImageExtension(mimeType: string): string {
   return extensions[mimeType] || 'png';
 }
 
-const networkImage = 'original';
-
-export const handlePaste = async (event: ClipboardEvent, editor: MilkdownEditorInstance) => {
+export const handlePaste = async (event: ClipboardEvent, editor: MilkdownEditorInstance, externImagePathOptions = ExternImagePathOptions.KEEP) => {
   const clipboardItems = event.clipboardData?.items || [];
   let hasImage = false;
-
   // 检查是否有图片
   for (const item of clipboardItems) {
     if (item.type.includes('image')) {
@@ -33,88 +29,71 @@ export const handlePaste = async (event: ClipboardEvent, editor: MilkdownEditorI
       break;
     }
   }
-
   // 没有图片则允许默认行为
   if (!hasImage) return;
+  event.preventDefault()
+  event.stopImmediatePropagation(); // 阻止后续同类型监听器执行
+  const settingsStore = useSettingsStore();
 
-  event.preventDefault();
-
-  // 处理每个粘贴项
+  // 处理每个粘贴项,网络图片同时有text/html和file类型
+  let existsImageUrl = false;
+  const fileInfo = editor.getFileInfo();
+  if (!fileInfo) return;
   for (const item of clipboardItems) {
-    if (item.kind === 'string' && item.type === 'text/plain') {
-      // 处理纯文本
-      // item.getAsString(async (text) => {
-      // this.insertContent(text);
-      // });
-    } else if (item.kind === 'string' && item.type === 'text/html') {
+    if (item.kind === 'string' && item.type === 'text/html' && settingsStore.state.file.image.externImagePathOptions === ExternImagePathOptions.KEEP) {
       // 处理HTML内容
+      console.log('处理HTML')
+      existsImageUrl = true;
+      // getAsString 是异步的
       item.getAsString(async (html) => {
-        await handleHtmlPaste(html, editor);
+        const image = handleHtmlPaste(html);
+        if (image?.src instanceof Blob) {
+          image.src = await uploadImage(image.src, fileInfo);
+        }
+        if (typeof image?.src === 'string') {
+          editor.insertImage(image.src, image.alt, image.title);
+        }
       });
     } else if (item.kind === 'file' && item.type.includes('image')) {
+      if (existsImageUrl) continue;
       // 处理图片文件
-      const blob = item.getAsFile();
-      const fileInfo = editor.getFileInfo();
-      if (blob && fileInfo) {
-        const imgUrl = await uploadImage(blob, fileInfo);
-        editor.insertImage(imgUrl);
+      console.log('处理图片文件')
+      const src = item.getAsFile();
+      if (src) {
+        const url = await uploadImage(src, fileInfo);
+        editor.insertImage(url);
       }
     }
   }
-  
 }
 
-const handleHtmlPaste = async (html: string, editor: MilkdownEditorInstance) => {
-  const fileInfo = editor.getFileInfo();
-  if (!fileInfo) return;
+const handleHtmlPaste = (html: string): { src: string | Blob, alt?: string, title?: string } | null => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   const images = doc.querySelectorAll('img');
 
-  if (images.length === 0) {
-    // 没有图片，直接插入文本
-    const text = doc.body.textContent || '';
-    // this.insertContent(text);
-    return;
-  }
-
-  // 处理每个图片
   for (const img of images) {
     const src = img.getAttribute('src');
+    const alt = img.getAttribute('alt');
+    const title = img.getAttribute('title');
     if (!src) continue;
-
     if (src.startsWith('data:')) {
       // 处理base64图片
       const blob = dataUrlToBlob(src);
-      const imgUrl = await uploadImage(blob, fileInfo);
-      editor.insertImage(imgUrl);
-    } else if (networkImage === 'original') {
-      // 使用原始网络图片链接
-      // this.insertContent(`![image](${src})`);
+      return {
+        src: blob,
+        alt: alt ?? '',
+        title: title ?? ''
+      };
     } else {
-      // 上传网络图片
-      try {
-        const response = await fetch(src);
-        const blob = await response.blob();
-        const imgUrl = await uploadImage(blob, fileInfo);
-        editor.insertImage(imgUrl);
-      } catch (error) {
-        console.error('下载网络图片失败:', error);
-        // this.insertContent(`![image](${src})`); // 失败时回退到原始链接
-      }
+      return {
+        src,
+        alt: alt ?? '',
+        title: title ?? ''
+      };
     }
   }
-
-  // 插入其他文本内容
-  const textNodes: string[] = [];
-  doc.body.childNodes.forEach((node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      textNodes.push(node.textContent || '');
-    }
-  });
-  if (textNodes.length > 0) {
-    // this.insertContent(textNodes.join(' '));
-  }
+  return null;
 }
 
 const dataUrlToBlob = (dataUrl: string): Blob => {
@@ -129,8 +108,15 @@ const dataUrlToBlob = (dataUrl: string): Blob => {
 
   return new Blob([u8arr], { type: mime });
 }
-
+/**
+ * TODO: 上传图片返回的路径类型
+ * @param file 
+ * @param fileInfo 
+ * @param imagePathTypeOptions : 图片路径类型，默认是相对路径
+ * @returns 
+ */
 export const uploadImage = async (file: Blob | File, fileInfo: AppFileInfo): Promise<string> => {
+  const settingsStore = useSettingsStore();
   const dirInfo = Object.assign({}, fileInfo);
   dirInfo.isDir = true;
   dirInfo.path = getJoin(getDirname(dirInfo.path), `${filename(dirInfo.name)}.assets`);
@@ -141,12 +127,15 @@ export const uploadImage = async (file: Blob | File, fileInfo: AppFileInfo): Pro
   }
   console.log(file.type)
   const imgName = `${nowFormatDate('YYYYMMDDHHmmss').value}-${nanoid(4)}` + '.' + getImageExtension(file.type);
-  const imgUrl = getJoin(dirInfo.path, imgName);
-  console.log(imgUrl, file)
+  let imgUrl = getJoin(dirInfo.path, imgName);
   await fileService.writeFile({
     path: imgUrl,
     storageLocation: dirInfo.storageLocation,
   }, file);
-  return imgUrl;
+  // 根据 imagePathTypeOptions 返回不同类型路径
+  if (settingsStore.state.file.image.imagePathTypeOptions === ImagePathTypeOptions.RELATIVE) {
+    imgUrl = getRelative(fileInfo.path, imgUrl); // 需要你定义这个函数
+  }
+  return imgUrl; // 需要你定义这个函数
 }
 

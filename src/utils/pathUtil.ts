@@ -1,7 +1,9 @@
-import { basename, dirname, extname, isAbsolute, join, sep } from 'pathe';
+import { basename, dirname, extname, isAbsolute, join, normalize, relative, sep } from 'pathe';
 import { convertFileSrc, isTauri } from "@tauri-apps/api/core";
 import { fileService } from '@/services/files/fileService';
 import type { AppFileInfo } from '@/types/appTypes';
+import { statusCode } from './statusCodes';
+import { ErrorStatus } from '@/services/codeService';
 
 export async function createFileInnerSrc(fileInfo: AppFileInfo, url: string): Promise<string> {
   if (!url) return url; // 空路径，用户可能还没有输入完成
@@ -19,14 +21,32 @@ export async function createFileInnerSrc(fileInfo: AppFileInfo, url: string): Pr
       }
     }
   } else {
+    if (isRelativePath(url)) {
+      url = getJoin(fileInfo.path, url);
+    }
     if (isSameOrigin(fileInfo.path, url)) {
-      console.log("url is same origin")
       const content = await fileService.readFile({ ...fileInfo, path: url })
       return URL.createObjectURL(new Blob([content]))
     }
     console.log("url is not same origin")
   }
   return url;
+}
+export function isSameOrigin(url1: string, url2: string): boolean {
+  try {
+    const u1 = new URL(url1);
+    const u2 = new URL(url2);
+
+    const getOriginWithPort = (u: URL) => {
+      const defaultPort = u.protocol === 'http:' ? '80' :
+        u.protocol === 'https:' ? '443' : u.port;
+      return `${u.protocol}//${u.hostname}:${u.port || defaultPort}`;
+    };
+
+    return getOriginWithPort(u1) === getOriginWithPort(u2);
+  } catch {
+    return false;
+  }
 }
 
 export async function createFileSrc(fileInfo: AppFileInfo): Promise<string> {
@@ -50,74 +70,38 @@ export function closeImageSource(src: string) {
   }
 }
 
-/**
- * 专为 HTTP/HTTPS 路径设计的 join 方法
- * @param {...string} parts 要连接的路径部分
- * @returns {string} 连接后的规范化路径
- */
-export function httpJoin(...parts: string[]): string {
+export function getJoin(...parts: string[]): string {
   if (parts.length === 0) return '';
 
-  // 处理第一个部分（可能包含协议和域名）
-  let result = parts[0].replace(/\/+$/, ''); // 移除末尾的斜杠
-
-  // 处理后续部分
-  for (let i = 1; i < parts.length; i++) {
-    const part = parts[i].replace(/^\/+|\/+$/g, ''); // 移除开头和结尾的斜杠
-
-    if (part) {
-      // 如果当前部分包含查询参数或哈希，直接拼接
-      if (part.includes('?') || part.includes('#')) {
-        result += '/' + part;
-        break; // 查询参数或哈希后的部分不再处理
-      }
-
-      result += '/' + part;
-    }
+  const [first, ...rest] = parts;
+  if (isValidURL(first)) {
+    const url = new URL(first);
+    const path = join(url.pathname, ...rest)
+    url.pathname = path;
+    return url.toString();
+  } else {
+    return join(first, ...rest);
   }
-
-  // 处理协议后的双斜杠（如 http:// → http:/）
-  result = result.replace(/(https?:)\/+/g, '$1//');
-
-  // 确保路径中不包含多个连续的斜杠（除了协议部分）
-  result = result.replace(/([^:])\/+/g, '$1/');
-
-  return result;
-}
-export function getJoin(...parts: string[]): string {
-  if (isAbsolute(parts[0])) {
-    return join(...parts)
-  }
-  return httpJoin(...parts)
 }
 
 /**
- * 获取网络路径相对于根路径的相对路径
- * @param {string} baseUrl 根路径（如 "https://example.com/api"）
- * @param {string} fullUrl 完整路径（如 "https://example.com/api/v1/users"）
- * @returns {string} 相对路径（如 "v1/users"），如果不是子路径则返回空字符串
+ * 通用相对路径计算函数，支持HTTP路径和本地文件路径
+ * @param baseUrl 基础路径
+ * @param fullUrl 完整路径
+ * @returns 相对路径，如果不相关则返回null
  */
-export function relativeHttpPath(baseUrl: string, fullUrl: string): string | null {
-  // 规范化路径：移除结尾的斜杠
-  const normalizedBase = baseUrl.replace(/\/+$/, '');
-  const normalizedFull = fullUrl.replace(/\/+$/, '');
-
-  // 检查是否是相同协议和域名
-  if (!normalizedFull.startsWith(normalizedBase)) {
-    return '';
+export function getRelative(baseUrl: string, fullUrl: string): string {
+  if (isValidURL(baseUrl) && isValidURL(fullUrl)) {
+    const base = new URL(baseUrl);
+    const full = new URL(fullUrl);
+    if (base.origin !== full.origin) {
+      throw new ErrorStatus(statusCode.TYPE_ERROR);
+    }
+    baseUrl = base.pathname;
+    fullUrl = full.pathname;
   }
-
-  // 获取相对部分
-  const relativePart = normalizedFull.slice(normalizedBase.length);
-
-  // 检查是否是直接子路径（以/开头且不包含../）
-  if (relativePart === '' || relativePart.startsWith('/')) {
-    return relativePart.slice(1); // 移除开头的/
-  }
-
-  return null;
+  return relative(baseUrl, fullUrl);
 }
-
 /**
  * 判断目标路径是否是根路径的子路径
  * @param {string} baseUrl 根路径（如 "https://example.com/api"）
@@ -164,6 +148,11 @@ export function getExtname(path: string): string {
   }
   return `.${getFilename(path).replace(/^.*\./, '')}`;
 }
+/**
+ * 规范化路径：移除结尾的斜杠并转为小写（不区分大小写）
+ * @param path 
+ * @returns 
+ */
 export function normalizedPath(path: string): string {
   return path.replace(/\/+$/, '');
 }
@@ -184,41 +173,11 @@ export function isRelativePath(pathStr: string): boolean {
   if (illegalChars.test(trimmedPath)) {
     return false;
   }
-
   // 使用 path.isAbsolute 检查路径是否为绝对路径
-  if (isAbsolute(trimmedPath)) {
+  if (isAbsolute(trimmedPath) || isValidURL(trimmedPath)) {
     return false;
   }
-
-  // 检查路径中的每个部分是否符合文件系统命名规则
-  const pathParts = trimmedPath.split(sep);
-  for (let part of pathParts) {
-    if (part === '' || part === '.' || part === '..') {
-      continue;
-    }
-    if (illegalChars.test(part)) {
-      return false;
-    }
-  }
-
   return true;
-}
-
-function getNormalizedOrigin(u: URL): string {
-  const defaultPort = (u.protocol === 'http:' && u.port === '') ? '80' :
-    (u.protocol === 'https:' && u.port === '') ? '443' :
-      u.port;
-  return `${u.protocol}//${u.hostname}:${defaultPort}`;
-}
-
-export function isSameOrigin(url1: string, url2: string): boolean {
-  try {
-    const u1 = new URL(url1);
-    const u2 = new URL(url2);
-    return getNormalizedOrigin(u1) === getNormalizedOrigin(u2);
-  } catch {
-    return false;
-  }
 }
 
 
@@ -243,4 +202,13 @@ export function isValidFilePath(pathStr: string): boolean {
   }
 
   return true;
+}
+
+function isValidURL(str: string): boolean {
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
 }
