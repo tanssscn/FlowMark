@@ -78,8 +78,8 @@ export function useEdit() {
         const result = await dialogService.confirm({
           title: t('dialog.versionConflict.title'),
           message: t('dialog.versionConflict.message'),
-          confirmButtonText: t('dialog.button.continueSave'),
-          cancelButtonText: t('dialog.button.cancel'),
+          confirmButtonText: t('dialog.button.cancel'),
+          cancelButtonText: t('dialog.button.continueSave'),
         })
         if (result) {
           return false;

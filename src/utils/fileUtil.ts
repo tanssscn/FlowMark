@@ -89,6 +89,12 @@ const fileExtensions: Record<TabType, string[]> = {
   [TabType.Unknown]: []
 };
 
+export function isBinaryFile(filename: string): boolean {
+  const bins = [TabType.Image, TabType.PDF];
+  const fileExtension = getTabType(filename);
+  return fileExtension in bins;
+}
+
 export function getTabType(fileName: string): TabType {
   const fileExtension = fileName.toLowerCase().split('.').pop();
   if (!fileExtension) {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { watch, onUnmounted, ref, onMounted, onBeforeMount } from "vue";
 import { Milkdown } from "@milkdown/vue";
-import { MilkdownEditorInstance } from "@/components/editor/milkdown/composable/milkdownEditor";
 import { milkdownManager } from "@/services/milkdownManager";
 import { handlePaste } from "@/utils/clipboardUtil";
+import { MilkdownEditorInstance } from "./composable/milkdownEditor";
 
 const props = defineProps<{
   tabId: string

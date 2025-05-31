@@ -17,7 +17,7 @@ export const defaultSettings: AppSettings = {
   file: {
     save: {
       autoSave: true,
-      autoSaveInterval: 3 // 3 seconds
+      autoSaveInterval: 1 // 3 seconds
     },
     history: {
       autoSave: true,

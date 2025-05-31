@@ -1,10 +1,11 @@
 <template>
-  <div v-if="!initial"  v-loading="!initial" style="height: 100vh; display: flex; justify-content: center; align-items: center;"/>
-  <SplitPane v-else class="editor-wrap"  left-absolute :show-right="showMilkdown" left-class="nonprintable" right-class="print-panel"
-    :showLeft="showCodeMirror">
+  <div v-if="!initial" v-loading="!initial"
+    style="height: 100vh; display: flex; justify-content: center; align-items: center;" />
+  <SplitPane v-else class="editor-wrap" left-absolute :show-right="showMilkdown" left-class="nonprintable"
+    right-class="print-panel" :showLeft="showCodeMirror">
     <template #left>
-        <el-scrollbar class="nonprintable">
-      <CodeMirrorEditor  ref="codemirrorEditorRef" @updateMilkdown="updateMilkdown" :content="content" />
+      <el-scrollbar class="nonprintable">
+        <CodeMirrorEditor ref="codemirrorEditorRef" @updateMilkdown="updateMilkdown" :content="content" />
       </el-scrollbar>
     </template>
     <template #right>
@@ -16,7 +17,7 @@
 </template>
 <script lang="ts" setup>
 import { useEdit } from "@/composable/useEdit";
-import MilkdownEditor from '@/components/editor/milkdown/MilkdownEditor.vue'
+import MilkdownEditor from '@/components/editor/markdown/milkdown/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue';
 import { ViewMode, type EditorTab } from '@/types/appTypes';
 import { ref, PropType, computed, watch, onMounted } from 'vue'
@@ -30,8 +31,8 @@ const codemirrorEditorRef = ref()
 const updateMilkdown = (content: string) => {
   milkdownEditorRef.value?.milkdownEditor.updateContent(content)
 }
-const updateMirrorEditor = () => {
-  codemirrorEditorRef.value?.codemirrorEditor.updateContent(milkdownEditorRef.value?.milkdownEditor.getContent())
+const updateMirrorEditor = (content: string) => {
+  codemirrorEditorRef.value?.updateContent(content)
 }
 const showMilkdown = computed(() => {
   return props.tab.edit?.viewMode === ViewMode.WYSIWYG || props.tab.edit?.viewMode === ViewMode.SPLIT || props.tab.edit?.viewMode === ViewMode.READONLY
@@ -82,6 +83,15 @@ readFileByTabId(props.tab.id).then((_content) => {
   initial.value = true
 }).catch((res) => {
   dialogService.notifyError(res)
+})
+const fileChange = () => {
+  readFileByTabId(props.tab.id).then((_content) => {
+    updateMilkdown(_content)
+    updateMirrorEditor(_content)
+  })
+}
+defineExpose({
+  fileChange
 })
 </script>
 <style>

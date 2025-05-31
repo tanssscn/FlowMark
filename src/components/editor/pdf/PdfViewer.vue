@@ -26,8 +26,16 @@ const loadPdf = async () => {
   if (!fileInfo) return
   pdfUrl.value = await createFileSrc(fileInfo)
 }
+const fileChange = async () => {
+  closeImageSource(pdfUrl.value)
+  loadPdf()
+}
+
 onUnmounted(() => {
   closeImageSource(pdfUrl.value)
+})
+defineExpose({
+  fileChange,
 })
 
 </script>

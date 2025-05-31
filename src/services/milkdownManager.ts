@@ -1,5 +1,5 @@
-import { MilkdownEditorInstance } from "@/components/editor/milkdown/composable/milkdownEditor";
-import type { FindOptions, FindResult } from "@/components/editor/types";
+import { MilkdownEditorInstance } from "@/components/editor/markdown/milkdown/composable/milkdownEditor";
+import type { FindOptions, FindResult } from "@/components/editor/markdown/types";
 
 
 export class MilkdownEditorManager {

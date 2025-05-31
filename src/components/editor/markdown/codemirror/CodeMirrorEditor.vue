@@ -72,7 +72,7 @@ const createCodeMirrorState = (
       markdown(),
       EditorView.updateListener.of((viewUpdate) => {
         // if (viewUpdate.focusChanged)
-          onCodeMirrorUpdate(viewUpdate);
+        onCodeMirrorUpdate(viewUpdate);
       }),
     ],
   });
@@ -100,6 +100,11 @@ onMounted(() => {
   watch(() => settingsStore.state.appearance.theme, (newTheme) => {
     const themeCompartment = new Compartment();
     editor?.dispatch({
+      changes: {
+        from: 0,
+        to: editor?.state.doc.length,
+        insert: getContent() ?? ''
+      },
       effects: themeCompartment.reconfigure(nord(newTheme === 'dark'))
     });
   })
@@ -127,7 +132,7 @@ const createView = () => {
 const focus = () => {
   editor?.focus();
 }
-const getContent=()=>{
+const getContent = () => {
   editor?.state.doc.toString()
 }
 // 组件卸载时清理

@@ -3,7 +3,7 @@ import { nowFormatDate } from "./formatUtil";
 import { fileService } from "@/services/files/fileService";
 import { filename } from "pathe/utils";
 import { getDirname, getJoin, getRelative } from "./pathUtil";
-import { MilkdownEditorInstance } from "@/components/editor/milkdown/composable/milkdownEditor";
+import { MilkdownEditorInstance } from "@/components/editor/markdown/milkdown/composable/milkdownEditor";
 import type { AppFileInfo } from "@/types/appTypes";
 import { useSettingsStore } from '@/stores/settingsStore.ts';
 import { ExternImagePathOptions, ImagePathTypeOptions } from "@/types/appSettingsConst";

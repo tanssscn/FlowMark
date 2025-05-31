@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import EditorWrap from '@/components/editor/EditorWrap.vue'
+import EditorWrap from '@/components/editor/markdown/EditorWrap.vue'
 import WelcomePanel from '@/components/editor/welcome/WelcomePanel.vue'
 import ImageViewer from '@/components/editor/image/ImageViewer.vue'
 import PdfViewer from '@/components/editor/pdf/PdfViewer.vue'
 import { useTabStore } from '@/stores/tabStore';
-import { watch, nextTick } from 'vue';
+import { nextTick, onMounted, reactive } from 'vue';
 import { fileService } from '@/services/files/fileService';
 import { milkdownManager } from '@/services/milkdownManager';
-import SearchReplace from "@/components/editor/plugins/find/SearchReplace.vue"
+import SearchReplace from "@/components/editor/markdown/plugins/find/SearchReplace.vue"
 import { useWindowStore } from '@/stores/windowStore';
-import TableSelector from './editor/table/TableSelector.vue';
+import TableSelector from './editor/markdown/plugins/table/TableSelector.vue';
 import { useFileStore } from '@/stores/fileStore';
 import { UnwatchFn } from '@tauri-apps/plugin-fs';
 import { TabType } from '@/types/appTypes';
@@ -20,38 +20,13 @@ const windowStore = useWindowStore()
 const tabStore = useTabStore()
 const fileStore = useFileStore()
 const settingsStore = useSettingsStore();
-
+const childRefs = reactive<Record<string, any>>({})
+const setChildRef = (el: any, id: string) => {
+  if (el) {
+    childRefs[id] = el
+  }
+}
 let unwatch: UnwatchFn | void = undefined;
-watch(() => tabStore.activeTab, (newVal) => {
-  nextTick(async () => {
-    milkdownManager.setActiveEditor(newVal?.id)
-    const fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
-    if (newVal && fileInfo) {
-      if (unwatch) {
-        if (typeof unwatch === 'function') {
-          unwatch()
-        }
-      }
-      unwatch = await fileService.watchFileChange(fileInfo, async () => {
-        const session = tabStore.activeSession
-        if (session) {
-          if (session?.unsaved) {
-            return
-          }
-          const newFileInfo = await fileService.getStat(fileInfo)
-          if (fileInfo.version !== newFileInfo.version) {
-            if (!session.unsaved) {
-              fileStore.set([newFileInfo])
-              milkdownManager.getEditor(newVal.id)?.updateContent(await fileService.readTextFile(fileInfo))
-            }
-          }
-        }
-      })
-    }
-  })
-}, { immediate: true })
-
-
 const conponentMap = {
   [TabType.Image]: ImageViewer,
   [TabType.Markdown]: EditorWrap,
@@ -59,12 +34,48 @@ const conponentMap = {
   [TabType.PDF]: PdfViewer,
   [TabType.Unknown]: EditorWrap,
 };
+const handleTabChange = (tabName: string) => {
+  tabChange(tabName)
+}
+onMounted(() => {
+  if (!tabStore.activeId) return
+  tabChange(tabStore.activeId)
+})
+const tabChange = (id: string) => {
+  nextTick(async () => {
+    milkdownManager.setActiveEditor(id)
+    const fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
+    if (fileInfo) {
+      if (unwatch) {
+        if (typeof unwatch === 'function') {
+          unwatch()
+        }
+      }
+      const childRef = childRefs[id]
+      if (typeof childRef.fileChange !== 'function') return;
+      const session = tabStore.activeSession
+      unwatch = await fileService.watchFileChange(fileInfo, async () => {
+        if (session && session?.unsaved) return;
+        try {
+          const newFileInfo = await fileService.getStat(fileInfo)
+          console.log(newFileInfo.version, fileInfo.version)
+          if (fileInfo.version !== newFileInfo.version) {
+            fileStore.set([newFileInfo])
+            childRef.fileChange();
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      })
+    }
+  })
+}
 </script>
 
 <template>
   <div>
-    <el-tabs v-model="tabStore.activeId" type="card" closable class="tabs-container flex flex-col"
-      @tab-remove="closeTab">
+    <el-tabs @tab-change="handleTabChange" v-model="tabStore.activeId" type="card" closable
+      class="tabs-container flex flex-col" @tab-remove="closeTab">
       <el-tab-pane lazy v-for="(tab, id) in tabStore.state" :key="id" :label="tab.title" :name="id">
         <!-- 自定义标签标题 -->
         <template #label>
@@ -77,7 +88,7 @@ const conponentMap = {
             </el-icon>
           </span>
         </template>
-        <component :is="conponentMap[tab.type]" :tab="tab" />
+        <component :is="conponentMap[tab.type]" :tab="tab" :ref="(el) => setChildRef(el, id)" />
       </el-tab-pane>
     </el-tabs>
     <!-- 查找替换组件 -->

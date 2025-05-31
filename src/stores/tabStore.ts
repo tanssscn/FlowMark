@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { nanoid } from 'nanoid';
-import { computed, reactive, readonly, ref, version } from 'vue';
+import { computed, reactive, readonly, ref } from 'vue';
 import { restoreApp, RestoreApp } from '@/services/persistService';
 import type { TabBehavior } from '@/types/appSettings';
 import { getFilename } from '@/utils/pathUtil';

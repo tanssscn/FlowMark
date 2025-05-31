@@ -43,10 +43,19 @@ onMounted(async () => {
   })
   useEventListener(imgRef, 'wheel', panzoomInstance.zoomWithWheel);
 })
+const fileChange = async () => {
+  const fileInfo = fileStore.get(props.tab.filePath!)
+  if (!fileInfo) return
+  closeImageSource(objectUrl.value)
+  objectUrl.value = await createFileSrc(fileInfo)
+}
+
 onUnmounted(() => {
   closeImageSource(objectUrl.value)
 })
-
+defineExpose({
+  fileChange,
+})
 </script>
 
 <style scoped>
