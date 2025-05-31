@@ -22,7 +22,7 @@ const { t } = useI18n()
 
         <el-form-item>
           <el-switch v-model="settings.file.save.autoSave" />
-          <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+          <span class="ml-2 text-sm">
             {{ t('settings.file.save.autoSave.label') }}
           </span>
         </el-form-item>
@@ -42,7 +42,7 @@ const { t } = useI18n()
         </h4>
         <el-form-item>
           <el-switch v-model="settings.file.history.autoSave" />
-          <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+          <span class="ml-2 text-sm">
             {{ t('settings.file.history.autoSave.label') }}
           </span>
         </el-form-item>

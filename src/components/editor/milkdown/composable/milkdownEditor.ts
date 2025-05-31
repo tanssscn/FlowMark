@@ -14,14 +14,12 @@ import {
   from '@milkdown/preset-commonmark';
 import { callCommand, replaceAll } from '@milkdown/utils';
 import type { AppFileInfo, OutlineItem } from "@/types/appTypes";
-import { emoji } from '@milkdown/plugin-emoji';
 import { indentConfig, type IndentConfigOptions } from '@milkdown/plugin-indent'
 import { historyKeymap, redoCommand, undoCommand } from "@milkdown/plugin-history";
 import { TextSelection } from "@milkdown/prose/state";
 import type { FindResult, IMilkdownEditor } from "../../types";
 import { getDeviceInfo } from "@/services/deviceService";
 import { insertTableCommand, toggleStrikethroughCommand } from '@milkdown/preset-gfm';
-import { codeBlockMemory, codeBlockMemoryPluginKey } from "../../plugins/lastCodeBlockLang/codeLangMemory";
 import { useFileStore } from "@/stores/fileStore";
 import { useDebounceFn } from '@vueuse/core';
 import type { AppSettings } from "@/types/appSettings";
@@ -114,17 +112,14 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
             // },
           },
           [CrepeFeature.CodeMirror]: {
-            languages: [
-              ...languages,
-              mermaidLanguageSupport
-            ],
-            renderPreview: mermaidPreviewer,
+            languages: this.getCodeMirrorLanguage(),
+            renderPreview: this.getRenderPreview()
           }
         }
       });
       this.crepe = crepe;
       this.autoSave();
-      crepe.editor.use(searchPlugin).use(codeBlockMemory).config((ctx) => {
+      crepe.editor.use(searchPlugin).config((ctx) => {
         ctx.set(historyKeymap.key, {
           // Remap to one shortcut.
           Undo: "Mod-z",
@@ -135,6 +130,17 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       this.editor = crepe.editor;
       return crepe;
     });
+  }
+  private getCodeMirrorLanguage() {
+    if (this.settingsStore.state.markdown.extensions.enableMermaid) {
+      languages.push(mermaidLanguageSupport)
+    }
+    return languages
+  }
+  private getRenderPreview() {
+    if (this.settingsStore.state.markdown.extensions.enableMermaid) {
+      return mermaidPreviewer
+    }
   }
   private _save = useDebounceFn((newContent: string) => {
     this.useEdit.saveFile(this.id, newContent);
@@ -314,12 +320,13 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       );
     });
   }
-  public updateSettings(newSettings: any): void {
+  public async updateSettings(newSettings: any): Promise<void> {
     const oldSettings = this.settings;
     this.settings = { ...newSettings };
 
     // Check if emoji setting changed
     if (newSettings.markdown.extends.enableEmoji !== oldSettings?.markdown?.extends?.enableEmoji) {
+      const { emoji } = await import('@milkdown/plugin-emoji');
       if (newSettings.markdown.extends.enableEmoji) {
         this.editor?.use(emoji);
       } else {
@@ -434,12 +441,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
    * @param code 
    */
   public createCodeBlock(): void {
-    this.editor?.action((ctx) => {
-      const view = ctx.get(editorViewCtx)
-      const state = view.state;
-      const langState = codeBlockMemoryPluginKey.getState(state);
-      this.editor?.action(callCommand(createCodeBlockCommand.key, langState?.lastLanguage || 'text'));
-    })
+    this.editor?.action(callCommand(createCodeBlockCommand.key, 'text'));
   }
   /**
    * 行内代码块

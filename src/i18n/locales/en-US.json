@@ -233,15 +233,10 @@
     },
     "markdown": {
       "label": "Markdown Settings",
-      "extensions": "Markdown Extensions",
-      "enableMath": {
-        "label": "Enable Math"
-      },
-      "enableDiagram": {
-        "label": "Enable Diagram"
-      },
-      "enableEmoji": {
-        "label": "Enable Emoji"
+      "extensions": {
+        "label": "Extensions",
+        "enableMermaid": "Enable Mermaid",
+        "enableEmoji": "Enable Emoji"
       },
       "toc": {
         "label": "Table of Contents",

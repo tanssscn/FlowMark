@@ -61,23 +61,24 @@ const connection = async (isTest: boolean) => {
     isConnecting.value = false
   }
 }
-const resetConnection=()=>{
+const resetConnection = () => {
   dialogService.confirm({
     title: t('dialog.resetConnection.title'),
     message: t('dialog.resetConnection.message'),
   }).then((res) => {
-    if(res){
+    if (res) {
       settings.resetWebdav()
       testResult.value = null
       isTesting.value = false
       isConnecting.value = false
-    }})
+    }
+  })
 }
 </script>
 
 <template>
   <div class="space-y-6">
-    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+    <h3 class="text-lg font-medium">
       {{ t('settings.webdav.label') }}
     </h3>
 
@@ -99,13 +100,13 @@ const resetConnection=()=>{
 
       <el-form-item>
         <el-switch v-model="settings.settings.webdav.autoConnect" />
-        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
+        <span class="ml-2 text-sm">
           {{ t('settings.webdav.autoConnect.label') }}
         </span>
       </el-form-item>
     </el-form>
 
-    <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center gap-4">
+    <div class="pt-4 border-t flex items-center gap-4">
       <el-button type="primary" @click="connection(true)" :loading="isTesting" class="px-6">
         {{ isTesting ? t('settings.webdav.testing') : t('settings.webdav.testConnection') }}
       </el-button>

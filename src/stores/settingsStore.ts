@@ -47,7 +47,7 @@ export const defaultSettings: AppSettings = {
       syntaxHighlighting: true,
       lineNumbers: false,
     },
-    extends: {
+    extensions: {
       enableMermaid: true,
       enableEmoji: true
     }

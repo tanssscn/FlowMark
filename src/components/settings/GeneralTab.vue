@@ -29,7 +29,7 @@ const conflictResolutionOptions = [
 
 <template>
   <div class="space-y-6">
-    <h3 class="text-xl !pb-3 text-gray-900 dark:text-gray-100">
+    <h3 class="text-xl !pb-3">
       {{ t('settings.general.label') }}
     </h3>
 

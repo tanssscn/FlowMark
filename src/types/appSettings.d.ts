@@ -67,7 +67,7 @@ export interface ExtendsSettings {
 export interface MarkdownSettings {
   tocDepth: number[]; // 目录深度
   codeBlock: CodeBlockSettings; // 代码块设置
-  extends: ExtendsSettings; // 扩展功能设置
+  extensions: ExtendsSettings; // 扩展功能设置
 }
 // WebDAV 设置
 export interface WebDAVSettings {

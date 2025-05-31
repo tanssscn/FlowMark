@@ -34,8 +34,7 @@ const tabs = computed(() => [
       <div class="settings-sidebar overflow-y-auto p-2">
         <el-menu :default-active="activeTab" class="h-full border-0 bg-transparent"
           @select="(key: string) => activeTab = key">
-          <el-menu-item v-for="tab in tabs" :key="tab.id" :index="tab.id"
-            class="mb-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+          <el-menu-item v-for="tab in tabs" :key="tab.id" :index="tab.id" class="mb-1 rounded-md">
             {{ tab.label }}
           </el-menu-item>
         </el-menu>

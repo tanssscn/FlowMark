@@ -231,15 +231,10 @@
     },
     "markdown": {
       "label": "Markdown设置",
-      "extensions": "Markdown扩展",
-      "enableMath": {
-        "label": "启用数学公式"
-      },
-      "enableDiagram": {
-        "label": "启用图表"
-      },
-      "enableEmoji": {
-        "label": "启用表情符号"
+      "extensions": {
+        "label": "扩展",
+        "enableMermaid": "启用 Mermaid",
+        "enableEmoji": "启用表情符号"
       },
       "toc": {
         "label": "目录",
