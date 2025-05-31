@@ -5,19 +5,23 @@ import { ListenerManager } from '@milkdown/plugin-listener'
 import type { Ctx } from '@milkdown/ctx'
 import { commandsCtx, Editor, editorViewCtx } from "@milkdown/kit/core";
 import { useEdit } from "@/composable/useEdit";
-import { createCodeBlockCommand, insertHrCommand, insertImageCommand, toggleEmphasisCommand, toggleInlineCodeCommand, toggleStrongCommand, turnIntoTextCommand, wrapInBlockquoteCommand, wrapInBulletListCommand, wrapInHeadingCommand, wrapInOrderedListCommand } from '@milkdown/preset-commonmark';
-import { callCommand, getHTML, replaceAll } from '@milkdown/utils';
-import { fileService } from "@/services/files/fileService";
+import {
+  createCodeBlockCommand, insertHrCommand, insertImageCommand,
+  toggleEmphasisCommand, toggleInlineCodeCommand, toggleStrongCommand,
+  turnIntoTextCommand, wrapInBlockquoteCommand, wrapInBulletListCommand,
+  wrapInHeadingCommand, wrapInOrderedListCommand
+}
+  from '@milkdown/preset-commonmark';
+import { callCommand, replaceAll } from '@milkdown/utils';
 import type { AppFileInfo, OutlineItem } from "@/types/appTypes";
 import { emoji } from '@milkdown/plugin-emoji';
 import { indentConfig, type IndentConfigOptions } from '@milkdown/plugin-indent'
 import { historyKeymap, redoCommand, undoCommand } from "@milkdown/plugin-history";
 import { TextSelection } from "@milkdown/prose/state";
-import { searchPlugin, searchPluginKey } from "./searchPlugin";
-import type { FindResult, IMilkdownEditor } from "./types";
+import type { FindResult, IMilkdownEditor } from "../../types";
 import { getDeviceInfo } from "@/services/deviceService";
 import { insertTableCommand, toggleStrikethroughCommand } from '@milkdown/preset-gfm';
-import { codeBlockMemory, codeBlockMemoryPluginKey } from "./codeLangMemory";
+import { codeBlockMemory, codeBlockMemoryPluginKey } from "../../plugins/lastCodeBlockLang/codeLangMemory";
 import { useFileStore } from "@/stores/fileStore";
 import { useDebounceFn } from '@vueuse/core';
 import type { AppSettings } from "@/types/appSettings";
@@ -25,10 +29,11 @@ import { closeImageSource, createFileInnerSrc } from "@/utils/pathUtil";
 import { uploadImage } from "@/utils/clipboardUtil";
 import { useTabStore } from "@/stores/tabStore";
 import { type Ref, watch } from "vue";
+import { searchPlugin, searchPluginKey } from "../../plugins/find/composable/searchPlugin";
+import { languages } from '@codemirror/language-data'
+import { mermaidLanguageSupport, mermaidPreviewer } from "../../plugins/mermaid/mermaidConfig";
+import { exportHtml } from "../../plugins/export/exportHtml";
 
-/**
- * TODO：图像块在客户端不一致
- */
 export class MilkdownEditorInstance implements IMilkdownEditor {
   public id: string;
   public editor: Editor | null = null;
@@ -108,7 +113,13 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
             //   return url;
             // },
           },
-          [CrepeFeature.CodeMirror]: {}
+          [CrepeFeature.CodeMirror]: {
+            languages: [
+              ...languages,
+              mermaidLanguageSupport
+            ],
+            renderPreview: mermaidPreviewer,
+          }
         }
       });
       this.crepe = crepe;
@@ -399,94 +410,9 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
 
   public async exportHtml() {
     if (!this.editor) return;
-    await this.editor.action(async (ctx) => {
-      // 获取当前内容 HTML
-      const contentHTML = getHTML()(ctx);
-
-      // 获取 Milkdown 主题样式
-      const themeStyles = await this.getEditorStyles();
-
-      // 构建完整 HTML 文档
-      const completeHTML = `<!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导出文档</title>
-    <style>
-      /* Milkdown 主题样式 */
-      ${themeStyles}
-    </style>
-  </head>
-  <body class="milkdown">
-    <div class="editor">
-      ${contentHTML}
-    </div>
-  </body>
-  </html>`;
-      // 处理文件保存
-      fileService.saveFileDialog({
-        title: '导出 HTML 文件',
-        filters: [{ name: 'HTML 文件', extensions: ['html'] }],
-      }).then(async (file) => {
-        if (!file) return;
-        await fileService.writeTextFile(
-          { path: file, storageLocation: 'local' },
-          completeHTML
-        );
-      });
-    });
+    exportHtml(this.editor);
   }
 
-  // 获取编辑器当前样式
-  private async getEditorStyles(): Promise<string> {
-    // 获取所有样式表
-    const stylesheets = Array.from(document.styleSheets);
-    let cssText = '';
-
-    for (const sheet of stylesheets) {
-      try {
-        // 只收集 Milkdown 相关样式
-        if (sheet.href && !sheet.href.includes('milkdown')) continue;
-
-        const rules = Array.from(sheet.cssRules || []);
-        for (const rule of rules) {
-          // 收集所有与 milkdown 相关的规则
-          if (rule.cssText.includes('milkdown') ||
-            rule.cssText.includes('ProseMirror')) {
-            cssText += rule.cssText + '\n';
-          }
-        }
-      } catch (e) {
-        console.warn('无法读取样式表:', e);
-      }
-    }
-
-    // 添加关键 CSS 变量
-    cssText += `
-      :root {
-        ${this.getCSSVariables()}
-      }
-    `;
-
-    return cssText;
-  }
-
-  // 获取当前 CSS 变量
-  private getCSSVariables(): string {
-    const style = getComputedStyle(document.documentElement);
-    const variables = [];
-
-    // 收集所有以 -- 开头的变量
-    for (let i = 0; i < style.length; i++) {
-      const name = style[i];
-      if (name.startsWith('--')) {
-        variables.push(`${name}: ${style.getPropertyValue(name)};`);
-      }
-    }
-
-    return variables.join('\n');
-  }
   public setHeadings(level: number) {
     this.editor?.action(callCommand(wrapInHeadingCommand.key, level));
   }
@@ -496,12 +422,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   public blockquote(): void {
     this.editor?.action(callCommand(wrapInBlockquoteCommand.key));
   }
-  /**
-   * Keymap for list item node.
-   * `<Enter>`: Split the current list item.
-   * `<Tab>/<Mod-]>`: Sink the current list item.
-   * `<Shift-Tab>/<Mod-[>`: Lift the current list item.
-   */
   public orderedList(): void {
     this.editor?.action(callCommand(wrapInOrderedListCommand.key));
   }

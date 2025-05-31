@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useWindowStore } from '@/stores/windowStore';
-import AppMenu from '../header/AppMenu.vue';
+import AppMenu from './header/AppMenu.vue';
 import {Setting} from '@element-plus/icons-vue'
 const windowStore = useWindowStore()
 

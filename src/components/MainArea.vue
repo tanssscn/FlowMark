@@ -7,9 +7,9 @@ import { useTabStore } from '@/stores/tabStore';
 import { watch, nextTick } from 'vue';
 import { fileService } from '@/services/files/fileService';
 import { milkdownManager } from '@/services/milkdownManager';
-import SearchReplace from "@/components/editor/find/SearchReplace.vue"
+import SearchReplace from "@/components/editor/plugins/find/SearchReplace.vue"
 import { useWindowStore } from '@/stores/windowStore';
-import TableSelector from '../editor/table/TableSelector.vue';
+import TableSelector from './editor/table/TableSelector.vue';
 import { useFileStore } from '@/stores/fileStore';
 import { UnwatchFn } from '@tauri-apps/plugin-fs';
 import { TabType } from '@/types/appTypes';
@@ -19,7 +19,7 @@ const { closeTab } = useEdit()
 const windowStore = useWindowStore()
 const tabStore = useTabStore()
 const fileStore = useFileStore()
-  const settingsStore = useSettingsStore();
+const settingsStore = useSettingsStore();
 
 let unwatch: UnwatchFn | void = undefined;
 watch(() => tabStore.activeTab, (newVal) => {

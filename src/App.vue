@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useWindowStore } from '@/stores/windowStore'
-import SidePanel from '@/components/layout/SidePanel.vue'
-import HeaderMenu from '@/components/layout/HeaderMenu.vue'
-import MainArea from '@/components/layout/MainArea.vue'
+import SidePanel from '@/components/SidePanel.vue'
+import HeaderMenu from '@/components/HeaderMenu.vue'
+import MainArea from '@/components/MainArea.vue'
 import { useWindowRoute } from './composable/useWindowRoute'
 import SettingsModal from '@/components/settings/index.vue'
 import { ref, onMounted } from 'vue'

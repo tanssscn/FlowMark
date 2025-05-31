@@ -76,7 +76,7 @@ import {
 import IconCustomReplace from "~icons/custom/replace"
 import IconCustomReplaceAll from "~icons/custom/replace-all"
 import { milkdownManager } from '@/services/milkdownManager'
-import type { FindOptions } from '../composable/types'
+import type { FindOptions } from '../../types'
 import { useWindowStore } from '@/stores/windowStore'
 import { useDebounceFn, watchPausable } from '@vueuse/core'
 const windowStore = useWindowStore()
@@ -98,13 +98,13 @@ const { pause, resume } = watchPausable(
     debouncedFind(newSearchText, newOptions)
   }
 );
-const  debouncedFind =   useDebounceFn((text: string, options: FindOptions) => {
-      nextTick(() => {
-        const matches = milkdownManager.find(text, options)
-        matchCount.value = matches?.count ?? 0
-        currentMatchIndex.value = matches?.currentIndex ?? -1
-      })
-    }, 500)
+const debouncedFind = useDebounceFn((text: string, options: FindOptions) => {
+  nextTick(() => {
+    const matches = milkdownManager.find(text, options)
+    matchCount.value = matches?.count ?? 0
+    currentMatchIndex.value = matches?.currentIndex ?? -1
+  })
+}, 500)
 // 弹窗关闭时暂停监听，打开时恢复
 watch(() => windowStore.state.findReplace.show, (isVisible) => {
   if (isVisible) {

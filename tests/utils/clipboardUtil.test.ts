@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { handlePaste, uploadImage } from '@/utils/clipboardUtil.ts'
 import type { AppFileInfo } from '@/types/appTypes'
-import { MilkdownEditorInstance } from '@/components/editor/composable/milkdownEditor'
+import { MilkdownEditorInstance } from '@/components/editor/milkdown/composable/milkdownEditor'
 
 describe('clipboardUtil', () => {
   let mockEditor: MilkdownEditorInstance

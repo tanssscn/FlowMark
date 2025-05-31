@@ -3,7 +3,7 @@ import { nowFormatDate } from "./formatUtil";
 import { fileService } from "@/services/files/fileService";
 import { filename } from "pathe/utils";
 import { getDirname, getJoin, getRelative } from "./pathUtil";
-import { MilkdownEditorInstance } from "@/components/editor/composable/milkdownEditor";
+import { MilkdownEditorInstance } from "@/components/editor/milkdown/composable/milkdownEditor";
 import type { AppFileInfo } from "@/types/appTypes";
 import { useSettingsStore } from '@/stores/settingsStore.ts';
 import { ExternImagePathOptions, ImagePathTypeOptions } from "@/types/appSettingsConst";
@@ -109,7 +109,6 @@ const dataUrlToBlob = (dataUrl: string): Blob => {
   return new Blob([u8arr], { type: mime });
 }
 /**
- * TODO: 上传图片返回的路径类型
  * @param file 
  * @param fileInfo 
  * @param imagePathTypeOptions : 图片路径类型，默认是相对路径
