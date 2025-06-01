@@ -1,52 +1,45 @@
 @media print {
-  @page {
-    size: A4;
-  } 
- 
+  body * {
+    visibility: hidden;
+    /* left: 0 !important; */
+  }
 
-body * {
-  visibility: hidden;
-  /* left: 0 !important; */
-}
+  .nonprintable {
+    display: none;
+  }
 
-.nonprintable {
-  display: none;
-}
+  /* 只显示打印容器及其内容 */
+  .ProseMirror,
+  .ProseMirror * {
+    visibility: visible;
+    position: static;
+    width: auto;
+    height: auto;
+  }
 
-/* 只显示打印容器及其内容 */
-.ProseMirror,
-.ProseMirror * {
-  visibility: visible;
-  position: static;
-  width: auto;
-  height: auto;
-}
+  .ProseMirror {
+    margin: 0 auto !important;
+    /* 左右外边距自动 */
+    padding: 0 !important;
+    border: none;
+    width: 100% !important;
+    height: auto;
+    overflow: visible !important;
+    z-index: 999 !important;
+    /* 悬停时临时提高层级 */
+  }
 
-.ProseMirror {
-  margin: 0 auto !important;
-  /* 左右外边距自动 */
-  padding: 0 !important;
-  border: none;
-  left: 0;
-  top: 0;
-  width: 100% !important;
-  height: auto;
-  overflow: visible !important;
-  z-index: 999 !important;
-  /* 悬停时临时提高层级 */
-}
+  .print-panel {
+    left: 0 !important;
+    width: 100% !important;
+  }
 
-.print-panel {
-  left: 0 !important;
-  width: 100% !important;
-}
+  .tabs-container :deep(.el-tabs__header) {
+    display: none;
+  }
 
-.tabs-container :deep(.el-tabs__header) {
-  display: none;
-}
-
-.main-area {
-  margin: 0 !important;
-}
+  .main-area {
+    margin: 0 !important;
+  }
 
 }

@@ -3,15 +3,16 @@ import { Editor } from "@milkdown/kit/core";
 import { getHTML } from "@milkdown/utils";
 
 export const exportHtml = async (editor: Editor) => {
-  await editor.action(async (ctx) => {
-    // 获取当前内容 HTML
-    const contentHTML = getHTML()(ctx);
-
-    // 获取 Milkdown 主题样式
-    const themeStyles = getEditorStyles();
-
-    // 构建完整 HTML 文档
-    const completeHTML = `<!DOCTYPE html>
+    const html = editor.action(getHTML());
+    const contentHtml = `
+    <div class="ProseMirror">
+      ${html}
+    </div>
+    `
+  // 获取 Milkdown 主题样式
+  const themeStyles = getEditorStyles();
+  // 构建完整 HTML 文档
+  const completeHTML = `<!DOCTYPE html>
   <html>
   <head>
     <meta charset="UTF-8">
@@ -23,22 +24,19 @@ export const exportHtml = async (editor: Editor) => {
     </style>
   </head>
   <body class="milkdown">
-    <div class="editor">
-      ${contentHTML}
-    </div>
+    ${contentHtml}
   </body>
   </html>`;
-    // 处理文件保存
-    fileService.saveFileDialog({
-      title: '导出 HTML 文件',
-      filters: [{ name: 'HTML 文件', extensions: ['html'] }],
-    }).then(async (file) => {
-      if (!file) return;
-      await fileService.writeTextFile(
-        { path: file, storageLocation: 'local' },
-        completeHTML
-      );
-    });
+  // 处理文件保存
+  fileService.saveFileDialog({
+    title: '导出 HTML 文件',
+    filters: [{ name: 'HTML 文件', extensions: ['html'] }],
+  }).then(async (file) => {
+    if (!file) return;
+    await fileService.writeTextFile(
+      { path: file, storageLocation: 'local' },
+      completeHTML
+    );
   });
 }
 

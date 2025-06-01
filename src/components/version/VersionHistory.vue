@@ -34,8 +34,8 @@
     </el-scrollbar>
     <VersionMenu @restoreVersion="_restoreVersion" :contextMenu="contextMenu" @updateVersions="updateVersions"
       @close="contextMenu.visible = false" @compareWithCurrent="compareWithCurrent" />
-    <version-compare ref="versionCompareRef" v-model="compareDialogVisible" :comparedVersion="comparedVersion"
-      @restoreVersion="_restoreVersion" @close="compareDialogVisible = false" />
+    <version-compare ref="versionCompareRef" v-model="compareDialogVisible" @restoreVersion="_restoreVersion"
+      @close="compareDialogVisible = false" />
   </div>
 </template>
 
@@ -64,7 +64,6 @@ const fileInfo = computed(() => {
 })
 const versionCompareRef = ref<InstanceType<typeof VersionCompare> | null>(null)
 // 版本数据
-const comparedVersion = ref<VersionInfo>({} as VersionInfo)
 const contextMenu = reactive<VersionContextMenuState>({
   visible: false,
   version: {} as VersionInfo,
@@ -94,8 +93,8 @@ const compareWithCurrent = async (version: VersionInfo) => {
     // 这里替换为实际的API调用
     const id = tabStore.activeTab?.id
     if (id && versionCompareRef.value) {
-      versionCompareRef.value.updateContent(tabStore.activeTab.id, fileInfo.value?.path ?? '')
-      comparedVersion.value = version
+      console.log('update content')
+      versionCompareRef.value.updateContent(tabStore.activeTab.id, fileInfo.value?.path ?? '',version)
       compareDialogVisible.value = true
     }
   } catch (error) {

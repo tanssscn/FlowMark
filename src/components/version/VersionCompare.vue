@@ -6,9 +6,10 @@
       <div class="flex justify-between items-center">
         <h4 :id="titleId" :class="titleClass">{{ t('version.compare') }}</h4>
         <div>
-          <el-button link :size="iconSize" @click="$emit('restoreVersion', comparedVersion, comparedContent)"
-            :icon="RefreshLeft" class="!rounded-md" />
-          <el-button link @click="closeDialog" class="!rounded-md" :size="iconSize" :icon="Close" />
+          <!-- <el-button link :size="iconSize" @click="" :icon="View" /> -->
+          <el-button link :size="iconSize" @click="$emit('restoreVersion', version, comparedContent)"
+            :icon="RefreshLeft" />
+          <el-button link @click="closeDialog" :size="iconSize" :icon="Close" />
         </div>
       </div>
     </template>
@@ -26,7 +27,7 @@
       <!-- 历史版本 -->
       <div class="flex-1 overflow-auto p-4">
         <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
-          {{ t('version.history') }} ({{ formatDate(comparedVersion?.createdAt, "YYYY-MM-DD HH:mm:ss") }})
+          {{ t('version.history') }} ({{ formatDate(version?.createdAt!, "YYYY-MM-DD HH:mm:ss") }})
         </div>
         <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
           <pre class="whitespace-pre-wrap font-mono text-sm">{{ comparedContent }}</pre>
@@ -39,25 +40,21 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { formatDate } from '@/utils/formatUtil'
-import { RefreshLeft, Close } from '@element-plus/icons-vue'
+import { RefreshLeft, View, Close } from '@element-plus/icons-vue'
 import { milkdownManager } from '@/services/milkdownManager'
-import { ref, PropType } from 'vue'
+import { ref } from 'vue'
 import { versionService } from '@/services/versions/versionService';
 import { VersionInfo } from '@/types/appTypes'
 
 const { t } = useI18n()
 const iconSize = "large"
-const props = defineProps({
-  comparedVersion: {
-    type: Object as PropType<VersionInfo>,
-    required: true
-  },
-})
 const comparedContent = ref<string>('')
 const currentContent = ref<string>('')
-const updateContent = (id: string, filePath: string) => {
+const version = ref<VersionInfo>()
+const updateContent = (id: string, filePath: string, _version: VersionInfo) => {
+  version.value = _version
   currentContent.value = milkdownManager.getEditor(id)?.getContent() ?? ''
-  versionService.getVersion(filePath, props.comparedVersion.id).then(content => {
+  versionService.getVersion(filePath, _version.id).then(content => {
     comparedContent.value = content ?? ''
   })
 }

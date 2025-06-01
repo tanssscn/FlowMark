@@ -53,14 +53,14 @@ onMounted(() => {
       switch (newVal) {
         case ViewMode.SOURCE:
           content = milkdownEditorRef.value?.milkdownEditor.getContent()
-          codemirrorEditorRef.value.updateContent(content)
+          updateMirrorEditor(content)
           break
         case ViewMode.READONLY:
           setEditable(false)
           break
         case ViewMode.SPLIT:
           content = milkdownEditorRef.value?.milkdownEditor.getContent()
-          codemirrorEditorRef.value.updateContent(content)
+          updateMirrorEditor(content)
           setEditable(false)
           break
         case ViewMode.WYSIWYG:
