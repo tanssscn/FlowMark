@@ -52,7 +52,7 @@ declare module 'vue' {
     HeaderMenu: typeof import('./src/components/HeaderMenu.vue')['default']
     ImageViewer: typeof import('./src/components/editor/image/ImageViewer.vue')['default']
     MainArea: typeof import('./src/components/MainArea.vue')['default']
-    MarkdownPreview: typeof import('./src/components/common/markdown/MarkdownPreview.vue')['default']
+    Markdown: typeof import('./src/components/common/markdown/index.vue')['default']
     MarkdownTab: typeof import('./src/components/settings/MarkdownTab.vue')['default']
     MenuItem: typeof import('./src/components/header/MenuItem.vue')['default']
     MilkdownEditor: typeof import('./src/components/editor/markdown/milkdown/MilkdownEditor.vue')['default']

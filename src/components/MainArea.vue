@@ -44,7 +44,7 @@ onMounted(() => {
 const tabChange = (id: string) => {
   nextTick(async () => {
     milkdownManager.setActiveEditor(id)
-    const fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
+    let fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
     if (fileInfo) {
       if (unwatch) {
         if (typeof unwatch === 'function') {
@@ -57,9 +57,11 @@ const tabChange = (id: string) => {
       unwatch = await fileService.watchFileChange(fileInfo, async () => {
         if (session && session?.unsaved) return;
         try {
+          fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
+          if (!fileInfo) return
           const newFileInfo = await fileService.getStat(fileInfo)
-          console.log(newFileInfo.version, fileInfo.version)
-          if (fileInfo.version !== newFileInfo.version) {
+          console.log(newFileInfo.version, fileInfo?.version)
+          if (fileInfo?.version !== newFileInfo.version) {
             fileStore.set([newFileInfo])
             childRef.fileChange();
           }
@@ -88,7 +90,7 @@ const tabChange = (id: string) => {
             </el-icon>
           </span>
         </template>
-        <component :is="conponentMap[tab.type]" :tab="tab" :ref="(el) => setChildRef(el, id)" />
+        <component :is="conponentMap[tab.type]" :tab="tab" :ref="(el: any) => setChildRef(el, id)" />
       </el-tab-pane>
     </el-tabs>
     <!-- 查找替换组件 -->

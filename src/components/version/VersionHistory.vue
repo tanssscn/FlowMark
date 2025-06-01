@@ -120,7 +120,7 @@ const createVersion = () => {
 const _restoreVersion = async (version: VersionInfo, content?: string) => {
   dialogService.confirm({
     title: t('dialog.restoreVersion.title'),
-    message: t('dialog.restoreVersion.meessage', { msg: `${version.message ?? ''}-${formatDate(version.createdAt, "YYYY-MM-DD HH:mm:ss")}` }),
+    message: t('dialog.restoreVersion.message', { msg: `${version.message ?? ''}-${formatDate(version.createdAt, "YYYY-MM-DD HH:mm:ss")}` }),
     type: 'warning'
   }).then(async () => {
     if (!fileInfo.value) return

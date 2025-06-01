@@ -1,4 +1,5 @@
 import { Editor } from "@milkdown/kit/core";
+import { DecorationSet } from '@milkdown/prose/view';
 
 export interface FindOptions {
   matchCase: false,
