@@ -43,6 +43,8 @@ onMounted(() => {
 })
 const tabChange = (id: string) => {
   nextTick(async () => {
+    const childRef = childRefs[id]
+    console.log(childRef)
     milkdownManager.setActiveEditor(id)
     let fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
     if (fileInfo) {
@@ -51,7 +53,6 @@ const tabChange = (id: string) => {
           unwatch()
         }
       }
-      const childRef = childRefs[id]
       if (typeof childRef.fileChange !== 'function') return;
       const session = tabStore.activeSession
       unwatch = await fileService.watchFileChange(fileInfo, async () => {

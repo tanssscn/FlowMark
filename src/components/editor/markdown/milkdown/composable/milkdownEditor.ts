@@ -26,24 +26,22 @@ import type { AppSettings } from "@/types/appSettings";
 import { closeImageSource, createFileInnerSrc } from "@/utils/pathUtil";
 import { uploadImage } from "@/utils/clipboardUtil";
 import { useTabStore } from "@/stores/tabStore";
-import { type Ref, watch } from "vue";
+import { type Ref, toRaw, watch, WatchHandle } from "vue";
 import { searchPlugin, searchPluginKey } from "../../plugins/find/composable/searchPlugin";
-import { languages } from '@codemirror/language-data'
-import { mermaidLanguageSupport, mermaidPreviewer } from "../../plugins/mermaid/mermaidConfig";
 import { exportHtml } from "../../plugins/export/exportHtml";
+import { mermaidPlugin } from "../../plugins/mermaid/mermaidPlugin";
 
 export class MilkdownEditorInstance implements IMilkdownEditor {
   public id: string;
   public editor: Editor | null = null;
-  private crepe: Crepe | null = null;
+  private crepe: Crepe | undefined = undefined;
   public settings: AppSettings | any;
   private settingsStore = useSettingsStore();
   private useEdit = useEdit();
   private isActive = false;
   private imageList: string[] = []
   private tabStore = useTabStore()
-  private editorReturn: ReturnType<typeof useEditor>;
-
+  private watchAll: WatchHandle[] = [];
   isBrowser = getDeviceInfo().isBrowser;
   fileStore = useFileStore()
 
@@ -53,40 +51,20 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       this.updateContent(content);
     });
   }
-  public loading(): Ref<boolean> {
-    return this.editorReturn.loading;
-  }
-  /**
- * 等待 ref 变量变为 true (回调函数版本)
- * @param ref 要监听的 ref 变量
- * @param callback 变为 true 时的回调
- * @param timeout 超时时间(毫秒)，默认不超时
- */
   public onloaded(
     callback: () => void,
-  ) { // 返回取消函数
-    // 如果已经是 true，直接调用回调
-    if (!this.loading().value) {
+  ) {
+    this.crepe?.create().then(() => {
+      console.log("Milkdown is ready!");
       callback();
-      return;
-    }
-    // 监听 ref 变化
-    watch(this.loading(), (value) => {
-      if (value) {
-        callback();
-      }
-    }, { once: true });
+    });
   }
   constructor(id: string, content: string) {
     this.id = id;
-    this.settings = { ...this.settingsStore.state };
-    this.editorReturn = useEditor((root) => {
+    useEditor((root) => {
       const crepe = new Crepe({
         root,
         defaultValue: content,
-        features: {
-          [CrepeFeature.Latex]: this.settings.markdown.extends.enableMath,
-        },
         featureConfigs: {
           [CrepeFeature.ImageBlock]: {
             proxyDomURL: async (url: string) => {
@@ -111,10 +89,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
             //   return url;
             // },
           },
-          [CrepeFeature.CodeMirror]: {
-            languages: this.getCodeMirrorLanguage(),
-            renderPreview: this.getRenderPreview()
-          }
         }
       });
       this.crepe = crepe;
@@ -127,20 +101,12 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
           Redo: ["Mod-y", "Shift-Mod-z"],
         });
       })
+      if (this.settingsStore.state.markdown.extensions.enableMermaid) {
+        mermaidPlugin(crepe.editor)
+      }
       this.editor = crepe.editor;
       return crepe;
     });
-  }
-  private getCodeMirrorLanguage() {
-    if (this.settingsStore.state.markdown.extensions.enableMermaid) {
-      languages.push(mermaidLanguageSupport)
-    }
-    return languages
-  }
-  private getRenderPreview() {
-    if (this.settingsStore.state.markdown.extensions.enableMermaid) {
-      return mermaidPreviewer
-    }
   }
   private _save = useDebounceFn((newContent: string) => {
     this.useEdit.saveFile(this.id, newContent);
@@ -320,10 +286,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       );
     });
   }
-  public async updateSettings(newSettings: any): Promise<void> {
-    const oldSettings = this.settings;
-    this.settings = { ...newSettings };
-
+  public async updateSettings(newSettings: any, oldSettings?: any): Promise<void> {
     // Check if emoji setting changed
     if (newSettings.markdown.extends.enableEmoji !== oldSettings?.markdown?.extends?.enableEmoji) {
       const { emoji } = await import('@milkdown/plugin-emoji');
@@ -344,6 +307,12 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
         } as IndentConfigOptions);
       });
     }
+
+    // if (newSettings.markdown.extensions.enableMermaid !== oldSettings?.markdown?.extensions?.enableMermaid) {
+    //   if (newSettings.markdown.extensions.enableMermaid) {
+    //     mermaidPlugin(this.editor!)
+    //   }
+    // }
   }
 
   public updateTOC(): void {
@@ -384,13 +353,17 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   }
 
   public activate(): void {
-    this.checkSettingsUpdate();
-    this.isActive = true;
-    this.updateTOC();
+    this.onloaded(() => {
+      console.log('activate')
+      this.watchHandler()
+      this.isActive = true;
+      this.updateTOC();
+    })
   }
 
   public deactivate(): void {
     this.isActive = false;
+    this.watchAll.forEach(w => w.stop());
   }
   public getFileInfo(): AppFileInfo | undefined {
     return this.fileStore.get(this.tabStore.state[this.id].filePath!);
@@ -409,12 +382,19 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   }
 
   private checkSettingsUpdate(): void {
-    const currentSettings = { ...this.settingsStore.state };
-    if (JSON.stringify(currentSettings) !== JSON.stringify(this.settings)) {
-      this.updateSettings(currentSettings);
-    }
+    console.log('checkSettingsUpdate')
+    const oldSettings = this.settings;
+    this.settings = structuredClone(toRaw(this.settingsStore.state));
+    this.updateSettings(this.settings, oldSettings);
   }
 
+  private watchHandler() {
+    const watchSettings = watch([this.settingsStore.state.markdown, this.settingsStore.state.editor], () => {
+      console.log('watchSettings')
+      this.checkSettingsUpdate();
+    }, { deep: true, immediate: true });
+    this.watchAll.push(watchSettings);
+  }
   public async exportHtml() {
     if (!this.editor) return;
     exportHtml(this.editor);

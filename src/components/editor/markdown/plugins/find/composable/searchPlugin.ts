@@ -4,6 +4,8 @@ import { Decoration, DecorationSet } from '@milkdown/prose/view';
 import { Ctx } from '@milkdown/ctx';
 import { Transaction, EditorState } from '@milkdown/prose/state';
 import { FindOptions } from '../../../types';
+import type { Node } from '@milkdown/prose/model'
+import { createRegexMatcher, createTextMatcher, mergeSlash } from './searchMatcher';
 
 interface MatchPosition {
   from: number;
@@ -40,16 +42,24 @@ export const searchPlugin = $prose((ctx: Ctx) => {
       apply: (
         tr: Transaction,
         prev: SearchPluginState,
+        oldState: EditorState,
+        newState: EditorState
       ): SearchPluginState => {
         const searchMeta = tr.getMeta(searchPluginKey);
 
-        if (!searchMeta) return prev;
+        // 如果没有搜索元数据，保持原状态
+        if (!searchMeta) {
+          // 文档变化时更新装饰器位置
+          if (tr.docChanged && prev.initialized) {
+            return updateDecorations(prev, newState);
+          }
+          return prev;
+        }
 
         // 处理搜索操作
         if (searchMeta.action === 'search') {
           const { searchTerm, options } = searchMeta;
-          console.log('search', searchTerm, options);
-          const doc = tr.doc;
+          const doc = newState.doc;
 
           if (!searchTerm) {
             return {
@@ -62,173 +72,128 @@ export const searchPlugin = $prose((ctx: Ctx) => {
             };
           }
 
-          const decorations: Decoration[] = [];
-          const matches: { from: number, to: number }[] = [];
-
-          // 创建匹配函数
-          const getMatches = options.regex
-            ? createRegexMatcher(searchTerm, options)
-            : createTextMatcher(searchTerm, options);
-
-          doc.descendants((node, pos) => {
-            if (node.isText) {
-              const content = node.textContent;
-              const newMatches = getMatches(content, pos);
-              matches.push(...newMatches);
-
-              newMatches.forEach(match => {
-                decorations.push(Decoration.inline(
-                  match.from,
-                  match.to,
-                  { class: 'search-highlight' }
-                ));
-              });
-            }
-          });
-
-          let currentIndex = -1;
-          if (matches.length > 0) {
-            currentIndex = matches.findIndex(match =>
-              match.from >= (tr.selection?.from || 0)
-            );
-            if (currentIndex === -1) currentIndex = 0;
-
-            // 更新当前匹配项的装饰器
-            const currentMatch = matches[currentIndex];
-            decorations.push(Decoration.inline(
-              currentMatch.from,
-              currentMatch.to,
-              { class: 'current-search-highlight' }
-            ));
-          }
-
-          return {
-            decorations: DecorationSet.create(doc, decorations),
-            searchTerm,
-            currentIndex,
-            matches,
-            initialized: true,
-            options
-          };
+          return performSearch(doc, searchTerm, options);
         }
+
         // 处理导航操作
         if (searchMeta.action === 'navigate' && prev.initialized) {
-          const { matches, decorations: prevDecorations, options } = prev;
-          let { currentIndex } = prev;
-          const direction = searchMeta.direction;
-          const doc = tr.doc;
-
-          if (matches.length === 0) return prev;
-
-          // 计算新索引
-          const newIndex = direction === 'next'
-            ? (currentIndex + 1) % matches.length
-            : (currentIndex - 1 + matches.length) % matches.length;
-
-          // 创建新的装饰器集合
-          const newDecorations: Decoration[] = [];
-
-          // 添加所有匹配项
-          matches.forEach((match, index) => {
-            newDecorations.push(Decoration.inline(
-              match.from,
-              match.to,
-              { class: index === newIndex ? 'current-search-highlight' : 'search-highlight' }
-            ));
-          });
-
-          return {
-            ...prev,
-            decorations: DecorationSet.create(doc, newDecorations),
-            currentIndex: newIndex,
-            options
-          };
+          return navigateMatches(prev, newState, searchMeta.direction);
         }
+
         return prev;
       }
     },
     props: {
       decorations(state: EditorState) {
-        const stateObj = this.getState(state);
-        if (stateObj) {
-          return stateObj.decorations;
-        } else {
-          // 提供一个默认值，或者根据具体业务逻辑处理 undefined 的情况
-          return DecorationSet.empty;
-        }
+        return this.getState(state)?.decorations || DecorationSet.empty;
       }
     }
   });
 });
+// 执行搜索并创建装饰器
+function performSearch(doc: Node, searchTerm: string, options: FindOptions) {
+  const decorations: Decoration[] = [];
+  const matches: MatchPosition[] = [];
 
-// 创建文本匹配器（普通文本搜索）
-function createTextMatcher(searchTerm: string, options: { matchCase: boolean, wholeWord: boolean }) {
-  const term = options.matchCase ? searchTerm : searchTerm.toLowerCase();
-  const wordBoundary = options.wholeWord ? '\\b' : '';
+  // 创建匹配函数
+  const getMatches = options.regex
+    ? createRegexMatcher(searchTerm, options)
+    : createTextMatcher(searchTerm, options);
 
-  return (content: string, pos: number) => {
-    const matches: { from: number, to: number }[] = [];
-    const text = options.matchCase ? content : content.toLowerCase();
-    let index = 0;
+  doc.descendants((node, pos) => {
+    if (node.isText) {
+      // 处理特殊字符转义
+      const content = mergeSlash(node.textContent);
 
-    while (index < content.length) {
-      const matchIndex = text.indexOf(term, index);
-      if (matchIndex === -1) break;
+      const newMatches = getMatches(content, pos);
+      matches.push(...newMatches);
 
-      const from = pos + matchIndex;
-      const to = from + term.length;
-
-      // 检查是否全词匹配
-      if (!options.wholeWord || isWholeWord(content, matchIndex, term.length)) {
-        matches.push({ from, to });
-      }
-
-      index = matchIndex + term.length;
+      newMatches.forEach(match => {
+        decorations.push(Decoration.inline(
+          match.from,
+          match.to,
+          { class: 'search-highlight' }
+        ));
+      });
     }
+  });
 
-    return matches;
-  };
-}
+  let currentIndex = -1;
+  if (matches.length > 0) {
+    currentIndex = 0;
 
-// 创建正则表达式匹配器
-function createRegexMatcher(pattern: string, options: { matchCase: boolean }) {
-  const flags = options.matchCase ? 'g' : 'gi';
-  let regex: RegExp;
-
-  try {
-    regex = new RegExp(pattern, flags);
-  } catch (e) {
-    // 正则表达式无效时退回普通文本搜索
-    return createTextMatcher(pattern, { matchCase: options.matchCase, wholeWord: false });
+    // 更新当前匹配项的装饰器
+    const currentMatch = matches[currentIndex];
+    decorations.push(Decoration.inline(
+      currentMatch.from,
+      currentMatch.to,
+      { class: 'current-search-highlight' }
+    ));
   }
 
-  return (content: string, pos: number) => {
-    const matches: { from: number, to: number }[] = [];
-    let match;
+  return {
+    decorations: DecorationSet.create(doc, decorations),
+    searchTerm,
+    currentIndex,
+    matches,
+    initialized: true,
+    options
+  };
+}
+// 文档变化时更新装饰器位置
+function updateDecorations(prev: SearchPluginState, state: EditorState) {
+  const { searchTerm, options } = prev;
+  if (!searchTerm) return prev;
 
-    while ((match = regex.exec(content)) !== null) {
-      matches.push({
-        from: pos + match.index,
-        to: pos + match.index + match[0].length
-      });
+  return performSearch(state.doc, searchTerm, options);
+}
 
-      // 避免无限循环
-      if (match.index === regex.lastIndex) {
-        regex.lastIndex++;
+// 导航到下一个/上一个匹配项
+function navigateMatches(prev: SearchPluginState, state: EditorState, direction: 'next' | 'prev') {
+  const { matches, decorations: prevDecorations, options } = prev;
+  let { currentIndex } = prev;
+  const doc = state.doc;
+
+  if (matches.length === 0) return prev;
+
+  // 计算新索引
+  const newIndex = direction === 'next'
+    ? (currentIndex + 1) % matches.length
+    : (currentIndex - 1 + matches.length) % matches.length;
+
+  // 创建新的装饰器集合
+  const newDecorations: Decoration[] = [];
+
+  // 添加所有匹配项
+  matches.forEach((match, index) => {
+    newDecorations.push(Decoration.inline(
+      match.from,
+      match.to,
+      { class: index === newIndex ? 'current-search-highlight' : 'search-highlight' }
+    ));
+  });
+
+  // 滚动到当前匹配项
+  const match = matches[newIndex];
+  if (match) {
+    setTimeout(() => {
+      const view = stateToView(state);
+      if (view) {
+        view.dispatch(view.state.tr.scrollIntoView());
       }
-    }
+    }, 0);
+  }
 
-    return matches;
+  return {
+    ...prev,
+    decorations: DecorationSet.create(doc, newDecorations),
+    currentIndex: newIndex,
+    options
   };
 }
 
-// 检查是否全词匹配
-function isWholeWord(text: string, index: number, length: number) {
-  const before = index > 0 ? text[index - 1] : '';
-  const after = index + length < text.length ? text[index + length] : '';
-  return !isWordChar(before) && !isWordChar(after);
-}
-
-function isWordChar(char: string) {
-  return /\w/.test(char);
+// 从编辑器状态获取视图（辅助函数）
+function stateToView(state: EditorState) {
+  const view = (state as any).editorView;
+  return view && view.dom && view.dom.parentNode ? view : null;
 }

@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { watch, onUnmounted, ref, onMounted, onBeforeMount } from "vue";
+import { watch, onUnmounted, onMounted } from "vue";
 import { Milkdown } from "@milkdown/vue";
 import { milkdownManager } from "@/services/milkdownManager";
 import { handlePaste } from "@/utils/clipboardUtil";
-import { MilkdownEditorInstance } from "./composable/milkdownEditor";
 
 const props = defineProps<{
   tabId: string
   content: string
 }>()
-const milkdownEditor = new MilkdownEditorInstance(props.tabId, props.content)
-milkdownManager.setEditor(props.tabId, milkdownEditor)
+const milkdownEditor = milkdownManager.createEditor(props.tabId, props.content)
 watch(() => props.tabId, async (newId) => {
   milkdownEditor.updateId(newId)
 })

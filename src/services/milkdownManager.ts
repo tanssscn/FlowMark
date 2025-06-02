@@ -21,7 +21,17 @@ export class MilkdownEditorManager {
   }
   public setEditor(id: string, editor: MilkdownEditorInstance): void {
     this.editors.set(id, editor);
-    editor.activate();
+    if (id === this.currentEditorId) {
+      editor.activate();
+    }
+  }
+  public createEditor(id: string, content: string): MilkdownEditorInstance {
+    const editor = new MilkdownEditorInstance(id, content);
+    this.setEditor(id, editor);
+    if (id === this.currentEditorId) {
+      editor.activate();
+    }
+    return editor;
   }
   public removeEditor(id: string): void {
     if (this.currentEditorId === id) {
@@ -42,7 +52,9 @@ export class MilkdownEditorManager {
     this.currentEditorId = id;
     if (id) {
       const editor = this.editors.get(id);
+      console.log("activate editor", id, editor, this.editors);
       if (editor) {
+        console.log("activate editor", id);
         editor.activate();
       }
     }
