@@ -1,4 +1,4 @@
-import { useEditor } from "@milkdown/vue";
+import { useEditor, UseEditorReturn } from "@milkdown/vue";
 import { Crepe, CrepeFeature } from "@milkdown/crepe";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { ListenerManager } from '@milkdown/plugin-listener'
@@ -30,8 +30,6 @@ import { type Ref, toRaw, watch, WatchHandle } from "vue";
 import { searchPlugin, searchPluginKey } from "../../plugins/find/composable/searchPlugin";
 import { exportHtml } from "../../plugins/export/exportHtml";
 import { mermaidPlugin } from "../../plugins/mermaid/mermaidPlugin";
-import { languages } from '@codemirror/language-data'
-import { mermaidLanguageSupport } from "../../plugins/mermaid/mermaidConfig";
 export class MilkdownEditorInstance implements IMilkdownEditor {
   public id: string;
   public editor: Editor | null = null;
@@ -39,10 +37,10 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   public settings: AppSettings | any;
   private settingsStore = useSettingsStore();
   private useEdit = useEdit();
-  private isActive = false;
   private imageList: string[] = []
   private tabStore = useTabStore()
   private watchAll: WatchHandle[] = [];
+  private editorReturn: UseEditorReturn;
   isBrowser = getDeviceInfo().isBrowser;
   fileStore = useFileStore()
 
@@ -52,17 +50,31 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       this.updateContent(content);
     });
   }
+
   public onloaded(
     callback: () => void,
   ) {
-    this.crepe?.create().then(() => {
-      console.log("Milkdown is ready!");
+    console.log(this.loading().value,callback())
+    // 如果已经是 true，直接调用回调
+    if (!this.loading().value) {
+      console.log('call')
       callback();
-    });
+      return;
+    }
+    // 监听 ref 变化
+    watch(this.loading(), (value) => {
+      if (value) {
+        console.log('not loaded')
+        callback();
+      }
+    }, { once: true });
+  }
+  private loading(): Ref<boolean> {
+    return this.editorReturn.loading;
   }
   constructor(id: string, content: string) {
     this.id = id;
-    useEditor((root) => {
+    this.editorReturn = useEditor((root) => {
       const crepe = new Crepe({
         root,
         defaultValue: content,
@@ -313,7 +325,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   }
 
   public updateTOC(): void {
-    if (!this.isActive) return
     const items: OutlineItem[] = [];
     const view = this.editor?.action((ctx) => ctx.get(editorViewCtx));
     if (!view) return;
@@ -351,15 +362,12 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
 
   public activate(): void {
     this.onloaded(() => {
-      console.log('activate')
       this.watchHandler()
-      this.isActive = true;
       this.updateTOC();
     })
   }
 
   public deactivate(): void {
-    this.isActive = false;
     this.watchAll.forEach(w => w.stop());
   }
   public getFileInfo(): AppFileInfo | undefined {
@@ -449,5 +457,8 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   // 删除线
   public toggleStrikethrough() {
     this.editor?.action(callCommand(toggleStrikethroughCommand.key))
+  }
+  public setOnlyRead(bool: boolean){
+    this.crepe?.setReadonly(bool)
   }
 }

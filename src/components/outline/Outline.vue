@@ -9,7 +9,6 @@ const tabStore = useTabStore()
 
 const { t } = useI18n()
 
-const allCollapsed = ref(false)
 const expandedKeys = ref<string[]>([])
 
 const treeProps = {
@@ -25,13 +24,6 @@ const outline = computed(() => {
 })
 const handleNodeClick = (data: OutlineItem) => {
   milkdownManager.scrollTo(data.id)
-}
-
-const toggleAllCollapse = () => {
-  allCollapsed.value = !allCollapsed.value
-  expandedKeys.value = allCollapsed.value ? [] :
-    outline.value.filter(item => item.level <= 2)
-      .map(item => item.id)
 }
 </script>
 

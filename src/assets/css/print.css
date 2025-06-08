@@ -37,9 +37,4 @@
   .tabs-container :deep(.el-tabs__header) {
     display: none;
   }
-
-  .main-area {
-    margin: 0 !important;
-  }
-
 }

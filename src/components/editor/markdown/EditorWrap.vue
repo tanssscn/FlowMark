@@ -1,74 +1,81 @@
 <template>
   <div v-if="!initial" v-loading="!initial"
     style="height: 100vh; display: flex; justify-content: center; align-items: center;" />
-  <SplitPane v-else class="editor-wrap" left-absolute :show-right="showMilkdown" left-class="nonprintable"
-    right-class="print-panel" :showLeft="showCodeMirror">
-    <template #left>
+  <el-splitter v-else class="editor-wrap" @resize-end="resizeEndEvent">
+    <el-splitter-panel collapsible v-model:size="sourceWdith">
       <el-scrollbar class="nonprintable">
         <CodeMirrorEditor ref="codemirrorEditorRef" @updateMilkdown="updateMilkdown" :content="content" />
       </el-scrollbar>
-    </template>
-    <template #right>
+    </el-splitter-panel>
+    <el-splitter-panel collapsible v-model:size="milkdownWdith">
       <MilkdownProvider>
         <MilkdownEditor ref="milkdownEditorRef" :tab-id="tab.id" :content="content" />
       </MilkdownProvider>
-    </template>
-  </SplitPane>
+    </el-splitter-panel>
+  </el-splitter>
 </template>
 <script lang="ts" setup>
 import { useEdit } from "@/composable/useEdit";
 import MilkdownEditor from '@/components/editor/markdown/milkdown/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue';
 import { ViewMode, type EditorTab } from '@/types/appTypes';
-import { ref, PropType, computed, watch, onMounted } from 'vue'
+import { ref, PropType, watch, onMounted } from 'vue'
 import CodeMirrorEditor from "./codemirror/CodeMirrorEditor.vue";
-import SplitPane from '@/components/common/splitPanel/SplitPanel.vue'
 import { dialogService } from "@/services/dialog/dialogService";
+import { useTabStore } from "@/stores/tabStore";
+const tabStore = useTabStore()
 
 let content = ""
 const milkdownEditorRef = ref()
 const codemirrorEditorRef = ref()
+const sourceWdith = ref<string | number>()
+const milkdownWdith = ref<string | number>()
 const updateMilkdown = (content: string) => {
   milkdownEditorRef.value?.milkdownEditor.updateContent(content)
 }
 const updateMirrorEditor = (content: string) => {
   codemirrorEditorRef.value?.updateContent(content)
 }
-const showMilkdown = computed(() => {
-  return props.tab.edit?.viewMode === ViewMode.WYSIWYG || props.tab.edit?.viewMode === ViewMode.SPLIT || props.tab.edit?.viewMode === ViewMode.READONLY
-})
-const showCodeMirror = computed(() => {
-  return props.tab.edit?.viewMode === ViewMode.SOURCE || props.tab.edit?.viewMode === ViewMode.SPLIT
-})
 const setEditable = (preview: boolean) => {
-  const proseMirrorElement = document.querySelector('.ProseMirror');
-  if (proseMirrorElement) {
-    proseMirrorElement.setAttribute('contenteditable', preview.toString());
+  content = milkdownEditorRef.value?.milkdownEditor.setOnlyRead(!preview)
+}
+const resizeEndEvent = (index: number, sizes: number[]) => {
+  if (sizes[0] == 0) {
+    tabStore.switchViewMode(props.tab.id, ViewMode.WYSIWYG)
+  }
+  if (sizes[1] == 0) {
+    tabStore.switchViewMode(props.tab.id, ViewMode.SOURCE)
   }
 }
 
 onMounted(() => {
   watch(() => props.tab.edit?.viewMode, (newVal) => {
-    milkdownEditorRef.value?.milkdownEditor.onloaded(() => {
-      switch (newVal) {
-        case ViewMode.SOURCE:
-          content = milkdownEditorRef.value?.milkdownEditor.getContent()
-          updateMirrorEditor(content)
-          break
-        case ViewMode.READONLY:
-          setEditable(false)
-          break
-        case ViewMode.SPLIT:
-          content = milkdownEditorRef.value?.milkdownEditor.getContent()
-          updateMirrorEditor(content)
-          setEditable(false)
-          break
-        case ViewMode.WYSIWYG:
-          setEditable(true)
-          break
-      }
-    })
-  })
+    switch (newVal) {
+      case ViewMode.SOURCE:
+        sourceWdith.value = '100%'
+        milkdownWdith.value = 0
+        content = milkdownEditorRef.value?.milkdownEditor.getContent()
+        updateMirrorEditor(content)
+        break
+      case ViewMode.READONLY:
+        milkdownWdith.value = '100%'
+        sourceWdith.value = 0
+        setEditable(false)
+        break
+      case ViewMode.SPLIT:
+        milkdownWdith.value = '50%'
+        sourceWdith.value = '50%'
+        content = milkdownEditorRef.value?.milkdownEditor.getContent()
+        updateMirrorEditor(content)
+        setEditable(false)
+        break
+      case ViewMode.WYSIWYG:
+        milkdownWdith.value = '100%'
+        sourceWdith.value = 0
+        setEditable(true)
+        break
+    }
+  }, { immediate: true })
 })
 const { readFileByTabId } = useEdit()
 const props = defineProps({

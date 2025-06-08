@@ -13,34 +13,34 @@
         </div>
       </div>
     </template>
-    <SplitPane>
-      <template #left>
-        <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
-          {{ t('version.current') }}
-        </div>
-        <div v-if="renderMd">
-          <MilkdownProvider>
-            <MarkdownPreview :value="currentContent" />
-          </MilkdownProvider>
-        </div>
+    <el-splitter>
+    <el-splitter-panel>
+      <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
+        {{ t('version.current') }}
+      </div>
+      <div v-if="renderMd">
+        <MilkdownProvider>
+          <MarkdownPreview :value="currentContent" />
+        </MilkdownProvider>
+      </div>
+      <div v-else class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+        <pre class="whitespace-pre-wrap font-mono text-sm">{{ currentContent }}</pre>
+      </div>
+    </el-splitter-panel>
+    <el-splitter-panel>
+      <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
+        {{ t('version.history') }} ({{ formatDate(version?.createdAt!, "YYYY-MM-DD HH:mm:ss") }})
+      </div>
+      <div>
+        <MilkdownProvider v-if="renderMd">
+          <MarkdownPreview :value="comparedContent" />
+        </MilkdownProvider>
         <div v-else class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
-          <pre class="whitespace-pre-wrap font-mono text-sm">{{ currentContent }}</pre>
+          <pre class="whitespace-pre-wrap font-mono text-sm">{{ comparedContent }}</pre>
         </div>
-      </template>
-      <template #right>
-        <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
-          {{ t('version.history') }} ({{ formatDate(version?.createdAt!, "YYYY-MM-DD HH:mm:ss") }})
-        </div>
-        <div>
-          <MilkdownProvider v-if="renderMd">
-            <MarkdownPreview :value="comparedContent" />
-          </MilkdownProvider>
-          <div v-else class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
-            <pre class="whitespace-pre-wrap font-mono text-sm">{{ comparedContent }}</pre>
-          </div>
-        </div>
-      </template>
-    </SplitPane>
+      </div>
+      </el-splitter-panel>
+    </el-splitter>
   </el-dialog>
 </template>
 

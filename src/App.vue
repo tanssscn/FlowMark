@@ -9,7 +9,6 @@ import { ref, onMounted } from 'vue'
 import { getDeviceInfo } from '@/services/deviceService';
 import { initI18n } from './i18n'
 import { themeManager } from './services/persistService'
-import SplitPane from '@/components/common/splitPanel/SplitPanel.vue'
 const isBrowser = getDeviceInfo().isBrowser;
 const { restoreWindow, handleScroll, initMenu } = useWindowRoute()
 const windowStore = useWindowStore()
@@ -36,18 +35,16 @@ onMounted(async () => {
     <!-- 顶部导航栏 -->
     <HeaderMenu v-if="isBrowser" id="mainHeader"
       class="h-12 transform transition-transform duration-300 sticky top-0 z-50 bg-white dark:bg-black nonprintable" />
-    <SplitPane leftAbsolute v-model:left-width="windowStore.state.sidebar.width" :min-left-width="200"
-      :show-left="windowStore.state.sidebar.visible" left-class="nonprintable" right-class="print-panel"
-      :max-right-width="600"> <!-- 左侧边栏 -->
-      <template #left="{ width }">
-        <SidePanel class="overflow-hidden transition-all duration-200 fixed top-0 w-full"
-          :style="{ width: `${width}px` }" v-if="windowStore.state.sidebar.visible" id="sidebar" />
-      </template>
+    <el-splitter>
+      <el-splitter-panel class="nonprintable" v-model:size="windowStore.state.sidebar.width"
+        v-if="windowStore.state.sidebar.visible">
+        <SidePanel class="fixed top-0 left-0" :style="{ width: `${windowStore.state.sidebar.width}px` }" />
+      </el-splitter-panel>
       <!-- 主编辑区 -->
-      <template #right="{ width }">
-        <MainArea :width="width" v-if="isInitialized" class="flex-1 main-area" />
-      </template>
-    </SplitPane>
+      <el-splitter-panel v-if="isInitialized">
+        <MainArea />
+      </el-splitter-panel>
+    </el-splitter>
     <SettingsModal class="nonprintable" v-model="windowStore.state.showSettingsModal" />
   </div>
 </template>

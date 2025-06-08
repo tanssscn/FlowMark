@@ -9,6 +9,7 @@ const props = defineProps<{
   content: string
 }>()
 const milkdownEditor = milkdownManager.createEditor(props.tabId, props.content)
+
 watch(() => props.tabId, async (newId) => {
   milkdownEditor.updateId(newId)
 })

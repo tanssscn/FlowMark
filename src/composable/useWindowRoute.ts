@@ -65,8 +65,7 @@ export function useWindowRoute() {
     // 防抖处理滚动逻辑（默认 16ms，接近一帧的时间）
     const handleScroll = useThrottleFn(() => {
       const mainHeader = document.getElementById('mainHeader') as HTMLElement;
-      const sidebar = document.getElementById('sidebar') as HTMLElement;
-      const contentHeader = document.querySelector('.tabs-container .el-tabs__header') as HTMLElement;
+      const splitterContainer = document.getElementById('splitter-container') as HTMLElement;
       const currentScroll = window.scrollY;
       const mainHeaderVisible = mainHeader?.classList.contains('-translate-y-full');
       if (mainHeaderVisible && currentScroll >= lastScroll) {
@@ -80,16 +79,12 @@ export function useWindowRoute() {
         // currentScroll > lastScroll : 向下滚动
         if (currentScroll >= lastScroll) {
           mainHeader?.classList.add('-translate-y-full');
-          contentHeader.style.top = '0';
-          sidebar.style.top = '0';
+          splitterContainer.style.top = '0';
         } else {
           mainHeader?.classList.remove('-translate-y-full');
-          contentHeader.style.top = mainHeaderHeight;
-          sidebar.style.top = mainHeaderHeight;
-          console.log(mainHeaderHeight)
+          splitterContainer.style.top = mainHeaderHeight;
         }
         lastScroll = currentScroll;
-        console.log('scroll', currentScroll)
       });
     }, 200)
 

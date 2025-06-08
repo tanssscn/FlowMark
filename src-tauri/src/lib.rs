@@ -8,7 +8,8 @@ fn greet(name: &str) -> String {
 }
 fn configure_logging() -> Builder {
     let level = if cfg!(debug_assertions) {
-        LevelFilter::Trace // 开发环境更详细的日志
+        // LevelFilter::Trace // 开发环境更详细的日志
+        LevelFilter::Info // 生产环境基本日志
     } else {
         LevelFilter::Info // 生产环境基本日志
     };
