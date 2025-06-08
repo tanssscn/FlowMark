@@ -30,7 +30,8 @@ import { type Ref, toRaw, watch, WatchHandle } from "vue";
 import { searchPlugin, searchPluginKey } from "../../plugins/find/composable/searchPlugin";
 import { exportHtml } from "../../plugins/export/exportHtml";
 import { mermaidPlugin } from "../../plugins/mermaid/mermaidPlugin";
-
+import { languages } from '@codemirror/language-data'
+import { mermaidLanguageSupport } from "../../plugins/mermaid/mermaidConfig";
 export class MilkdownEditorInstance implements IMilkdownEditor {
   public id: string;
   public editor: Editor | null = null;
@@ -102,6 +103,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
         });
       })
       if (this.settingsStore.state.markdown.extensions.enableMermaid) {
+        // 如果初始化完毕进行配置，只有改动的节点会重新渲染，另外可能会导致配置失效。
         mermaidPlugin(crepe.editor)
       }
       this.editor = crepe.editor;
@@ -261,7 +263,8 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   }
 
   public getContent(): string {
-    return this.crepe?.getMarkdown() ?? '';
+    const content = this.crepe?.getMarkdown() ?? ''
+    return content;
   }
   public insertText(text: string): void {
     this.editor?.action((ctx) => {
@@ -307,12 +310,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
         } as IndentConfigOptions);
       });
     }
-
-    // if (newSettings.markdown.extensions.enableMermaid !== oldSettings?.markdown?.extensions?.enableMermaid) {
-    //   if (newSettings.markdown.extensions.enableMermaid) {
-    //     mermaidPlugin(this.editor!)
-    //   }
-    // }
   }
 
   public updateTOC(): void {

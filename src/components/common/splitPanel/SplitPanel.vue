@@ -1,38 +1,48 @@
 <template>
-  <div ref="containerRef" class="w-full h-full">
+  <div ref="containerRef" :class="[
+    'w-full h-full',
+    { 'flex': !leftAbsolute && !rightAbsolute }  // 非绝对定位时启用 Flex
+  ]">
     <!-- 左侧面板 -->
     <div v-show="showLeft" :class="[
       `h-full transition-[width] duration-200 ${leftClass}`,
       {
         'absolute left-0 top-0 z-10': leftAbsolute,
         'relative': !leftAbsolute,
+        'flex-shrink-0': !leftAbsolute && !rightAbsolute
       }
     ]" :style="{
-      width: showRight ? `${leftWidth}px` : '100%',
+      // width: showRight ? `${leftWidth}px` : '100%',
+      'flex-basis': (showRight && !leftAbsolute && !rightAbsolute) ? `${leftWidth}px` : undefined
     }">
       <slot name="left" :width="leftWidth" :updateWidth="(w: number | string) => updateWidth('left', w)" />
     </div>
 
     <!-- 拖拽手柄 -->
-    <div v-if="showLeft && showRight"
-      class='h-full bg-gray-300 dark:bg-gray-700 cursor-col-resize hover:bg-primary transition-colors duration-200 fixed top-0 z-20'
-      :style="{
-        width: `${handleWidth}px`,
-        left: fixedLeft,
-      }" @mousedown.prevent="startDrag" />
+    <div v-if="showLeft && showRight" :class="[
+      'h-full bg-gray-300 dark:bg-gray-700 cursor-col-resize hover:bg-primary transition-colors duration-200',
+      {
+        'fixed top-0 z-20': leftAbsolute || rightAbsolute,
+        'flex-shrink-0': !leftAbsolute && !rightAbsolute, // 关键修改
+      }
+    ]" :style="{
+      width: `${handleWidth}px`,
+      left: fixedLeft,
+      height: containerHeight,
+    }" @mousedown.prevent="startDrag" />
 
     <!-- 右侧面板 -->
     <div v-show="showRight" :class="[
       `h-full transition-[width] duration-200 ${rightClass}`,
       {
         'absolute top-0 z-10': rightAbsolute,
-        'relative': !rightAbsolute,
+        'relative': !rightAbsolute && leftAbsolute,
+        'flex-grow': !leftAbsolute && !rightAbsolute
       }
     ]" :style="{
       left: showLeft ? `${leftWidth + handleWidth}px` : '0px',
-      width: showLeft
-        ? `calc(100% - ${leftWidth + handleWidth}px)`
-        : '100%'
+      width: (!showLeft || (!leftAbsolute && !rightAbsolute)) ? undefined : '100%'
+
     }">
       <slot name="right" :width="rightWidthComputed" :updateWidth="(w: number | string) => updateWidth('right', w)" />
     </div>
@@ -40,8 +50,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
-import {useElementBounding, useEventListener, useThrottleFn } from '@vueuse/core'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useElementBounding, useEventListener, useThrottleFn } from '@vueuse/core'
 
 const props = withDefaults(
   defineProps<{
@@ -94,13 +104,19 @@ const isDragging = ref(false)
 const parsePercentage = (value: string, containerWidth: number) => {
   return (containerWidth * parseFloat(value)) / 100
 }
+watch(() => containerRef.value, () => {
+  if (containerRef.value) {
+    if (typeof props.leftWidth === 'string') {
+      leftWidth.value = parsePercentage(props.leftWidth, containerRef.value.offsetWidth)
+    }
+  }
+}, { once: true })
 // 左侧宽度（响应式变量）
 const leftWidth = ref(
   typeof props.leftWidth === 'string'
-    ? parsePercentage(props.leftWidth, containerRef.value?.offsetWidth || 0)
+    ? 0
     : props.leftWidth
 )
-
 // 右侧宽度计算
 const rightWidthComputed = computed(() => {
   if (!containerRef.value) return 0
@@ -117,6 +133,13 @@ const fixedLeft = computed(() => {
     return `${leftWidth.value + containerRect.left.value}px`
   } else {
     return `${leftWidth.value}px`
+  }
+})
+const containerHeight = computed(() => {
+  if (containerRef.value) {
+    return containerRect.height.value + 'px'
+  } else {
+    return 0
   }
 })
 const containerRect = useElementBounding(containerRef)

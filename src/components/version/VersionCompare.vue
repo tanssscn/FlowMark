@@ -6,34 +6,41 @@
       <div class="flex justify-between items-center">
         <h4 :id="titleId" :class="titleClass">{{ t('version.compare') }}</h4>
         <div>
-          <!-- <el-button link :size="iconSize" @click="" :icon="View" /> -->
+          <el-button link :size="iconSize" @click="toggleView" :icon="View" />
           <el-button link :size="iconSize" @click="$emit('restoreVersion', version, comparedContent)"
             :icon="RefreshLeft" />
           <el-button link @click="closeDialog" :size="iconSize" :icon="Close" />
         </div>
       </div>
     </template>
-    <div class="flex h-[calc(100vh-100px)] border border-gray-200 dark:border-gray-700 rounded-md">
-      <!-- 当前版本 -->
-      <div class="flex-1 overflow-auto p-4 border-r border-gray-200 dark:border-gray-700">
+    <SplitPane>
+      <template #left>
         <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
           {{ t('version.current') }}
         </div>
-        <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+        <div v-if="renderMd">
+          <MilkdownProvider>
+            <MarkdownPreview :value="currentContent" />
+          </MilkdownProvider>
+        </div>
+        <div v-else class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
           <pre class="whitespace-pre-wrap font-mono text-sm">{{ currentContent }}</pre>
         </div>
-      </div>
-
-      <!-- 历史版本 -->
-      <div class="flex-1 overflow-auto p-4">
+      </template>
+      <template #right>
         <div class="font-medium mb-2 text-gray-900 dark:text-gray-100">
           {{ t('version.history') }} ({{ formatDate(version?.createdAt!, "YYYY-MM-DD HH:mm:ss") }})
         </div>
-        <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
-          <pre class="whitespace-pre-wrap font-mono text-sm">{{ comparedContent }}</pre>
+        <div>
+          <MilkdownProvider v-if="renderMd">
+            <MarkdownPreview :value="comparedContent" />
+          </MilkdownProvider>
+          <div v-else class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+            <pre class="whitespace-pre-wrap font-mono text-sm">{{ comparedContent }}</pre>
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </SplitPane>
   </el-dialog>
 </template>
 
@@ -45,8 +52,15 @@ import { milkdownManager } from '@/services/milkdownManager'
 import { ref } from 'vue'
 import { versionService } from '@/services/versions/versionService';
 import { VersionInfo } from '@/types/appTypes'
+import SplitPane from '@/components/common/splitPanel/SplitPanel.vue'
+import MarkdownPreview from '@/components/common/markdown/MarkdownPreview.vue'
+import { MilkdownProvider } from '@milkdown/vue';
 
 const { t } = useI18n()
+const renderMd = ref(false)
+const toggleView = () => {
+  renderMd.value = !renderMd.value
+}
 const iconSize = "large"
 const comparedContent = ref<string>('')
 const currentContent = ref<string>('')
