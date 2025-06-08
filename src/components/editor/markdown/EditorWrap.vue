@@ -2,13 +2,13 @@
   <div v-if="!initial" v-loading="!initial"
     style="height: 100vh; display: flex; justify-content: center; align-items: center;" />
   <el-splitter v-else class="editor-wrap" @resize-end="resizeEndEvent">
-    <el-splitter-panel collapsible v-model:size="sourceWdith">
-      <el-scrollbar class="nonprintable">
+    <el-splitter-panel collapsible v-model:size="sourceWdith" :resizable>
+      <el-scrollbar class="nonprintable" v-show="typeof sourceWdith === 'number' ? sourceWdith > 0 : true">
         <CodeMirrorEditor ref="codemirrorEditorRef" @updateMilkdown="updateMilkdown" :content="content" />
       </el-scrollbar>
     </el-splitter-panel>
     <el-splitter-panel collapsible v-model:size="milkdownWdith">
-      <MilkdownProvider>
+      <MilkdownProvider v-show="typeof milkdownWdith === 'number' ? milkdownWdith > 0 : true">
         <MilkdownEditor ref="milkdownEditorRef" :tab-id="tab.id" :content="content" />
       </MilkdownProvider>
     </el-splitter-panel>
@@ -24,7 +24,7 @@ import CodeMirrorEditor from "./codemirror/CodeMirrorEditor.vue";
 import { dialogService } from "@/services/dialog/dialogService";
 import { useTabStore } from "@/stores/tabStore";
 const tabStore = useTabStore()
-
+const resizable = ref(true)
 let content = ""
 const milkdownEditorRef = ref()
 const codemirrorEditorRef = ref()
@@ -40,11 +40,13 @@ const setEditable = (preview: boolean) => {
   content = milkdownEditorRef.value?.milkdownEditor.setOnlyRead(!preview)
 }
 const resizeEndEvent = (index: number, sizes: number[]) => {
-  if (sizes[0] == 0) {
+  if (sizes[0] < 10) {
     tabStore.switchViewMode(props.tab.id, ViewMode.WYSIWYG)
+    resizable.value = false
   }
-  if (sizes[1] == 0) {
+  if (sizes[1] < 10) {
     tabStore.switchViewMode(props.tab.id, ViewMode.SOURCE)
+    resizable.value = false
   }
 }
 
@@ -68,6 +70,7 @@ onMounted(() => {
         content = milkdownEditorRef.value?.milkdownEditor.getContent()
         updateMirrorEditor(content)
         setEditable(false)
+        resizable.value = true
         break
       case ViewMode.WYSIWYG:
         milkdownWdith.value = '100%'

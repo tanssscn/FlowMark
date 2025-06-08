@@ -36,7 +36,7 @@ onMounted(async () => {
     <HeaderMenu v-if="isBrowser" id="mainHeader"
       class="h-12 transform transition-transform duration-300 sticky top-0 z-50 bg-white dark:bg-black nonprintable" />
     <el-splitter>
-      <el-splitter-panel class="nonprintable" v-model:size="windowStore.state.sidebar.width"
+      <el-splitter-panel class="nonprintable" v-model:size="windowStore.state.sidebar.width" min="200"
         v-if="windowStore.state.sidebar.visible">
         <SidePanel class="fixed top-0 left-0" :style="{ width: `${windowStore.state.sidebar.width}px` }" />
       </el-splitter-panel>
