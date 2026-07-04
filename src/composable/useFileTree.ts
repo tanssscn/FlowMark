@@ -19,7 +19,6 @@ export function useFileTree() {
   const fileStore = useFileStore();
   const recentStore = useRecentStore();
   const tabStore = useTabStore()
-  const settingsStore = useSettingsStore()
   const isBrowser = getDeviceInfo().isBrowser
 
   async function loadFiletreeAndRecent(fileEntry: FileEntry) {
@@ -103,14 +102,14 @@ export function useFileTree() {
    * @param fileInfo
    * @param isParent fileInfo 是否是父节点
    */
-  async function refresh(fileInfo: Pick<AppFileInfo, 'path' | 'isDir' | 'storageLocation'>, useParentRefresh: boolean = true) {
+  async function refresh(fileInfo: Pick<AppFileInfo, 'path' | 'isDir' | 'storageLocation' | 'username'>, useParentRefresh: boolean = true) {
     let path = fileInfo.path
     let fileEntry
     if (useParentRefresh || fileInfo.isDir) {
       if (useParentRefresh) {
         path = getDirname(fileInfo.path)
       }
-      fileEntry = await fileService.readDirectory({ path: path, storageLocation: fileInfo.storageLocation })
+      fileEntry = await fileService.readDirectory({ ...fileInfo, path: path })
     } else {
       fileEntry = await fileService.getStat({ path: path, storageLocation: fileInfo.storageLocation, isDir: false })
     }
@@ -151,14 +150,14 @@ export function useFileTree() {
    * 加载不存在的文件树，无弹窗
    * @param fileInfo 
    */
-  async function addFileTree(fileInfo: Pick<FileEntry, 'path' | 'storageLocation' | 'isDir'>) {
+  async function addFileTree(fileInfo: Pick<FileEntry, 'path' | 'storageLocation' | 'isDir' | 'username' | 'rootPath'>) {
+    fileInfo.rootPath = fileInfo.path
     const _fileInfo = fileStore.get(fileInfo.path)
     if (_fileInfo) {
       return
     }
     const stat = await fileService.getStat(fileInfo)
     if (stat.isDir) {
-      console.log('isDir')
       fileService.readDirectory(fileInfo).then((fileEntry) => {
         loadFiletreeAndRecent(fileEntry)
       })

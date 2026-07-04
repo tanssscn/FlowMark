@@ -7,8 +7,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, PropType, onMounted, onUnmounted } from 'vue'
-import panzoom, { PanzoomObject } from '@panzoom/panzoom'
+import { ref, onMounted, onUnmounted } from 'vue'
+import type { PropType } from 'vue'
+import panzoom from '@panzoom/panzoom'
+import type { PanzoomObject } from '@panzoom/panzoom'
 import type { EditorTab } from '@/types/appTypes';
 import { useFileStore } from '@/stores/fileStore'
 import { closeImageSource, createFileSrc } from '@/utils/pathUtil';

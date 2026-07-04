@@ -15,7 +15,7 @@ import {
 import { callCommand, replaceAll } from '@milkdown/utils';
 import type { AppFileInfo, OutlineItem } from "@/types/appTypes";
 import { indentConfig, type IndentConfigOptions } from '@milkdown/plugin-indent'
-import { historyKeymap, redoCommand, undoCommand } from "@milkdown/plugin-history";
+import { redoCommand, undoCommand, history } from "@milkdown/plugin-history";
 import { TextSelection } from "@milkdown/prose/state";
 import type { FindResult, IMilkdownEditor } from "../../types";
 import { getDeviceInfo } from "@/services/deviceService";
@@ -54,7 +54,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   public onloaded(
     callback: () => void,
   ) {
-    console.log(this.loading().value,callback())
+    console.log(this.loading().value, callback())
     // 如果已经是 true，直接调用回调
     if (!this.loading().value) {
       console.log('call')
@@ -106,18 +106,13 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       });
       this.crepe = crepe;
       this.autoSave();
-      crepe.editor.use(searchPlugin).config((ctx) => {
-        ctx.set(historyKeymap.key, {
-          // Remap to one shortcut.
-          Undo: "Mod-z",
-          // Remap to multiple shortcuts.
-          Redo: ["Mod-y", "Shift-Mod-z"],
-        });
-      })
+      crepe.editor.use(searchPlugin).use(history)
       if (this.settingsStore.state.markdown.extensions.enableMermaid) {
         // 如果初始化完毕进行配置，只有改动的节点会重新渲染，另外可能会导致配置失效。
         mermaidPlugin(crepe.editor)
       }
+      crepe.editor.use(history);
+
       this.editor = crepe.editor;
       return crepe;
     });
@@ -125,13 +120,15 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   private _save = useDebounceFn((newContent: string) => {
     this.useEdit.saveFile(this.id, newContent);
   }, this.settingsStore.state.file.save.autoSaveInterval * 1000)
+
   private _updateTOC = useDebounceFn((markdown: string) => {
     this.updateTOC();
-    this.tabStore.unsave(this.id);
+    this.tabStore.unsave();
     if (this.settingsStore.state.file.save.autoSave) {
       this._save(markdown);
     }
   }, 1000)
+
   private autoSave() {
     if (!this.crepe) return;
     this.crepe.on((api: ListenerManager) => {
@@ -301,11 +298,11 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       );
     });
   }
-  public async updateSettings(newSettings: any, oldSettings?: any): Promise<void> {
+  public async updateSettings(newSettings: AppSettings, oldSettings?: AppSettings): Promise<void> {
     // Check if emoji setting changed
-    if (newSettings.markdown.extends.enableEmoji !== oldSettings?.markdown?.extends?.enableEmoji) {
+    if (newSettings.markdown.extensions.enableEmoji !== oldSettings?.markdown?.extensions?.enableEmoji) {
       const { emoji } = await import('@milkdown/plugin-emoji');
-      if (newSettings.markdown.extends.enableEmoji) {
+      if (newSettings.markdown.extensions.enableEmoji) {
         this.editor?.use(emoji);
       } else {
         this.editor?.remove(emoji);
@@ -371,7 +368,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
     this.watchAll.forEach(w => w.stop());
   }
   public getFileInfo(): AppFileInfo | undefined {
-    return this.fileStore.get(this.tabStore.state[this.id].filePath!);
+    return this.fileStore.get(this.tabStore.state?.filePath!);
   }
 
   public scrollTo(id: string): void {
@@ -458,7 +455,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   public toggleStrikethrough() {
     this.editor?.action(callCommand(toggleStrikethroughCommand.key))
   }
-  public setOnlyRead(bool: boolean){
+  public setOnlyRead(bool: boolean) {
     this.crepe?.setReadonly(bool)
   }
 }

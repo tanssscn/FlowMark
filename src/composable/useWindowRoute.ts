@@ -28,15 +28,19 @@ export function useWindowRoute() {
   async function restoreWindow() {
     await fileStore.withAutoLoading(async () => {
       // 链接webdav
-      const webdav = settingsStore.state.webdav
-      let connected = false
-      if (webdav.serverUrl && webdav.username && webdav.password) {
-        connected = await webdavFileService.connect(webdav.serverUrl, webdav.username, webdav.password)
-        // 如果没有链接成功则清除 上次打开的数据
-        if (!connected && fileStore.state.fileTree.get(webdav.serverUrl)) {
-          fileStore.removeRoot(webdav.serverUrl)
+      const webdavs = settingsStore.state.webdav
+      await Promise.allSettled(webdavs.map(async (webdav) => {
+        if (webdav.showInFileTree && webdav.url && webdav.username && webdav.password) {
+          const connected = await webdavFileService.connect(webdav.url, webdav.username, webdav.password)
+          //   // 如果没有链接成功则清除 上次打开的数据
+          //   if (!connected && fileStore.state.fileTree.get(webdav.serverUrl)) {
+          //     fileStore.removeRoot(webdav.serverUrl)
+          //   }
+          if (connected) {
+            addFileTree({ path: webdav.url, storageLocation: 'webdav', isDir: true, username: webdav.username, rootPath: webdav.url })
+          }
         }
-      }
+      }))
       // 恢复上一次会话
       if (restoreApp.isRestoreLastSession()) {
         await Promise.allSettled(Object.values(fileStore.state.treeRoot).map(async (fileInfo: AppFileInfo) => {
@@ -47,13 +51,8 @@ export function useWindowRoute() {
         }))
         await restoreSession()
       }
-      if (!tabStore.activeId) {
+      if (!tabStore.state?.filePath) {
         tabStore.openWelcomeTab()
-      }
-      // 恢复窗口状态
-      // if (settingsStore.state.webdav.autoConnect && (!restoreApp.isNewWindow)) {
-      if (settingsStore.state.webdav.autoConnect && connected) {
-        addFileTree({ path: settingsStore.state.webdav.serverUrl, storageLocation: 'webdav', isDir: true })
       }
     })
   }

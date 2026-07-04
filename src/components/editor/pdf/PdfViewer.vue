@@ -3,10 +3,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, PropType, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import type { PropType } from 'vue'
 import { useFileStore } from '@/stores/fileStore'
 import { closeImageSource, createFileSrc } from '@/utils/pathUtil'
-import { EditorTab } from '@/types/appTypes'
+import type { EditorTab } from '@/types/appTypes'
 const fileStore = useFileStore()
 
 const props = defineProps({

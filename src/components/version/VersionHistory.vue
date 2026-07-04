@@ -41,7 +41,8 @@
 
 <script setup lang="ts">
 import { formatDate } from '@/utils/formatUtil'
-import { useVersion, VersionContextMenuState } from '@/components/version/useVersion'
+import type { VersionContextMenuState } from '@/components/version/useVersion'
+import { useVersion } from '@/components/version/useVersion'
 import { Plus, Document } from '@element-plus/icons-vue'
 import VersionCompare from './VersionCompare.vue'
 import VersionMenu from './VersionMenu.vue'
@@ -49,7 +50,7 @@ import { useI18n } from 'vue-i18n'
 import { useTabStore } from '@/stores/tabStore'
 import { computed, ref, reactive } from 'vue'
 import { versionService } from '@/services/versions/versionService';
-import { VersionInfo } from '@/types/appTypes'
+import type { VersionInfo } from '@/types/appTypes'
 import { useFileStore } from '@/stores/fileStore'
 import { dialogService } from '@/services/dialog/dialogService'
 import { asyncComputed } from '@vueuse/core'
@@ -60,7 +61,7 @@ const fileStore = useFileStore()
 const { t } = useI18n()
 const tabStore = useTabStore();
 const fileInfo = computed(() => {
-  return fileStore.get(tabStore.activeTab?.filePath ?? '')
+  return fileStore.get(tabStore.state?.filePath ?? '')
 })
 const versionCompareRef = ref<InstanceType<typeof VersionCompare> | null>(null)
 // 版本数据
@@ -91,10 +92,9 @@ const versions = asyncComputed(async (): Promise<VersionInfo[]> => {
 const compareWithCurrent = async (version: VersionInfo) => {
   try {
     // 这里替换为实际的API调用
-    const id = tabStore.activeTab?.id
-    if (id && versionCompareRef.value) {
+    if (tabStore.state?.id && versionCompareRef.value) {
       console.log('update content')
-      versionCompareRef.value.updateContent(tabStore.activeTab.id, fileInfo.value?.path ?? '',version)
+      versionCompareRef.value.updateContent(tabStore.state.id, fileInfo.value?.path ?? '', version)
       compareDialogVisible.value = true
     }
   } catch (error) {

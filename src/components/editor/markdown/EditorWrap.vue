@@ -19,7 +19,8 @@ import { useEdit } from "@/composable/useEdit";
 import MilkdownEditor from '@/components/editor/markdown/milkdown/MilkdownEditor.vue'
 import { MilkdownProvider } from '@milkdown/vue';
 import { ViewMode, type EditorTab } from '@/types/appTypes';
-import { ref, PropType, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import type { PropType } from 'vue'
 import CodeMirrorEditor from "./codemirror/CodeMirrorEditor.vue";
 import { dialogService } from "@/services/dialog/dialogService";
 import { useTabStore } from "@/stores/tabStore";

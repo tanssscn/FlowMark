@@ -93,6 +93,7 @@ export const useFileStore = defineStore('file', () => {
       } else {
         fileState.expandedPaths.push(path);
       }
+      console.log(fileState.expandedPaths);
     },
     /**
      * 

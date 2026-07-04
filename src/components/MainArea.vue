@@ -11,15 +11,12 @@ import SearchReplace from "@/components/editor/markdown/plugins/find/SearchRepla
 import { useWindowStore } from '@/stores/windowStore';
 import TableSelector from './editor/markdown/plugins/table/TableSelector.vue';
 import { useFileStore } from '@/stores/fileStore';
-import { UnwatchFn } from '@tauri-apps/plugin-fs';
+import type { UnwatchFn } from '@tauri-apps/plugin-fs';
 import { TabType } from '@/types/appTypes';
-import { useEdit } from "@/composable/useEdit";
-import { useSettingsStore } from '@/stores/settingsStore';
-const { closeTab } = useEdit()
+
 const windowStore = useWindowStore()
 const tabStore = useTabStore()
 const fileStore = useFileStore()
-const settingsStore = useSettingsStore();
 const childRefs = reactive<Record<string, any>>({})
 const setChildRef = (el: any, id: string) => {
   if (el) {
@@ -34,19 +31,17 @@ const conponentMap = {
   [TabType.PDF]: PdfViewer,
   [TabType.Unknown]: EditorWrap,
 };
-const handleTabChange = (tabName: string) => {
-  tabChange(tabName)
-}
+
 onMounted(() => {
-  if (!tabStore.activeId) return
-  tabChange(tabStore.activeId)
+  if (!tabStore.state?.id) return
+  tabChange(tabStore.state.id)
 })
+
 const tabChange = (id: string) => {
   nextTick(async () => {
     const childRef = childRefs[id]
-    console.log(childRef)
     milkdownManager.setActiveEditor(id)
-    let fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
+    let fileInfo = fileStore.get(tabStore.state?.filePath ?? '')
     if (fileInfo) {
       if (unwatch) {
         if (typeof unwatch === 'function') {
@@ -58,7 +53,7 @@ const tabChange = (id: string) => {
       unwatch = await fileService.watchFileChange(fileInfo, async () => {
         if (session && session?.unsaved) return;
         try {
-          fileInfo = fileStore.get(tabStore.activeTab?.filePath ?? '')
+          fileInfo = fileStore.get(tabStore.state?.filePath ?? '')
           if (!fileInfo) return
           const newFileInfo = await fileService.getStat(fileInfo)
           console.log(newFileInfo.version, fileInfo?.version)
@@ -76,24 +71,13 @@ const tabChange = (id: string) => {
 </script>
 
 <template>
-  <div>
-    <el-tabs @tab-change="handleTabChange" v-model="tabStore.activeId" type="card" closable
-      class="tabs-container flex flex-col" @tab-remove="closeTab">
-      <el-tab-pane lazy v-for="(tab, id) in tabStore.state" :key="id" :label="tab.title" :name="id">
-        <!-- 自定义标签标题 -->
-        <template #label>
-          <span class="flex items-center">
-            {{ tab.title }}
-            <el-icon v-if="!settingsStore.state.file.save.autoSave && tab.edit?.unsaved" class="ml-1 text-red-500">
-              <svg viewBox="0 0 128 128">
-                <circle cx="80" cy="64" r="48" />
-              </svg>
-            </el-icon>
-          </span>
-        </template>
-        <component :is="conponentMap[tab.type]" :tab="tab" :ref="(el: any) => setChildRef(el, id)" />
-      </el-tab-pane>
-    </el-tabs>
+  <div class="editor-container">
+    <!-- 直接显示当前活动的编辑器组件 -->
+    <component v-if="tabStore.state?.id" :is="conponentMap[tabStore.state.type]" :tab="tabStore.state"
+      :ref="(el: any) => setChildRef(el, tabStore.state?.id || '')" />
+    <!-- 如果没有打开的 tab，显示欢迎页面 -->
+    <WelcomePanel v-else />
+
     <!-- 查找替换组件 -->
     <SearchReplace />
     <TableSelector v-model="windowStore.windowState.showTableSelect"
@@ -101,10 +85,8 @@ const tabChange = (id: string) => {
   </div>
 </template>
 <style scoped>
-.tabs-container :deep(.el-tabs__header) {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: blur(5px);
+.editor-container {
+  height: 100%;
+  position: relative;
 }
 </style>

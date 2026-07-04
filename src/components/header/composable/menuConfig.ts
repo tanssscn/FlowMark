@@ -9,12 +9,12 @@ import { useEdit } from '@/composable/useEdit'
 import { useWindowRoute } from '@/composable/useWindowRoute'
 import { useRecentStore } from '@/stores/recentStore'
 import { ViewMode } from '@/types/appTypes'
-import {type HotKey } from '@/utils/hotkeys'
+import { type HotKey } from '@/utils/hotkeys'
 const { t } = i18n.global
 
 export interface MenuConfig extends HotKey {
   name: string,
-  submenu?: MenuConfig[]
+  submenu?: MenuConfig[],
   enabled?: boolean,
   checked?: boolean,
   icon?: string,
@@ -22,7 +22,7 @@ export interface MenuConfig extends HotKey {
 export const useMenuConfig = (): MenuConfig[] => {
   const { openFolder, openFile } = useFileTree()
   const { clearCache } = useWindowRoute()
-  const { saveAsFile } = useEdit()
+  const { saveAsFile, closeTab } = useEdit()
   const recentStore = useRecentStore();
   const tabStore = useTabStore()
   const windowStore = useWindowStore()
@@ -53,7 +53,7 @@ export const useMenuConfig = (): MenuConfig[] => {
       name: t('menu.separator'),
     },
     {
-      name: t('menu.FileMenu.save'),
+      name: t('common.save'),
       action: () => {
         milkdownManager.saveFile()
       },
@@ -292,7 +292,7 @@ export const useMenuConfig = (): MenuConfig[] => {
       action: () => {
         windowStore.toggleSidebar()
       },
-      shortcut: 'CommandOrControl+B'
+      shortcut: 'CommandOrControl+T'
     }, {
       id: 'view-mode',
       name: t('menu.ViewMenu.viewMode'),
@@ -304,7 +304,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === ViewMode.WYSIWYG,
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.activeId!, ViewMode.WYSIWYG)
+              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.WYSIWYG)
             }
           },
         },
@@ -315,7 +315,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === ViewMode.READONLY,
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.activeId!, ViewMode.READONLY)
+              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.READONLY)
             }
           },
         }, {
@@ -325,7 +325,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === 'split',
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.activeId!, ViewMode.SPLIT)
+              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.SPLIT)
             }
           }
         }, {
@@ -335,7 +335,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === ViewMode.SOURCE,
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.activeId!, ViewMode.SOURCE)
+              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.SOURCE)
             }
           }
         }
@@ -346,8 +346,8 @@ export const useMenuConfig = (): MenuConfig[] => {
       name: t('menu.ViewMenu.closeTab'),
       shortcut: 'CommandOrControl+W',
       action: () => {
-        if (!tabStore?.activeId) return
-        tabStore.closeTab(tabStore.activeId)
+        if (!tabStore.state?.id!) return
+        closeTab()
       }
     }
   ]

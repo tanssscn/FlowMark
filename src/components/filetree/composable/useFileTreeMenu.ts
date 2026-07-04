@@ -63,6 +63,7 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
   }
   const toggleExpand = (data: FileEntry, node: any, component: any) => {
     fileStore.toggleExpand(data.path)
+    console.log('fileStore.toggleExpand', data.path, node, component)
   }
   // 右键菜单处理
   const showContextMenu = (event: MouseEvent, data: FileEntry, node: any, component: any) => {

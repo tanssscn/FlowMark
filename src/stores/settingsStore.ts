@@ -1,7 +1,8 @@
-import type { AppSettings, TabBehavior, ThemeMode } from '@/types/appSettings';
+import type { AppSettings, TabBehavior, ThemeMode, WebDAVSettings } from '@/types/appSettings';
 import { ViewMode } from '@/types/appTypes';
 import { defineStore } from 'pinia';
 import { computed, reactive, readonly } from 'vue';
+import { isEqual } from 'es-toolkit/predicate';
 
 export const defaultSettings: AppSettings = {
   general: {
@@ -52,12 +53,7 @@ export const defaultSettings: AppSettings = {
       enableEmoji: true
     }
   },
-  webdav: {
-    serverUrl: '',
-    username: '',
-    password: '',
-    autoConnect: false,
-  },
+  webdav: [],
   keymap: {
     commands: [
       {
@@ -120,7 +116,28 @@ export const useSettingsStore = defineStore('settings', () => {
     resetWebdav() {
       console.log(defaultSettings.webdav)
       settings.webdav = structuredClone(defaultSettings.webdav);
-    }
+    },
+    updateWebdavAccount(oldAccount: WebDAVSettings, newAccount: Partial<WebDAVSettings>): WebDAVSettings {
+      const account = { ...oldAccount, ...newAccount }
+      if ((account.url !== oldAccount.url || oldAccount.username !== account.username) && this.isExistedWebdavAccount(account)) {
+        return oldAccount;
+      }
+      settings.webdav.splice(settings.webdav.indexOf(oldAccount), 1, account);
+      return account;
+    },
+    addWebdavAccount(account: WebDAVSettings): WebDAVSettings {
+      if (this.isExistedWebdavAccount(account)) {
+        return account;
+      }
+      settings.webdav.push(account);
+      return account;
+    },
+    isExistedWebdavAccount(account: WebDAVSettings) {
+      return settings.webdav.some(acc => acc.url === account.url && acc.username === account.username && acc.password === account.password);
+    },
+    removeWebdavAccount(account: WebDAVSettings) {
+      settings.webdav.splice(settings.webdav.indexOf(account), 1);
+    },
   };
 
   return {

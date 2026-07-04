@@ -31,9 +31,10 @@ export class TauriLocalFileService {
    * 读取文件内容
    */
   async readFile(fileInfo: Pick<FileEntry, 'path'>): Promise<ArrayBuffer> {
-    return await readFile(fileInfo.path, {
+    const res = await readFile(fileInfo.path, {
       baseDir: BaseDirectory.AppData,
-    });
+    })
+    return res.buffer
   }
   async readTextFile(fileInfo: Pick<FileEntry, 'path'>): Promise<string> {
     return await readTextFile(fileInfo.path, {

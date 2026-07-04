@@ -11,18 +11,14 @@ import { useSettingsStore } from './settingsStore';
 
 export const useTabStore = defineStore('tab', () => {
   const settingsStore = useSettingsStore()
-  const tabState = reactive<Record<string, EditorTab>>({})
-  const activeTabId = ref<string | undefined>();
+  const currentTab = ref<EditorTab | undefined>();
   const outlineState = reactive({
     tabId: '',
     outline: [] as OutlineItem[]
   })
-  const activeTab = computed(() => {
-    return activeTabId.value ? tabState[activeTabId.value] : undefined;
-  })
   // 获取当前活动session
-  const activeSession = computed(() => {
-    return activeTab.value?.edit;
+  const currentSession = computed(() => {
+    return currentTab.value?.edit;
   });
   const createSession = (): EditorSession => {
     const session: EditorSession = {
@@ -34,50 +30,51 @@ export const useTabStore = defineStore('tab', () => {
   }
   // 操作方法
   const actions = {
-    unsave(id: string) {
-      if (!tabState[id].edit) return;
-      tabState[id].edit.unsaved = true;
-      tabState[id].edit.version += 1;
+    unsave() {
+      if (!currentTab.value?.edit) return;
+      currentTab.value.edit.unsaved = true;
+      currentTab.value.edit.version += 1;
     },
-    save(id: string, version: number) {
-      if (!tabState[id].edit) return;
-      if (tabState[id].edit.version === version) {
-        tabState[id].edit.unsaved = false;
+    save(version: number) {
+      if (!currentTab.value?.edit) return;
+      if (currentTab.value.edit.version === version) {
+        currentTab.value.edit.unsaved = false;
       }
+      console.log('save', version)
     },
     switchViewMode(id: string, mode: ViewMode) {
       console.log('switch view mode', id, mode)
-      if (tabState[id].edit) {
-        tabState[id].edit.viewMode = mode;
+      if (currentTab.value?.edit) {
+        currentTab.value.edit.viewMode = mode;
       }
     },
     updateOutline(id: string, _outline: OutlineItem[]) {
       outlineState.tabId = id;
       outlineState.outline = _outline;
     },
+    // 打开新tab
     openInTab(options: {
       tabBehavior: TabBehavior, title?: string
       filePath: string, isPinned?: boolean
     }) {
       const { tabBehavior, title, filePath, isPinned } = options;
       // 如果已经打开，则切换到tab
-      const existingTab = actions.getByFilePath(filePath)
+      const existingTab = actions.isCurrentTabByFilePath(filePath);
       if (existingTab) {
-        actions.switchTab(existingTab.id);
         return;
       }
       const fileType = getTabType(filePath)
       const session = enableEditTab(fileType) ? createSession() : undefined;
-      if (activeTab.value && tabBehavior === 'replace_tab') {
-        activeTab.value.edit = session;
-        activeTab.value.filePath = filePath;
-        activeTab.value.title = options?.title ?? options.filePath;
-        activeTab.value.isPinned = isPinned ?? false;
+      if (currentTab.value && tabBehavior === 'replace_tab') {
+        currentTab.value.edit = session;
+        currentTab.value.filePath = filePath;
+        currentTab.value.title = options?.title ?? options.filePath;
+        currentTab.value.isPinned = isPinned ?? false;
         return;
       }
       // replace模式但没有可以替换的tab，则新建tab
       const tabId = nanoid(7);
-      tabState[tabId] = {
+      currentTab.value = {
         id: tabId,
         type: fileType,
         filePath: filePath,
@@ -85,55 +82,37 @@ export const useTabStore = defineStore('tab', () => {
         isPinned: isPinned ?? false,
         edit: session,
       };
-      actions.switchTab(tabId)
+      return currentTab;
     },
-    switchTab(newActiveId: string) {
-      activeTabId.value = newActiveId;
+    closeTab() {
+      if (!currentTab.value) return;
+      currentTab.value = undefined;
     },
-    closeTab(tabId: string) {
-      const tab = tabState[tabId];
-      if (!tab) return;
-      delete tabState[tabId];
-      // 如果是活动tab，则切换到其他tab（比如第一个）
-      if (activeTabId.value === tabId) {
-        const tabs = Object.values(tabState)
-        if (tabs.length > 0) {
-          const firstTab = tabs[0];
-          actions.switchTab(firstTab.id);
-        } else {
-          activeTabId.value = undefined;
-        }
-      }
-    },
-    getByFilePath(filePath: string): EditorTab | undefined {
-      return Object.values(tabState).find(tab => tab.filePath === filePath);
+    isCurrentTabByFilePath(filePath: string): boolean {
+      return currentTab.value?.filePath === filePath;
     },
     openWelcomeTab() {
-      tabState['welcome'] = { title: '欢迎使用', id: "welcome", type: TabType.Welcome } as EditorTab;
-      actions.switchTab('welcome');
+      const welcomeTab = { title: '欢迎使用', id: "welcome", type: TabType.Welcome } as EditorTab;
+      currentTab.value = welcomeTab;
     },
     updatePath(oldPath: string, newPath: string | null) {
-      Object.values(tabState).forEach(tab => {
-        if (tab.filePath?.startsWith(oldPath)) {
-          if (newPath === null) {
-            actions.closeTab(tab.id)
-          } else {
-            tab.filePath = tab.filePath.replace(oldPath, newPath)
-            const title = getFilename(tab.filePath)
-            tab.title = title
-          }
+      if (currentTab.value?.filePath?.startsWith(oldPath)) {
+        if (newPath === null) {
+          // actions.closeTab()
+        } else {
+          currentTab.value.filePath = newPath;
+          const title = getFilename(currentTab.value.filePath)
+          currentTab.value.title = title
         }
-      });
+      }
     }
   };
   return {
-    state: readonly(tabState),
+    state: readonly(currentTab),
     outline: readonly(outlineState),
-    tabState,
-    activeId: activeTabId,
+    currentTab,
     ...actions,
-    activeTab,
-    activeSession,
+    activeSession: currentSession,
   };
 }, {
   // https://prazdevs.github.io/pinia-plugin-persistedstate/zh/guide/config.html
@@ -159,11 +138,11 @@ export const useTabStore = defineStore('tab', () => {
     },
     serializer: {
       serialize: (state) => {
-        return JSON.stringify({ tabState: state.tabState, activeId: state.activeId })
+        return JSON.stringify({ currentTab: state.currentTab })
       },
       deserialize: (saved) => {
         const parsed = JSON.parse(saved)
-        return { tabState: parsed.tabState, activeId: parsed.activeId };
+        return { currentTab: parsed.currentTab };
       }
     },
   }

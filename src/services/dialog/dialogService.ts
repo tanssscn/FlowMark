@@ -51,30 +51,30 @@ class DialogService {
 
   async alert(options: MessageBoxOptions) {
     return this.platform.alert({
-      confirmButtonText: options.confirmButtonText || t('dialog.button.confirm'),
+      confirmButtonText: options.confirmButtonText || t('common.confirm'),
       ...options
     })
   }
 
   async confirm(options: MessageBoxOptions): Promise<boolean> {
     return this.platform.confirm({
-      confirmButtonText: options.confirmButtonText || t('dialog.button.confirm'),
-      cancelButtonText: options.cancelButtonText || t('dialog.button.cancel'),
+      confirmButtonText: options.confirmButtonText || t('common.confirm'),
+      cancelButtonText: options.cancelButtonText || t('common.cancel'),
       ...options
     })
   }
 
   async prompt(options: MessageBoxOptions) {
     return this.platform.prompt({
-      confirmButtonText: options.confirmButtonText || t('dialog.button.confirm'),
-      cancelButtonText: options.cancelButtonText || t('dialog.button.cancel'),
+      confirmButtonText: options.confirmButtonText || t('common.confirm'),
+      cancelButtonText: options.cancelButtonText || t('common.cancel'),
       ...options
     })
   }
 
   // 快捷方法
-  success(message: string, title?: string) {
-    this.notify({ message, title, type: 'success' })
+  success(message?: string, title?: string) {
+    this.notify({ message: message || t('common.success'), title, type: 'success' })
   }
 
   warning(message: string, title?: string) {

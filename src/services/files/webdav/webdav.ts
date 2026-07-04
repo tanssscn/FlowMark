@@ -1,4 +1,4 @@
-import { XMLParser, XMLBuilder } from 'fast-xml-parser';
+import { JPathOrMatcher, XMLParser } from 'fast-xml-parser';
 import type {
   FileStat, Headers, GetDirectoryContentsOptions, ResponseDataDetailed, StatOptions, WebDAVParsingContext,
   DAVResult, DAVResultResponseProps, DAVResultResponse, WebDAVClientOptions, FetchFunction, GetFileContentsOptions,
@@ -10,7 +10,14 @@ import { ErrorStatus } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { calculateDataLength } from '@/utils/fileUtil';
 
-
+function jPathToString(jPath: JPathOrMatcher): string {
+  if (typeof jPath === 'string') {
+    return jPath; // 如果已经是字符串，直接返回
+  } else {
+    // jPath 是 MatcherView 类型，处理这个情况
+    return jPath.toString(); // 使用 MatcherView 的 toString 方法
+  }
+}
 
 // 其他接口保持不变...
 export const createClient = (options: WebDAVClientOptions): WebDAVClient | null => {
@@ -69,7 +76,7 @@ class WebDAVClient {
       attributeValueProcessor(_, attrValue, jPath) {
         for (const processor of attributeParsers) {
           try {
-            const value = processor(jPath, attrValue);
+            const value = processor(jPathToString(jPath), attrValue);
             if (value !== attrValue) {
               return value;
             }
@@ -80,9 +87,10 @@ class WebDAVClient {
         return attrValue;
       },
       tagValueProcessor(tagName, tagValue, jPath) {
+
         for (const processor of tagParsers) {
           try {
-            const value = processor(jPath, tagValue);
+            const value = processor(jPathToString(jPath), tagValue);
             if (value !== tagValue) {
               return value;
             }
@@ -92,8 +100,8 @@ class WebDAVClient {
         }
         return tagValue;
       },
-      isArray: (name, jpath, isLeafNode, isAttribute) => {
-        return ['multistatus.response', 'propstat'].includes(jpath);
+      isArray: (name, jPath, isLeafNode, isAttribute) => {
+        return ['multistatus.response', 'propstat'].includes(jPathToString(jPath));
       }
     });
   }

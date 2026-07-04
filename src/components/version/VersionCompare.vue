@@ -51,8 +51,7 @@ import { RefreshLeft, View, Close } from '@element-plus/icons-vue'
 import { milkdownManager } from '@/services/milkdownManager'
 import { ref } from 'vue'
 import { versionService } from '@/services/versions/versionService';
-import { VersionInfo } from '@/types/appTypes'
-import SplitPane from '@/components/common/splitPanel/SplitPanel.vue'
+import type { VersionInfo } from '@/types/appTypes'
 import MarkdownPreview from '@/components/common/markdown/MarkdownPreview.vue'
 import { MilkdownProvider } from '@milkdown/vue';
 

@@ -3,6 +3,7 @@ import { createTauriMenu, menuWatch } from "./createMenu";
 
 export async function macMenu() {
   const window = windowRouter.getCurrentWindow();
+  
   let cleanup: () => void = () => { };
 
   if (window) {

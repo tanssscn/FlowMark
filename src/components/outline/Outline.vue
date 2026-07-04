@@ -16,7 +16,7 @@ const treeProps = {
   children: 'children'
 }
 const outline = computed(() => {
-  const tab = tabStore.activeTab
+  const tab = tabStore.state
   if (tab?.id === tabStore.outline.tabId) {
     return tabStore.outline.outline
   }

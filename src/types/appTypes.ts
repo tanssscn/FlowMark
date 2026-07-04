@@ -28,6 +28,7 @@ export interface AppFileInfo {
   hidden?: boolean; // 是否隐藏
   isRoot?: boolean; // 是否是根目录
   version?: string; // 版本号/etag/md5
+  username?: string; // 用户名
 }
 
 export interface FileEntry extends AppFileInfo {

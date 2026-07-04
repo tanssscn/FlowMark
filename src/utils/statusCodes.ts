@@ -6,7 +6,7 @@ export const statusCode = {
   // 成功码 (虽然是错误类，但有时也需要表示成功状态)
   SUCCESS: {
     code: 2000,
-    message: t('notify.success.ok')
+    message: t('notify.success.label')
   },
   // UserError (4xxx)
   UNSUPPORTED_OPERATION: {

@@ -4,7 +4,8 @@ import { useFileStore } from '@/stores/fileStore'
 import type { FileEntry } from '@/types/appTypes'
 import FileTreeMenu from './FileTreeMenu.vue'
 import { FolderOpened, Folder, Document } from '@element-plus/icons-vue'
-import { ContextMenuState, DragState, fileTree, RenameState, TreeProps } from './composable/useFileTreeMenu'
+import { fileTree } from './composable/useFileTreeMenu'
+import type { ContextMenuState, DragState, RenameState, TreeProps } from './composable/useFileTreeMenu'
 import { useTabStore } from '@/stores/tabStore';
 import FilePropertiesPanel from './FileProperties.vue'
 
@@ -13,7 +14,6 @@ const tabStore = useTabStore()
 
 
 // Element Plus Tree 相关状态
-const treeRef = ref()
 const treeProps: TreeProps = {
   label: 'name',
   children: 'children',
@@ -78,8 +78,8 @@ const { handleNodeClick,
         :allow-drop="allowDrop" :highlight-current="true" node-key="path" @node-click="handleNodeClick"
         @node-contextmenu="showContextMenu" @node-drag-start="handleDragStart" @node-drag-end="handleDragEnd"
         @node-drag-over="handleDragOver" :default-expanded-keys="fileStore.state.expandedPaths"
-        @node-expand="toggleExpand" @node-collapse="toggleExpand" @node-drop="handleDrop"
-        :current-node-key="tabStore.activeTab?.filePath" check-on-click-node>
+        @node-expand="toggleExpand" @node-collapse="toggleExpand" @node-drop="handleDrop" :auto-expand-parent="false"
+        :current-node-key="tabStore.state?.filePath" check-on-click-node>
         <template #default="{ node, data }">
           <div class="flex items-center w-full">
             <el-icon v-if="data.isDir" class="mr-2">
@@ -113,10 +113,9 @@ const { handleNodeClick,
     <teleport to="body">
       <file-tree-menu :contextMenu="contextMenu" @rename="startRename" @show-properties="showProperties"
         @new-file="(node: Node, data: FileEntry) => create(node, data, false)"
-        @new-folder="(node: Node, data: FileEntry) => create(node, data, true)" 
-        @close="contextMenu.visible = false"/>
+        @new-folder="(node: Node, data: FileEntry) => create(node, data, true)" @close="contextMenu.visible = false" />
     </teleport>
-      <FilePropertiesPanel v-model="showPropertiesPanel" :file="propertiesFile" @close="showPropertiesPanel = false"/>
+    <FilePropertiesPanel v-model="showPropertiesPanel" :file="propertiesFile" @close="showPropertiesPanel = false" />
   </div>
 </template>
 <style scoped>

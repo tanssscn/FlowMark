@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AppFileInfo } from '@/types/appTypes'
+import type { AppFileInfo } from '@/types/appTypes'
 import { InfoFilled } from '@element-plus/icons-vue'
 import { formatDate, formatFileSize } from '@/utils/formatUtil'
 import { useI18n } from 'vue-i18n'

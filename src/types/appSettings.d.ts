@@ -71,10 +71,11 @@ export interface MarkdownSettings {
 }
 // WebDAV 设置
 export interface WebDAVSettings {
-  serverUrl: string;
+  url: string;
   username: string;
   password: string;
-  autoConnect: boolean; // 自动同步
+  title?: string;
+  showInFileTree: boolean;
 }
 export interface Command {
   name: string;
@@ -90,7 +91,7 @@ export interface AppSettings {
   file: FileSettings;
   editor: EditorSettings;
   markdown: MarkdownSettings;
-  webdav: WebDAVSettings;
+  webdav: WebDAVSettings[];
   keymap: KeymapSettings;
 }
 
