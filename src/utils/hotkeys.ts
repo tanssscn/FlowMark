@@ -63,9 +63,5 @@ export const addHotkey = (hotkey: HotKey) => {
     }
   })
 }
-
-export const removeHotkey = (hotkey: HotKey) => {
-  hotkeys.unbind(hotkey.shortcut)
-}
 // hotkeys默认：焦点在输入框时阻止快捷键事件
 hotkeys.filter = () => true

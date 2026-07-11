@@ -38,7 +38,8 @@
       "exportHtml": "导出为HTML",
       "recentFiles": "最近文件",
       "clearCache": "清除缓存",
-      "clearRecentFiles": "清除最近文件"
+      "clearRecentFiles": "清除最近文件",
+      "confirmClearRecentFiles": "确认清除最近文件吗？"
     },
     "edit": "编辑",
     "EditMenu": {
@@ -99,7 +100,9 @@
   },
   "outline": {
     "label": "大纲",
-    "empty": "无大纲"
+    "empty": "无大纲",
+    "expandAll": "全部展开",
+    "collapseAll": "全部折叠"
   },
   "version": {
     "label": "版本",
@@ -113,7 +116,8 @@
     "noMessage": "无保存消息",
     "compare": "对比",
     "message": "消息",
-    "delete": "删除"
+    "delete": "删除",
+    "clearAll": "清除所有版本"
   },
   "fileTree": {
     "label": "文件",
@@ -144,7 +148,8 @@
     "open": "打开",
     "openInNewTab": "在新标签页中打开",
     "revealInExplorer": "在资源管理器中显示",
-    "removeFromTree": "从文件树中移除"
+    "removeFromTree": "从文件树中移除",
+    "characterCount": "字符数"
   },
   "settings": {
     "label": "设置",
@@ -174,17 +179,15 @@
         "light": "浅色模式",
         "dark": "深色模式"
       },
-      "tabBehavior": {
-        "label": "标签页行为",
-        "new": "新标签打开",
-        "replace": "替换当前标签"
-      },
       "fontSize": {
         "label": "字体大小"
       }
     },
     "file": {
       "label": "文件设置",
+      "defaultFileExtension": {
+        "label": "默认文件扩展名"
+      },
       "save": {
         "label": "保存设置",
         "autoSave": {
@@ -309,6 +312,24 @@
       "connecting": "连接中...",
       "testing": "测试中...",
       "resetConnection": "重置连接"
+    },
+    "update": {
+      "label": "检查更新",
+      "currentVersion": "当前版本",
+      "latestVersion": "最新版本",
+      "check": "检查更新",
+      "checking": "检查中...",
+      "download": "下载更新",
+      "downloading": "下载中...",
+      "downloadProgress": "下载进度",
+      "noUpdate": "已是最新版本",
+      "upToDate": "当前版本已是最新",
+      "checkFailed": "检查更新失败",
+      "downloadFailed": "下载更新失败",
+      "info": "关于更新：",
+      "info1": "更新包将从 GitHub Releases 下载",
+      "info2": "建议在下载前保存所有未保存的更改",
+      "info3": "更新完成后需要重新启动应用"
     }
   },
   "dialog": {
@@ -324,6 +345,10 @@
     "deleteFile": {
       "title": "删除文件",
       "message": "确定要删除{msg}吗？"
+    },
+    "clearAll": {
+      "title": "清除所有",
+      "message": "确定要删除所有吗？"
     },
     "newVersion": {
       "title": "创建新版本",
@@ -365,13 +390,18 @@
       "message": "请输入文件夹名"
     }
   },
+  "dragDrop": {
+    "dropHere": "松开鼠标以导入文件",
+    "supportFiles": "支持导入文件和文件夹"
+  },
   "notify": {
     "errors": {
       "unknownError": "发生未知错误",
       "notFound": "资源不存在",
       "permissionDenied": "权限被拒绝",
       "saveFailed": "保存失败",
-      "connectionFailed": "连接失败，请检查您的设置",
+      "connectionFailed": "连接失败",
+      "checkSettingOrNetwork": "检查设置或网络连接",
       "connectionError": "连接失败：{error}",
       "nameCannotBeEmpty": "名称不能为空",
       "nameInvalid": "名称无效",
@@ -384,8 +414,19 @@
       "forbidden": "禁止访问",
       "fileExists": "文件已存在",
       "fileNotFound": "找不到文件",
+      "typeError": "类型错误",
+      "fileHandleNotFound": "文件句柄未找到",
+      "browserFileSystemError": "浏览器文件系统错误",
+      "webdavRequestFailed": "WebDAV 请求失败",
+      "invalidResponse": "无效响应",
       "missingCredentials": "用户名和密码不能为空",
-      "accountAlreadyExists": "账户已存在"
+      "accountAlreadyExists": "账户已存在",
+      "webdavLoadFailed": "WebDAV 加载失败",
+      "webdavLoadFailedMessage": "无法加载 WebDAV 文件树，可能是网络问题。"
+    },
+    "actions": {
+      "retry": "重试",
+      "removeFromTree": "移出文件树"
     },
     "success": {
       "label": "成功",

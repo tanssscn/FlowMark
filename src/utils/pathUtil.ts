@@ -28,7 +28,6 @@ export async function createFileInnerSrc(fileInfo: AppFileInfo, url: string): Pr
       const content = await fileService.readFile({ ...fileInfo, path: url })
       return URL.createObjectURL(new Blob([content]))
     }
-    console.log("url is not same origin")
   }
   return url;
 }
@@ -123,12 +122,15 @@ export function isSubPath(baseUrl: string, targetUrl: string): boolean {
   return remaining === '' || remaining.startsWith('/');
 }
 
-// 获取父目录路径
 export function getDirname(path: string): string {
   if (isAbsolute(path)) {
     return dirname(path);
   }
-  return path.replace(/\/[^/]*$/, '');
+  const lastSlash = path.lastIndexOf('/');
+  if (lastSlash === -1) {
+    return '';
+  }
+  return path.substring(0, lastSlash);
 }
 // 获取文件名（不含路径）
 export function getFilename(path: string): string {
@@ -146,7 +148,12 @@ export function getExtname(path: string): string {
   if (isAbsolute(path)) {
     return extname(path);
   }
-  return `.${getFilename(path).replace(/^.*\./, '')}`;
+  const filename = getFilename(path);
+  const dotIndex = filename.lastIndexOf('.');
+  if (dotIndex <= 0) {
+    return '';
+  }
+  return filename.slice(dotIndex);
 }
 /**
  * 规范化路径：移除结尾的斜杠并转为小写（不区分大小写）

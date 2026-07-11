@@ -21,7 +21,6 @@ export class WebDAVFileService {
   private ensureConnected(fileInfo: Pick<FileEntry, 'rootPath' | 'path' | 'username'>): WebDAVClient {
     const path = fileInfo.rootPath || fileInfo.path
     const id = path + fileInfo.username
-    console.log('Creating client for:'); // 添加日志
     const client = this.clients.get(id);
     if (!client) {
       throw new ErrorStatus(statusCode.NEED_CONNECT_SERVER)
@@ -142,7 +141,6 @@ export class WebDAVFileService {
   async readDirectory(fileInfo: Pick<FileEntry, 'path' | 'username' | 'rootPath'>, recursive = true): Promise<FileEntry> {
     console.log('Reading directory:', fileInfo.path, fileInfo.username); // 添加日志
     const client = this.ensureConnected(fileInfo)
-    console.log('Reading directory:', fileInfo.path, fileInfo.username); // 添加日志
     // 获取目录基本信息
     const dirStat = await client!.stat(fileInfo.path, { isDir: true }) as FileStat;
     // 转换为应用数据结构

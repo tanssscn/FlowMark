@@ -1,10 +1,8 @@
 import { ViewMode } from './appTypes';
 import { ExternImagePathOptions, ImagePathTypeOptions } from './appSettings'
 export type ConflictResolution = 'ask' | 'overwrite' | 'keep_both';
-export type TabBehavior = 'new_tab' | 'replace_tab';
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type Language = 'en-US' | 'zh-CN' | 'system';
-
 export type ImagePathTypeOptions = typeof ImagePathTypeOptions[keyof typeof ImagePathTypeOptions];
 export type ExternImagePathOptions = typeof ExternImagePathOptions[keyof typeof ExternImagePathOptions];
 // ============== 应用设置 ==============
@@ -16,7 +14,6 @@ export interface GeneralSettings {
 }
 // 外观 设置
 export interface AppearanceSettings {
-  tabBehavior: TabBehavior;
   fontSize: number;
   theme: ThemeMode;
 }
@@ -38,6 +35,7 @@ export interface FileSettings {
   save: SaveSettings;
   history: HistorySettings;
   image: ImageSettings;
+  defaultFileExtension: string;
 }
 // 编辑器设置
 export interface FontSettings {

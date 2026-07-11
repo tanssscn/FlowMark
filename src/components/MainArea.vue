@@ -10,7 +10,7 @@ import { milkdownManager } from '@/services/milkdownManager';
 import SearchReplace from "@/components/editor/markdown/plugins/find/SearchReplace.vue"
 import { useWindowStore } from '@/stores/windowStore';
 import TableSelector from './editor/markdown/plugins/table/TableSelector.vue';
-import { useFileStore } from '@/stores/fileStore';
+import { useFileStore } from '@/stores/fileTreeStore.ts';
 import type { UnwatchFn } from '@tauri-apps/plugin-fs';
 import { TabType } from '@/types/appTypes';
 

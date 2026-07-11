@@ -20,13 +20,13 @@ import { TextSelection } from "@milkdown/prose/state";
 import type { FindResult, IMilkdownEditor } from "../../types";
 import { getDeviceInfo } from "@/services/deviceService";
 import { insertTableCommand, toggleStrikethroughCommand } from '@milkdown/preset-gfm';
-import { useFileStore } from "@/stores/fileStore";
+import { useFileStore } from "@/stores/fileTreeStore";
 import { useDebounceFn } from '@vueuse/core';
 import type { AppSettings } from "@/types/appSettings";
 import { closeImageSource, createFileInnerSrc } from "@/utils/pathUtil";
 import { uploadImage } from "@/utils/clipboardUtil";
 import { useTabStore } from "@/stores/tabStore";
-import { type Ref, toRaw, watch, WatchHandle } from "vue";
+import { computed, type Ref, toRaw, watch, WatchHandle } from "vue";
 import { searchPlugin, searchPluginKey } from "../../plugins/find/composable/searchPlugin";
 import { exportHtml } from "../../plugins/export/exportHtml";
 import { mermaidPlugin } from "../../plugins/mermaid/mermaidPlugin";
@@ -54,7 +54,6 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   public onloaded(
     callback: () => void,
   ) {
-    console.log(this.loading().value, callback())
     // 如果已经是 true，直接调用回调
     if (!this.loading().value) {
       console.log('call')
@@ -63,8 +62,8 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
     }
     // 监听 ref 变化
     watch(this.loading(), (value) => {
-      if (value) {
-        console.log('not loaded')
+      if (!value) {
+        console.log('loaded')
         callback();
       }
     }, { once: true });
@@ -106,6 +105,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       });
       this.crepe = crepe;
       this.autoSave();
+      this.watchUnsaved();
       crepe.editor.use(searchPlugin).use(history)
       if (this.settingsStore.state.markdown.extensions.enableMermaid) {
         // 如果初始化完毕进行配置，只有改动的节点会重新渲染，另外可能会导致配置失效。
@@ -117,23 +117,36 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
       return crepe;
     });
   }
-  private _save = useDebounceFn((newContent: string) => {
-    this.useEdit.saveFile(this.id, newContent);
-  }, this.settingsStore.state.file.save.autoSaveInterval * 1000)
+  private watchUnsaved() {
+    const unsavedComputed = computed(() => this.tabStore.state?.edit?.unsaved && !this.settingsStore.state.file.save.autoSave);
+    watch(unsavedComputed, (value) => {
+      this._saveDebounce(value ?? false);
+    })
+  }
+  private _saveDebounce = useDebounceFn((value: boolean) => {
+    if (value) {
+      this.useEdit.setUnsavedWindowTitle();
+    } else {
+      this.useEdit.setWindowTitle();
+    }
+  }, 500)
 
-  private _updateTOC = useDebounceFn((markdown: string) => {
+  private _updateContext = useDebounceFn((markdown: string) => {
     this.updateTOC();
     this.tabStore.unsave();
     if (this.settingsStore.state.file.save.autoSave) {
       this._save(markdown);
     }
   }, 1000)
+  private _save = useDebounceFn((newContent: string) => {
+    this.useEdit.saveFile(this.id, newContent);
+  }, this.settingsStore.state.file.save.autoSaveInterval * 1000)
 
   private autoSave() {
     if (!this.crepe) return;
     this.crepe.on((api: ListenerManager) => {
       api.markdownUpdated((ctx: Ctx, markdown: string, prevMarkdown: string) => {
-        this._updateTOC(markdown);
+        this._updateContext(markdown);
       });
     });
   }
@@ -358,9 +371,11 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
   }
 
   public activate(): void {
+    console.log('activate')
     this.onloaded(() => {
       this.watchHandler()
       this.updateTOC();
+      console.log('updateTOC')
     })
   }
 
@@ -373,6 +388,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
 
   public scrollTo(id: string): void {
     const element = document.getElementById(id);
+    console.log(element, id)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -381,6 +397,7 @@ export class MilkdownEditorInstance implements IMilkdownEditor {
     this.editor?.action((ctx) => {
       replaceAll(content, false)(ctx)
     })
+    this.updateTOC();
   }
 
   private checkSettingsUpdate(): void {

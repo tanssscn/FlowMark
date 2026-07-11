@@ -1,6 +1,5 @@
 # FlowMark - Markdown Editor
 
-
 ## 项目概述
 
 FlowMark 是一款基于 Vue 3、Tauri 2 和 Milkdown 开发的跨平台 Markdown 编辑器应用。它提供了现代化的用户界面和丰富的 Markdown 编辑功能，支持文件管理、版本控制、大纲视图等功能。
@@ -34,6 +33,11 @@ FlowMark/
 │   ├── Cargo.toml             # Rust 依赖
 │   └── tauri.conf.json        # Tauri 配置
 ├── public/                    # 公共静态资源
+├── tests/                     # 单元测试
+│   ├── services/              # 服务层测试
+│   ├── composables/           # 组合式函数测试
+│   ├── stores/                # 状态管理测试
+│   └── utils/                 # 工具函数测试
 ├── vite.config.ts             # Vite 配置
 ├── tailwind.config.js         # TailwindCSS 配置
 └── package.json               # 项目依赖
@@ -121,3 +125,125 @@ FlowMark 采用三栏式布局设计：
 - **桌面应用**：Tauri (Rust)
 - **版本控制**：Isomorphic Git
 - **国际化**：Vue I18n
+
+## 开发命令
+
+### 环境要求
+
+- Node.js >= 20.x
+- pnpm >= 9.x
+- Rust >= 1.75 (仅桌面端构建需要)
+- Tauri CLI >= 2.x
+
+### 安装依赖
+
+```bash
+pnpm install
+```
+
+### 前端开发
+
+```bash
+# 启动前端开发服务器（浏览器模式）
+pnpm dev
+
+# 构建前端项目
+pnpm build
+
+# 预览构建结果
+pnpm preview
+
+# 运行单元测试
+pnpm test
+
+# 运行测试并观察文件变化
+pnpm test --watch
+
+# 运行测试覆盖率报告（需先安装 @vitest/coverage-v8）
+pnpm add -D @vitest/coverage-v8
+pnpm test --coverage
+```
+
+### 桌面端开发
+
+```bash
+# 启动桌面应用开发模式（前端 + Rust）
+pnpm tauri dev
+
+# 构建桌面应用安装包
+pnpm tauri build
+
+# 生成应用图标
+pnpm tauri icon
+
+# 检查 Tauri 配置
+pnpm tauri check
+
+# 查看 Tauri CLI 帮助
+pnpm tauri --help
+```
+
+### 代码检查
+
+```bash
+# TypeScript 类型检查
+pnpm vue-tsc --noEmit
+```
+
+## 项目配置
+
+### Vite 配置
+
+- **vite.config.ts**：配置开发服务器、插件、路径别名等
+
+### TailwindCSS 配置
+
+- **tailwind.config.js**：配置主题颜色、字体、间距等
+
+### Tauri 配置
+
+- **src-tauri/tauri.conf.json**：配置应用窗口、权限、打包等
+- **src-tauri/Cargo.toml**：配置 Rust 依赖
+
+## 测试
+
+项目使用 Vitest 进行单元测试，测试文件位于 `tests/` 目录下：
+
+- **tests/services/**：服务层测试
+- **tests/composables/**：组合式函数测试
+- **tests/stores/**：状态管理测试
+- **tests/utils/**：工具函数测试
+
+运行测试：
+
+```bash
+pnpm test
+```
+
+## 构建发布
+
+### 开发模式
+
+```bash
+pnpm tauri dev
+```
+
+### 生产构建
+
+```bash
+pnpm tauri build
+```
+
+构建产物位于 `src-tauri/target/release/bundle/` 目录下。
+
+## 贡献指南
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/feature-name`)
+3. 提交更改 (`git commit -m 'Add some feature'`)
+4. 推送到分支 (`git push origin feature/feature-name`)
+5. 创建 Pull Request
+
+## 许可证
+
+MIT License

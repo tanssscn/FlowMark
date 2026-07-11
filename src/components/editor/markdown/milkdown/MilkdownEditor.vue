@@ -10,8 +10,8 @@ const props = defineProps<{
 }>()
 const milkdownEditor = milkdownManager.createEditor(props.tabId, props.content)
 
-watch(() => props.tabId, async (newId) => {
-  milkdownEditor.updateId(newId)
+watch(() => props.tabId, async (oldId, newId) => {
+  milkdownManager.updateId(oldId, newId)
 })
 onUnmounted(() => {
   milkdownManager.removeEditor(props.tabId)

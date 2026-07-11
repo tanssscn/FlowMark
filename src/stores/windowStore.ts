@@ -22,6 +22,9 @@ export const useWindowStore = defineStore('window', () => {
 
   const actions = {
     toggleSidebar() {
+      if (windowState.sidebar.width < 100) {
+        windowState.sidebar.width = 200
+      }
       windowState.sidebar.visible = !windowState.sidebar.visible;
     },
     switchSettingsModal(visible: boolean) {

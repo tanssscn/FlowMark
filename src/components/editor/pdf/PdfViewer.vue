@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import type { PropType } from 'vue'
-import { useFileStore } from '@/stores/fileStore'
+import { useFileStore } from '@/stores/fileTreeStore'
 import { closeImageSource, createFileSrc } from '@/utils/pathUtil'
 import type { EditorTab } from '@/types/appTypes'
 const fileStore = useFileStore()

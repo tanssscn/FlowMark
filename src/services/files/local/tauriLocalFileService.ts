@@ -4,7 +4,7 @@ import {
   readFile,
   remove,
   rename,
-  copyFile,
+  copyFile as tauriCopyFile,
   exists,
   stat,
   readDir,
@@ -87,7 +87,7 @@ export class TauriLocalFileService {
    * 复制文件
    */
   async copyFile(source: Pick<FileEntry, 'path'>, destination: string): Promise<void> {
-    await copyFile(
+    await tauriCopyFile(
       source.path,
       destination,
       {
@@ -226,7 +226,9 @@ export class TauriLocalFileService {
     });
   }
   async getStat(fileInfo: Pick<AppFileInfo, 'path'>): Promise<AppFileInfo> {
-    const stats = await stat(fileInfo.path)
+    const stats = await stat(fileInfo.path, {
+      baseDir: BaseDirectory.AppData,
+    })
     return this.mapToAppFileInfo(fileInfo.path, stats);
   }
   /**
@@ -258,7 +260,6 @@ export class TauriLocalFileService {
     } else {
       uint8Array = new Uint8Array(file);
     }
-    console.log(uint8Array)
     await writeFile(fileInfo.path, uint8Array);
   }
   async openPathInFinder(path: string) {

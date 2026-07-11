@@ -1,10 +1,11 @@
 import { MilkdownEditorInstance } from "@/components/editor/markdown/milkdown/composable/milkdownEditor";
 import type { FindOptions, FindResult } from "@/components/editor/markdown/types";
+import { t } from "src/i18n";
 
 
 export class MilkdownEditorManager {
   private static instance: MilkdownEditorManager;
-  private editors: Map<string, MilkdownEditorInstance> = new Map();
+  private editor: MilkdownEditorInstance | undefined = undefined;
   private currentEditorId: string | undefined = undefined;
 
   private constructor() { }
@@ -17,54 +18,64 @@ export class MilkdownEditorManager {
   }
 
   public getEditor(id: string): MilkdownEditorInstance | undefined {
-    return this.editors.get(id);
-  }
-  public setEditor(id: string, editor: MilkdownEditorInstance): void {
-    this.editors.set(id, editor);
     if (id === this.currentEditorId) {
-      editor.activate();
+      return this.editor
     }
   }
+  public setEditor(id: string, editor: MilkdownEditorInstance): void {
+    if (id === this.currentEditorId && this.editor) {
+    } else {
+      this.editor = editor;
+      this.currentEditorId = id;
+    }
+    this.editor.activate();
+  }
+  /**
+   * 创建一个新的编辑器实例
+   * @param id - 编辑器的唯一标识符
+   * @param content - 编辑器的初始内容
+   * @returns 创建的编辑器实例
+   */
   public createEditor(id: string, content: string): MilkdownEditorInstance {
     const editor = new MilkdownEditorInstance(id, content);
     this.setEditor(id, editor);
-    if (id === this.currentEditorId) {
-      editor.activate();
-    }
     return editor;
   }
   public removeEditor(id: string): void {
-    if (this.currentEditorId === id) {
-      this.currentEditorId = undefined;
+    if (this.currentEditorId !== id) {
+      return;
     }
-    this.editors.get(id)?.destroy();
-    this.editors.delete(id);
+    this.currentEditorId = undefined;
+    this.editor?.destroy();
+    this.editor = undefined;
+  }
+  public destroyEditor(): void {
+    this.removeEditor(this.currentEditorId || '');
   }
   public setActiveEditor(id: string | undefined): void {
     if (this.currentEditorId === id) return;
 
     // Deactivate current editor
     if (this.currentEditorId) {
-      this.editors.get(this.currentEditorId)?.deactivate();
+      this.editor?.deactivate();
     }
 
     // Activate new editor
     this.currentEditorId = id;
-    if (id) {
-      const editor = this.editors.get(id);
-      console.log("activate editor", id, editor, this.editors);
-      if (editor) {
-        console.log("activate editor", id);
-        editor.activate();
-      }
+    if (id && this.editor) {
+      console.log("activate editor", id);
+      this.editor?.activate();
     }
   }
 
   public getActiveEditor(): MilkdownEditorInstance | undefined {
-    if (!this.currentEditorId) return undefined;
-    return this.editors.get(this.currentEditorId);
+    return this.getEditor(this.currentEditorId || '');
   }
-
+  public updateId(oldId: string, newId: string): void {
+    if (oldId === newId || oldId != this.currentEditorId) return;
+    this.getEditor(oldId)?.updateId(newId);
+    this.currentEditorId = newId;
+  }
   public undo(): void {
     this.getActiveEditor()?.undo();
   }
@@ -91,6 +102,7 @@ export class MilkdownEditorManager {
     return this.getActiveEditor()?.getContent();
   }
   public scrollTo(id: string): void {
+    console.log(id, this.getContent())
     this.getActiveEditor()?.scrollTo(id);
   }
   public updateContent(content: string): void {

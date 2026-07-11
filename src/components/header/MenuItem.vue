@@ -1,5 +1,6 @@
 <template>
-  <el-menu-item :index="actionKey" :disabled="enabled === false" @click="handleClick">
+  <el-divider style="margin: 0;" v-if="id == 'separator'" />
+  <el-menu-item v-else :index="actionKey" :disabled="enabled === false" @click="handleClick">
     <div class="flex justify-between items-center w-full">
       <div class="flex items-center">
         <i v-if="icon" :class="icon" class="mr-1"></i>

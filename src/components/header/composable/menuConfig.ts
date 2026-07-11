@@ -1,15 +1,13 @@
-// src/config/menus.ts
-import { useFileTree } from '@/composable/useFileTree'
+import { useFile } from '@/composable/useFile'
 import { useTabStore } from '@/stores/tabStore'
 import { useWindowStore } from '@/stores/windowStore'
 import { milkdownManager } from '@/services/milkdownManager'
 import i18n from '@/i18n/index'
-import { windowRouter } from '@/services/routerService'
 import { useEdit } from '@/composable/useEdit'
-import { useWindowRoute } from '@/composable/useWindowRoute'
-import { useRecentStore } from '@/stores/recentStore'
+import { useWindow } from '@/composable/useWindow'
 import { ViewMode } from '@/types/appTypes'
 import { type HotKey } from '@/utils/hotkeys'
+import { windowServer } from '@/services/window/windowService'
 const { t } = i18n.global
 
 export interface MenuConfig extends HotKey {
@@ -20,17 +18,16 @@ export interface MenuConfig extends HotKey {
   icon?: string,
 }
 export const useMenuConfig = (): MenuConfig[] => {
-  const { openFolder, openFile } = useFileTree()
-  const { clearCache } = useWindowRoute()
+  const { openFolder, openFile, clearAllRecent } = useFile()
+  const { clearCache } = useWindow()
   const { saveAsFile, closeTab } = useEdit()
-  const recentStore = useRecentStore();
   const tabStore = useTabStore()
   const windowStore = useWindowStore()
   const fileMenus: MenuConfig[] = [
     {
       name: t('menu.FileMenu.newWindow'),
       action: () => {
-        windowRouter.openInNewWindow({ path: '/new', name: 'new' })
+        windowServer.openInNewWindow({ path: '/new', name: 'new' })
       },
       shortcut: 'CommandOrControl+Shift+N'
     },
@@ -53,6 +50,7 @@ export const useMenuConfig = (): MenuConfig[] => {
       name: t('menu.separator'),
     },
     {
+      id: 'save',
       name: t('common.save'),
       action: () => {
         milkdownManager.saveFile()
@@ -60,6 +58,7 @@ export const useMenuConfig = (): MenuConfig[] => {
       shortcut: 'CommandOrControl+S'
     },
     {
+      id: 'save-as',
       name: t('menu.FileMenu.saveAs'),
       action: () => {
         saveAsFile()
@@ -74,7 +73,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           id: 'clear-recent-files',
           name: t('menu.FileMenu.clearRecentFiles'),
           action: () => {
-            recentStore.clearAll()
+            clearAllRecent()
           }
         }
       ]
@@ -304,7 +303,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === ViewMode.WYSIWYG,
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.WYSIWYG)
+              tabStore.switchViewMode(ViewMode.WYSIWYG)
             }
           },
         },
@@ -315,7 +314,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === ViewMode.READONLY,
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.READONLY)
+              tabStore.switchViewMode(ViewMode.READONLY)
             }
           },
         }, {
@@ -325,7 +324,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === 'split',
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.SPLIT)
+              tabStore.switchViewMode(ViewMode.SPLIT)
             }
           }
         }, {
@@ -335,7 +334,7 @@ export const useMenuConfig = (): MenuConfig[] => {
           checked: tabStore.activeSession?.viewMode === ViewMode.SOURCE,
           action: () => {
             if (tabStore.activeSession) {
-              tabStore.switchViewMode(tabStore.state?.id!, ViewMode.SOURCE)
+              tabStore.switchViewMode(ViewMode.SOURCE)
             }
           }
         }

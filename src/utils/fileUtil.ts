@@ -65,19 +65,15 @@ export function ignoreHiddenFiles(
  * @param entries 文件条目数组
  * @param platform 平台类型
  */
-export async function filterFileEntries<T extends { name: string }>(
+export function filterFileEntries<T extends { name: string }>(
   entries: T[],
   platform?: Platform,
   location?: StorageLocation
-): Promise<T[]> {
-  const filtered = await Promise.all(
-    entries.map(async entry => {
-      // 获取纯文件名（不含路径）
-      const filename = await basename(entry.name);
-      return ignoreHiddenFiles(filename, platform, location) ? null : entry;
-    })
-  );
-  return filtered.filter(Boolean) as T[];
+): T[] {
+  return entries.filter(entry => {
+    const filename = basename(entry.name);
+    return !ignoreHiddenFiles(filename, platform, location);
+  });
 }
 
 

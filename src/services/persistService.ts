@@ -1,5 +1,5 @@
 import type { AppSettings, Language, ThemeMode } from '@/types/appSettings';
-import { windowRouter } from "./routerService";
+import { windowServer } from './window/windowService';
 
 function getSettings(): AppSettings | undefined {
   const settingsStr = localStorage.getItem('settings')
@@ -18,7 +18,7 @@ export class RestoreApp {
   private _isNewWindow: boolean;
 
   constructor() {
-    const { fullPath } = windowRouter.getCurrentRoute()
+    const { fullPath } = windowServer.getCurrentRoute()
     this._isNewWindow = (fullPath === '/new')
   }
   isNewWindow(): boolean {
@@ -71,16 +71,14 @@ export class ThemeManager {
   // 应用主题
   async applyTheme(theme: ThemeMode) {
     if (theme === 'system') {
-      console.log("system theme")
-      // 应用系统主题
-      const systemTheme = windowRouter.getCurrentWindow()
+      const systemTheme = windowServer.getCurrentWindow()
       if (systemTheme) {
         await systemTheme.setTheme(null)
       }
       theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
     // Set Element Plus dark mode
-    windowRouter.getCurrentWindow()?.setTheme(theme)
+    windowServer.getCurrentWindow()?.setTheme(theme)
     document.documentElement.classList.remove(theme === 'dark' ? 'light' : 'dark')
     document.documentElement.classList.add(theme)
     document.documentElement.setAttribute('data-theme', theme)

@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { nanoid } from 'nanoid';
 import { computed, reactive, readonly, ref } from 'vue';
 import { restoreApp, RestoreApp } from '@/services/persistService';
-import type { TabBehavior } from '@/types/appSettings';
 import { getFilename } from '@/utils/pathUtil';
 import type { EditorSession, EditorTab, OutlineItem, ViewMode } from '@/types/appTypes';
 import { TabType } from '@/types/appTypes';
@@ -40,10 +39,8 @@ export const useTabStore = defineStore('tab', () => {
       if (currentTab.value.edit.version === version) {
         currentTab.value.edit.unsaved = false;
       }
-      console.log('save', version)
     },
-    switchViewMode(id: string, mode: ViewMode) {
-      console.log('switch view mode', id, mode)
+    switchViewMode(mode: ViewMode) {
       if (currentTab.value?.edit) {
         currentTab.value.edit.viewMode = mode;
       }
@@ -54,35 +51,34 @@ export const useTabStore = defineStore('tab', () => {
     },
     // 打开新tab
     openInTab(options: {
-      tabBehavior: TabBehavior, title?: string
       filePath: string, isPinned?: boolean
     }) {
-      const { tabBehavior, title, filePath, isPinned } = options;
+      const { filePath, isPinned } = options;
       // 如果已经打开，则切换到tab
       const existingTab = actions.isCurrentTabByFilePath(filePath);
       if (existingTab) {
-        return;
+        return currentTab.value;
       }
       const fileType = getTabType(filePath)
       const session = enableEditTab(fileType) ? createSession() : undefined;
-      if (currentTab.value && tabBehavior === 'replace_tab') {
+      if (currentTab.value) {
         currentTab.value.edit = session;
         currentTab.value.filePath = filePath;
-        currentTab.value.title = options?.title ?? options.filePath;
+        currentTab.value.title = getFilename(filePath);
+        currentTab.value.type = fileType;
         currentTab.value.isPinned = isPinned ?? false;
-        return;
+        return currentTab.value;
       }
-      // replace模式但没有可以替换的tab，则新建tab
       const tabId = nanoid(7);
       currentTab.value = {
         id: tabId,
         type: fileType,
         filePath: filePath,
-        title: options?.title ?? options.filePath,
+        title: getFilename(filePath),
         isPinned: isPinned ?? false,
         edit: session,
       };
-      return currentTab;
+      return currentTab.value;
     },
     closeTab() {
       if (!currentTab.value) return;

@@ -7,6 +7,7 @@ import MarkdownTab from './MarkdownTab.vue'
 import WebDAVTab from './WebDAVTab.vue'
 import ViewTab from './appearance.vue'
 import FileTab from './FileTab.vue'
+import UpdateTab from './UpdateTab.vue'
 
 const { t } = useI18n()
 const activeTab = ref('general')
@@ -18,6 +19,7 @@ const tabs = computed(() => [
   { id: 'editor', label: t('settings.editor.label'), component: EditorTab },
   { id: 'markdown', label: t('settings.markdown.label'), component: MarkdownTab },
   { id: 'webdav', label: t('settings.webdav.label'), component: WebDAVTab },
+  { id: 'update', label: t('settings.update.label'), component: UpdateTab },
 ])
 
 </script>

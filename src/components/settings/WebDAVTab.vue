@@ -2,17 +2,18 @@
 import { computed, ref } from 'vue'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { useI18n } from 'vue-i18n'
-import { useFileTree } from '@/composable/useFileTree'
 import { dialogService } from '@/services/dialog/dialogService'
-import type { WebDAVSettings } from 'src/types/appSettings'
+import type { WebDAVSettings } from '@/types/appSettings'
 import IconCustomMore from "~icons/custom/more"
 import IconCustomEdit from "~icons/custom/edit"
 import IconCustomDelete from "~icons/custom/delete"
-import { webdavFileService } from '@/services/files/webdav/webdavFileService'
+import { useWindow } from '@/composable/useWindow'
+import { useFileStore } from '@/stores/fileTreeStore'
 
-const { addFileTree, removeFromTree } = useFileTree()
+const { connectWithRetry } = useWindow()
 const settings = useSettingsStore()
 const { t } = useI18n()
+const fileStore = useFileStore();
 
 // 状态
 const showForm = ref(false)
@@ -67,25 +68,13 @@ const handleDelete = async (account: WebDAVSettings) => {
 }
 
 // 切换文件树显示状态
-const toggleShowInTree = (account: WebDAVSettings) => {
+const toggleShowInTree = async (account: WebDAVSettings) => {
   const newAccount = settings.updateWebdavAccount(account, {
     showInFileTree: !account.showInFileTree
   })
-  if (newAccount.showInFileTree) {
-    webdavFileService.connect(newAccount.url, newAccount.username, newAccount.password).then((res) => {
-      if (res) { // 连接成功
-        addFileTree({
-          path: newAccount.url,
-          storageLocation: 'webdav',
-          isDir: true,
-          username: newAccount.username,
-          rootPath: newAccount.url,
-        })
-      }
-    })
-  } else {
-    removeFromTree({ path: account.url, children: [] })
-  }
+  await fileStore.withAutoLoading(async () => {
+    await connectWithRetry(newAccount)
+  })
 }
 
 // 表单提交成功

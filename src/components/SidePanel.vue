@@ -1,57 +1,46 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Outline from '@/components/outline/Outline.vue'
-import VersionHistory from '@/components/version/VersionHistory.vue'
+import Outline from '@/components/sidebar/outline/Outline.vue'
+import VersionHistory from '@/components/sidebar/version/VersionHistory.vue'
 import { useWindowStore } from '@/stores/windowStore'
-import FileTree from '@/components/filetree/FileTree.vue'
-import { useI18n } from 'vue-i18n'
-import type { SidePanel } from '@/types/appTypes'
+import FileTree from '@/components/sidebar/filetree/FileTree.vue'
+import BottomBar from '@/components/bottombar/BottomBar.vue'
 
-const { t } = useI18n()
 const uiStore = useWindowStore()
+const isHovering = ref(false)
 
-const activePanel = ref(uiStore.state.sidebar.activePanel)
+const activePanel = computed(() => uiStore.state.sidebar.activePanel)
 
-// 监听面板切换
-const handlePanelChange = (panel: SidePanel) => {
-  activePanel.value = panel
-  uiStore.switchSidebarPanel(panel)
+const componentMap: Record<string, any> = {
+  fileTree: FileTree,
+  outline: Outline,
+  history: VersionHistory
 }
-const tabs = computed(() => {
-  return [
-    { name: 'fileTree', label: t('fileTree.label'), component: FileTree },
-    { name: 'outline', label: t('outline.label'), component: Outline },
-    { name: 'history', label: t('version.label'), component: VersionHistory }
-  ]
-})
+
+const currentComponent = computed(() => componentMap[activePanel.value])
+
+const handleMouseEnter = () => {
+  isHovering.value = true
+}
+
+const handleMouseLeave = () => {
+  isHovering.value = false
+}
 </script>
 
 <template>
-  <!-- 面板选择标签 -->
-  <el-tabs lazy v-model="activePanel" class="sidebar-tabs h-full" @tab-change="handlePanelChange">
-    <el-tab-pane v-for="tab in tabs" :key="tab.name" :name="tab.name" :label="tab.label" class="h-full">
-      <component :is="tab.component" class="h-full" />
-    </el-tab-pane>
-  </el-tabs>
+  <div class="side-panel h-full flex flex-col" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+    <div class="flex-1 overflow-hidden">
+      <component :is="currentComponent" class="h-full" :buttonShow="isHovering" />
+    </div>
+    <BottomBar v-show="isHovering" />
+  </div>
 </template>
 
 <style scoped>
-/* 自定义标签样式 */
-.sidebar-tabs :deep(.el-tabs__header) {
-  margin-bottom: 0;
-}
-
-.sidebar-tabs :deep(.el-tabs__nav) {
-  width: 100%;
+.side-panel {
+  height: 100%;
   display: flex;
-}
-
-.sidebar-tabs :deep(.el-tabs__item) {
-  flex: 1;
-  text-align: center;
-  padding: 0 12px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 14px;
+  flex-direction: column;
 }
 </style>

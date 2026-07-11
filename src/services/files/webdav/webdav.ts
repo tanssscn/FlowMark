@@ -135,6 +135,9 @@ class WebDAVClient {
     }
     return value;
   }
+  /**
+   * 规范资源路径，文件夹以斜杠结尾，避免特殊情况
+   */
   private normalizeResourcePath(rawPath: string, isDir?: boolean): string {
     let url: string;
     if (isSubPath(this.baseUrl, rawPath)) {
@@ -308,7 +311,8 @@ class WebDAVClient {
     path: string,
     options: StatOptions = {}
   ): Promise<FileStat | ResponseDataDetailed<FileStat>> {
-    path = this.normalizeResourcePath(path, options.isDir);
+    path = this.normalizeResourcePath(path);
+    console.log('Stat path:', path);
     const response = await this.request(path, {
       method: 'PROPFIND',
       headers: {
@@ -317,8 +321,8 @@ class WebDAVClient {
       },
     });
     const result = await this.parseXMLResponse(response);
-    console.log(result);
     const stat = this.parseStat(result, path, options.details);
+    console.log('Stat result:', stat);
     if (options.details) {
       return {
         data: stat,

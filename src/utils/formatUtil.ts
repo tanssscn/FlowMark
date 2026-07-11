@@ -10,11 +10,12 @@ export const nowFormatDate = (formatStr: DateFormat): UseDateFormatReturn => {
   return useDateFormat(useNow(), formatStr);
 };
 
-// 格式化文件大小
 export const formatFileSize = (bytes: number) => {
   if (bytes === 0) return '0 B'
   const k = 1024
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  const absBytes = Math.abs(bytes)
+  const i = Math.min(Math.floor(Math.log(absBytes) / Math.log(k)), sizes.length - 1)
+  const sign = bytes < 0 ? '-' : ''
+  return sign + parseFloat((absBytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }

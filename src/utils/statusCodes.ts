@@ -49,27 +49,27 @@ export const statusCode = {
   },
   TYPE_ERROR: {
     code: 6005,
-    message: "type error"
+    message: t('notify.errors.typeError')
   },
   FILE_HANDLE_NOT_FOUND: {
     code: 6006,
-    message: "file handle not found"
+    message: t('notify.errors.fileHandleNotFound')
   },
   BROWSER_FILE_SYSTEM_ERROR: {
     code: 6007,
-    message: "browser file system error"
+    message: t('notify.errors.browserFileSystemError')
   },
   AUTHEN_ERROR_NEED_USERNAME_PASSWORD: {
     code: 6008,
-    message: "authen error need username password"
+    message: t('notify.errors.missingCredentials')
   },
   WEBDAV_REQUEST_FAILED: {
     code: 6009,
-    message: "webdav request failed"
+    message: t('notify.errors.webdavRequestFailed')
   },
   INVALID_RESPONSE: {
     code: 6010,
-    message: "invalid response"
+    message: t('notify.errors.invalidResponse')
   },
 } as const;
 

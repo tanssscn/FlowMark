@@ -3,10 +3,10 @@ import { reactive, ref, watch } from 'vue'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { webdavFileService } from '@/services/files/webdav/webdavFileService'
 import { useI18n } from 'vue-i18n'
-import { useFileTree } from '@/composable/useFileTree'
+import { useFile } from '@/composable/useFile'
 import { dialogService } from '@/services/dialog/dialogService'
-import type { WebDAVSettings } from 'src/types/appSettings'
-const { addFileTree, removeFromTree } = useFileTree()
+import type { WebDAVSettings } from '@/types/appSettings'
+const { addWebDavFileTree, removeFromTree } = useFile()
 import { isEqual } from 'es-toolkit/predicate';
 
 const settings = useSettingsStore()
@@ -163,7 +163,7 @@ const saveAccount = async () => {
 const addWebdavToFileTree = (formData: WebDAVSettings) => {
   webdavFileService.connect(formData.url, formData.username, formData.password).then((connected) => { // 连接成功后
     if (connected) { // 如果连接成功，更新文件树
-      addFileTree({
+      addWebDavFileTree({
         path: formData.url,
         storageLocation: 'webdav',
         isDir: true,

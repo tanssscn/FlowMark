@@ -3,7 +3,6 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import tailwindcss from '@tailwindcss/vite'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -30,10 +29,6 @@ export default defineConfig({
       ],
     }),
     vue(),
-    nodePolyfills({
-      include: ['buffer', 'crypto', 'stream'], // 明确需要 polyfill 的模块
-    }),
-
     Icons({
       // 默认的比例为1
       scale: 1,

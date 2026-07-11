@@ -1,8 +1,7 @@
-import type { AppSettings, TabBehavior, ThemeMode, WebDAVSettings } from '@/types/appSettings';
+import type { AppSettings, ThemeMode, WebDAVSettings } from '@/types/appSettings';
 import { ViewMode } from '@/types/appTypes';
 import { defineStore } from 'pinia';
 import { computed, reactive, readonly } from 'vue';
-import { isEqual } from 'es-toolkit/predicate';
 
 export const defaultSettings: AppSettings = {
   general: {
@@ -11,7 +10,6 @@ export const defaultSettings: AppSettings = {
     restoreLastSession: true,
   },
   appearance: {
-    tabBehavior: 'new_tab',
     fontSize: 16,
     theme: 'system'
   },
@@ -28,7 +26,8 @@ export const defaultSettings: AppSettings = {
     image: {
       imagePathTypeOptions: "relative",
       externImagePathOptions: "keep"
-    }
+    },
+    defaultFileExtension: 'md',
   },
   editor: {
     font: {
@@ -77,11 +76,6 @@ export const useSettingsStore = defineStore('settings', () => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  // Get current tab behavior
-  const currentTabBehavior = computed<TabBehavior>(() => {
-    return settings.appearance.tabBehavior;
-  });
-
   const actions = {
     // Reset all settings to defaults
     resetSettings() {
@@ -125,6 +119,10 @@ export const useSettingsStore = defineStore('settings', () => {
       settings.webdav.splice(settings.webdav.indexOf(oldAccount), 1, account);
       return account;
     },
+    setWebdavShowInFileTree(oldAccount: WebDAVSettings, show: boolean) {
+      const account = { ...oldAccount, showInFileTree: show }
+      this.updateWebdavAccount(oldAccount, account)
+    },
     addWebdavAccount(account: WebDAVSettings): WebDAVSettings {
       if (this.isExistedWebdavAccount(account)) {
         return account;
@@ -144,7 +142,6 @@ export const useSettingsStore = defineStore('settings', () => {
     state: readonly(settings),
     settings,
     currentTheme,
-    currentTabBehavior,
     ...actions
   };
 }, {

@@ -6,6 +6,11 @@ import { ImagePathTypeOptions, ExternImagePathOptions } from "@/types/appSetting
 const settingsStore = useSettingsStore()
 const { settings } = storeToRefs(settingsStore)
 const { t } = useI18n()
+const fileExtensionOptions = [
+  { value: 'md', label: 'Markdown(.md)' },
+  { value: 'markdown', label: 'Markdown(.markdown)' },
+  { value: 'txt', label: 'Text(.txt)' },
+]
 </script>
 
 <template>
@@ -19,20 +24,30 @@ const { t } = useI18n()
         <h4 class="mb-2 text-base">
           {{ t('settings.file.save.label') }}
         </h4>
-
         <el-form-item>
           <el-switch v-model="settings.file.save.autoSave" />
           <span class="ml-2 text-sm">
             {{ t('settings.file.save.autoSave.label') }}
           </span>
         </el-form-item>
-
         <el-form-item v-if="settings.file.save.autoSave" :label="t('settings.file.save.autoSave.interval')">
           <el-input-number v-model="settings.file.save.autoSaveInterval" :min="1" :max="60">
             <template #suffix>
               <span>s</span>
             </template>
           </el-input-number>
+        </el-form-item>
+      </div>
+      <!-- Default File Extension -->
+      <div>
+        <h4 class="mb-2 text-base">
+          {{ t('settings.file.defaultFileExtension.label') }}
+        </h4>
+        <el-form-item>
+          <el-select v-model="settingsStore.settings.file.defaultFileExtension" class="w-full" @change="">
+            <el-option v-for="option in fileExtensionOptions" :key="option.value" :label="option.label"
+              :value="option.value" />
+          </el-select>
         </el-form-item>
       </div>
       <!-- history Settings -->

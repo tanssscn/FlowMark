@@ -186,27 +186,16 @@ export class BrowserFileService {
       const handle = await window.showSaveFilePicker({
         suggestedName: options?.defaultPath,
         types: types
-        //   {
-        //   description: 'Markdown Files',
-        //   accept: {
-        //     'text/markdown': ['.md', '.markdown']
-        //   }
-        // }
-
       });
 
-      const writable = await handle.createWritable();
-      await writable.write('');
-      await writable.close();
-
       const file = await handle.getFile();
-      const path = file.name; // 浏览器环境下只能用文件名作为路径标识
+      const path = file.name;
 
       this.fileHandles.set(path, handle);
       return path;
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
-        return null; // 用户取消了选择
+        return null;
       }
       throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }

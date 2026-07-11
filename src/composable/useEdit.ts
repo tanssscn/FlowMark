@@ -2,8 +2,8 @@ import { fileService } from '../services/files/fileService';
 import type { AppFileInfo, EditorTab, ViewMode } from '@/types/appTypes';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useTabStore } from '@/stores/tabStore';
-import { useVersion } from '@/components/version/useVersion';
-import { useFileStore } from '@/stores/fileStore';
+import { useVersion } from '@/components/sidebar/version/composable/useVersion';
+import { useFileStore } from '@/stores/fileTreeStore';
 import { dialogService } from '@/services/dialog/dialogService';
 import { useDebounceFn } from '@vueuse/core';
 import i18n from '@/i18n';
@@ -13,9 +13,7 @@ import { Mutex } from 'async-mutex';
 import { ErrorStatus } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { getExtname, getFilename } from '@/utils/pathUtil';
-import type { TabBehavior } from '@/types/appSettings';
-import { getCurrentWindow } from '@tauri-apps/api/window';
-const appWindow = getCurrentWindow();
+import { windowServer } from '@/services/window/windowService';
 const fileLocks = new Map<string, Mutex>();
 
 /**
@@ -37,7 +35,6 @@ export function useEdit() {
   async function openFileOnTab(
     fileInfo: AppFileInfo,
     options?: {
-      tabBehavior?: TabBehavior;
       pinTab?: boolean;
       viewMode?: ViewMode;
     }
@@ -50,12 +47,10 @@ export function useEdit() {
       // 关闭当前文件：打开新文件前，检查当前文件是否保存
       await closeTab()
       const tab = tabStore.openInTab({
-        tabBehavior: options?.tabBehavior ? options?.tabBehavior : settingsStore.state.appearance.tabBehavior,
-        title: fileInfo.name,
         filePath: fileInfo.path,
         isPinned: options?.pinTab,
       });
-      appWindow.setTitle(tabStore.state?.title || '');
+      setWindowTitle();
     } catch (error) {
       console.error('Failed to open file:', error);
       throw error;
@@ -82,19 +77,17 @@ export function useEdit() {
         const result = await dialogService.confirm({
           title: t('dialog.versionConflict.title'),
           message: t('dialog.versionConflict.message'),
-          confirmButtonText: t('common.cancel'),
-          cancelButtonText: t('dialog.button.continueSave'),
+          confirmButtonText: t('dialog.button.continueSave'),
+          cancelButtonText: t('common.cancel'),
         })
-        if (result) {
+        if (!result) {
           return false;
         }
       }
-    } catch (e) {
-      console.log(e)
+    } catch {
     }
     try {
-      // 写入文件：如果是空文件fetch报错，则用空格代替
-      await fileService.writeTextFile(fileInfo, content || ' ');
+      await fileService.writeTextFile(fileInfo, content);
       const stat = await fileService.getStat(fileInfo)
       fileStore.set([stat])
       tabStore.save(tab.edit?.version ?? 0);
@@ -112,13 +105,12 @@ export function useEdit() {
       manual?: boolean;
       versionMessage?: string;
     }) {
-    const tab = tabStore.state!
-    if (!tab.edit?.unsaved || !tab.filePath) return false;
-    // 保存session快照
-    const tabCopy = Object.assign({}, tabStore.state);
+    const tab = tabStore.currentTab;
+    if (!tab || tab.id !== tabId || !tab.edit?.unsaved || !tab.filePath) return false;
+    const tabCopy = { ...tab };
     const lock = getFileLock(tab.filePath);
-    await lock.runExclusive(async () => {
-      await _saveFile(tabCopy, content, options)
+    return await lock.runExclusive(async () => {
+      return await _saveFile(tabCopy, content, options)
     })
   }
 
@@ -147,51 +139,41 @@ export function useEdit() {
 
   function usePreventUnsaveLoss() {
     addEventListener("beforeunload", (event) => {
-      if (!settingsStore.state.file.save.autoSave) {
-        if (tabStore.state?.edit?.unsaved) {
-          event.preventDefault();
-        }
-      } else {
-        dialogService.alert({
-          title: t('dialog.unsavedChanges.title'),
-          message: t('dialog.unsavedChanges.message'),
-        })
+      if (!settingsStore.state.file.save.autoSave && tabStore.currentTab?.edit?.unsaved) {
+        event.preventDefault();
+        event.returnValue = '';
       }
     })
   }
   async function restoreSession() {
-    await Promise.resolve(() => {
-      if (!tabStore.state?.filePath) return
-      try {
-        const fileInfo = fileStore.get(tabStore.state.filePath);
-        if (!fileInfo) {
-          tabStore.closeTab()
-          return
-        }
-      } catch (e) {
-        // 删除tab和session
+    if (!tabStore.currentTab?.filePath) return
+    try {
+      const fileInfo = fileStore.get(tabStore.currentTab.filePath);
+      if (!fileInfo) {
         tabStore.closeTab()
-        return
       }
-    })
+    } catch {
+      tabStore.closeTab()
+    }
   }
   async function readFileByTabId(id: string): Promise<string> {
-    if (!tabStore.state?.filePath) {
+    const tab = tabStore.currentTab;
+    if (!tab || tab.id !== id || !tab.filePath) {
       throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     }
-    const fileInfo = fileStore.get(tabStore.state.filePath)
+    const fileInfo = fileStore.get(tab.filePath)
     if (!fileInfo) {
       throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     };
     try {
       const content = await fileService.readTextFile(fileInfo);
       return content;
-    } catch (e) {
+    } catch {
       throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     }
   }
   const closeTab = async () => {
-    const tab = tabStore.state;
+    const tab = tabStore.currentTab;
     if (!tab) return;
     if (tab.edit?.unsaved) {
       const result = await dialogService.confirm({
@@ -199,11 +181,19 @@ export function useEdit() {
         message: t('dialog.unsavedChanges.message'),
       })
       if (result) {
-        milkdownManager.getEditor(tab.id)?.saveFile()
+        await milkdownManager.getEditor(tab.id)?.saveFile()
         return
       }
     }
     tabStore.closeTab();
+  }
+  const setWindowTitle = async () => {
+    console.log('setWindowTitle');
+    await windowServer.setWindowTitle(tabStore.state?.title || '');
+  }
+  const setUnsavedWindowTitle = async () => {
+    console.log('setUnsavedWindowTitle');
+    await windowServer.setWindowTitle(tabStore.state?.title + ' *');
   }
   return {
     openFileOnTab,
@@ -211,6 +201,9 @@ export function useEdit() {
     usePreventUnsaveLoss,
     restoreSession,
     saveAsFile,
-    readFileByTabId, closeTab
+    readFileByTabId,
+    closeTab,
+    setWindowTitle,
+    setUnsavedWindowTitle,
   };
 }

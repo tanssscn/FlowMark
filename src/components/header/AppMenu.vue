@@ -1,26 +1,40 @@
-<!-- src/components/header/AppMenu.vue -->
 <script setup lang="ts">
 import { useWindowStore } from '@/stores/windowStore';
-import { useMenuConfig } from './composable/menuConfig'
+import { useMenuConfig, type MenuConfig } from './composable/menuConfig'
 import { ref, watch } from 'vue';
 import { useTabStore } from '@/stores/tabStore';
-import { useRecentStore } from '@/stores/recentStore';
-import { useFileTree } from '@/composable/useFileTree';
+import { useRecentStore } from '@/stores/recentFileStore.ts';
+import { useFile } from '@/composable/useFile.ts';
 import { getCurrentLanguage } from '@/i18n';
 import SubMenu from './SubMenu.vue'
 const windowStore = useWindowStore()
 const tabStore = useTabStore()
 const recentStore = useRecentStore();
-const { openRecentFile } = useFileTree()
+const { openRecentFile } = useFile()
 
 const menuData = ref(useMenuConfig())
-watch(getCurrentLanguage,()=>{
+watch(getCurrentLanguage, () => {
   menuData.value = useMenuConfig()
 })
-const subOpen = (index: string) => {
-  console.log(index)
-  switch (index) {
-    case 'recent-files':
+
+function findMenuById(menus: MenuConfig[], id: string): MenuConfig | undefined {
+  for (const menu of menus) {
+    if (menu.id === id) {
+      return menu
+    }
+    if (menu.submenu) {
+      const found = findMenuById(menu.submenu, id)
+      if (found) {
+        return found
+      }
+    }
+  }
+  return undefined
+}
+
+const subOpen = (menuId: string) => {
+  switch (menuId) {
+    case 'recent-files': {
       const menuItems = recentStore.state.map(file => {
         return {
           id: file.path,
@@ -34,26 +48,33 @@ const subOpen = (index: string) => {
           }
         }
       })
-      if (menuData.value[0].submenu && menuData.value[0].submenu[5]) {
-        menuData.value[0].submenu[5].submenu = menuItems
+      const recentFilesMenu = findMenuById(menuData.value, 'recent-files')
+      if (recentFilesMenu) {
+        recentFilesMenu.submenu = [...menuItems, ...[findMenuById(menuData.value, 'clear-recent-files')!]]
       }
-      break;
-    case 'view':
-      if (menuData.value[2].submenu && menuData.value[2].submenu[0]) {
-        menuData.value[2].submenu[0].checked = windowStore.windowState.sidebar.visible
-        menuData.value[2].submenu[1].enabled = tabStore.activeSession !== undefined
-      } break;
-    case 'view-mode':
-      if (menuData.value[2].submenu && menuData.value[2].submenu[1]) {
-        menuData.value[2].submenu[1].submenu?.forEach((item, index) => {
-          console.log(item.id)
-          item.enabled = tabStore.activeSession !== undefined
-          item.checked = item.id === tabStore.activeSession?.viewMode
-        })
+      break
+    }
+    case 'view': {
+      const sidebarToggleMenu = findMenuById(menuData.value, 'sidebar-toggle')
+      const viewModeMenu = findMenuById(menuData.value, 'view-mode')
+      if (sidebarToggleMenu) {
+        sidebarToggleMenu.checked = windowStore.windowState.sidebar.visible
       }
-      break;
+      if (viewModeMenu) {
+        viewModeMenu.enabled = tabStore.activeSession !== undefined
+      }
+      break
+    }
+    case 'view-mode': {
+      const viewModeMenu = findMenuById(menuData.value, 'view-mode')
+      viewModeMenu?.submenu?.forEach(item => {
+        item.enabled = tabStore.activeSession !== undefined
+        item.checked = item.id === tabStore.activeSession?.viewMode
+      })
+      break
+    }
     default:
-      break;
+      break
   }
 }
 </script>
@@ -67,6 +88,6 @@ const subOpen = (index: string) => {
 </template>
 <style lang="css" scoped>
 .el-menu--horizontal {
-  --el-menu-horizontal-height: 50px;
+  --el-menu-horizontal-height: 36px;
 }
 </style>

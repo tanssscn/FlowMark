@@ -1,13 +1,13 @@
 <template>
   <div v-if="!initial" v-loading="!initial"
     style="height: 100vh; display: flex; justify-content: center; align-items: center;" />
-  <el-splitter v-else class="editor-wrap" @resize-end="resizeEndEvent">
-    <el-splitter-panel collapsible v-model:size="sourceWdith" :resizable>
+  <el-splitter lazy v-else class="editor-wrap" @resize-end="resizeEndEvent">
+    <el-splitter-panel :min="minWith" v-model:size="sourceWdith" :resizable="resizable">
       <el-scrollbar class="nonprintable" v-show="typeof sourceWdith === 'number' ? sourceWdith > 0 : true">
         <CodeMirrorEditor ref="codemirrorEditorRef" @updateMilkdown="updateMilkdown" :content="content" />
       </el-scrollbar>
     </el-splitter-panel>
-    <el-splitter-panel collapsible v-model:size="milkdownWdith">
+    <el-splitter-panel :min="minWith" v-model:size="milkdownWdith" :resizable="resizable">
       <MilkdownProvider v-show="typeof milkdownWdith === 'number' ? milkdownWdith > 0 : true">
         <MilkdownEditor ref="milkdownEditorRef" :tab-id="tab.id" :content="content" />
       </MilkdownProvider>
@@ -24,6 +24,8 @@ import type { PropType } from 'vue'
 import CodeMirrorEditor from "./codemirror/CodeMirrorEditor.vue";
 import { dialogService } from "@/services/dialog/dialogService";
 import { useTabStore } from "@/stores/tabStore";
+
+const minWith = 100
 const tabStore = useTabStore()
 const resizable = ref(true)
 let content = ""
@@ -42,11 +44,11 @@ const setEditable = (preview: boolean) => {
 }
 const resizeEndEvent = (index: number, sizes: number[]) => {
   if (sizes[0] < 10) {
-    tabStore.switchViewMode(props.tab.id, ViewMode.WYSIWYG)
+    tabStore.switchViewMode(ViewMode.WYSIWYG)
     resizable.value = false
   }
   if (sizes[1] < 10) {
-    tabStore.switchViewMode(props.tab.id, ViewMode.SOURCE)
+    tabStore.switchViewMode(ViewMode.SOURCE)
     resizable.value = false
   }
 }
@@ -59,11 +61,13 @@ onMounted(() => {
         milkdownWdith.value = 0
         content = milkdownEditorRef.value?.milkdownEditor.getContent()
         updateMirrorEditor(content)
+        resizable.value = false
         break
       case ViewMode.READONLY:
         milkdownWdith.value = '100%'
         sourceWdith.value = 0
         setEditable(false)
+        resizable.value = false
         break
       case ViewMode.SPLIT:
         milkdownWdith.value = '50%'
@@ -77,6 +81,7 @@ onMounted(() => {
         milkdownWdith.value = '100%'
         sourceWdith.value = 0
         setEditable(true)
+        resizable.value = false
         break
     }
   }, { immediate: true })

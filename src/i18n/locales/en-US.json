@@ -3,6 +3,27 @@
     "title": "FlowMark",
     "exit": "Exit"
   },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "retry": "Retry",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info",
+    "success": "Success",
+    "retrying": "Retrying",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
   "menu": {
     "separator": "Separator",
     "file": "File",
@@ -18,7 +39,8 @@
       "exportHtml": "Export as HTML",
       "recentFiles": "Recent Files",
       "clearCache": "Clear Cache",
-      "clearRecentFiles": "Clear Recent Files"
+      "clearRecentFiles": "Clear Recent Files",
+      "confirmClearRecentFiles": "Are you sure you want to clear recent files?"
     },
     "edit": "Edit",
     "EditMenu": {
@@ -79,7 +101,9 @@
   },
   "outline": {
     "label": "Outline",
-    "empty": "No outline"
+    "empty": "No outline",
+    "expandAll": "Expand All",
+    "collapseAll": "Collapse All"
   },
   "version": {
     "label": "Version",
@@ -93,7 +117,8 @@
     "noMessage": "No save message",
     "compare": "Compare",
     "message": "Message",
-    "delete": "Delete"
+    "delete": "Delete",
+    "clearAll": "Clear All Versions"
   },
   "fileTree": {
     "label": "Files",
@@ -124,7 +149,8 @@
     "open": "Open",
     "openInNewTab": "Open in New Tab",
     "revealInExplorer": "Show in Explorer",
-    "removeFromTree": "Remove from File Tree"
+    "removeFromTree": "Remove from File Tree",
+    "characterCount": "Character Count"
   },
   "settings": {
     "label": "Settings",
@@ -154,17 +180,15 @@
         "light": "Light Mode",
         "dark": "Dark Mode"
       },
-      "tabBehavior": {
-        "label": "Tab Behavior",
-        "new": "Open in New Tab",
-        "replace": "Replace Current Tab"
-      },
       "fontSize": {
         "label": "Font Size"
       }
     },
     "file": {
       "label": "File Settings",
+      "defaultFileExtension": {
+        "label": "Default File Extension"
+      },
       "save": {
         "label": "Save Settings",
         "autoSave": {
@@ -251,9 +275,23 @@
     },
     "webdav": {
       "label": "WebDAV Settings",
-      "serverUrl": {
-        "label": "Server URL",
+      "accounts": {
+        "label": "WebDAV Accounts",
+        "add": "Add Account",
+        "edit": "Edit Account",
+        "delete": "Delete Account",
+        "empty": "No accounts"
+      },
+      "title": {
+        "label": "Title",
+        "placeholder": "Custom Title"
+      },
+      "url": {
+        "label": "URL",
         "placeholder": "https://example.com/webdav/"
+      },
+      "showInFileTree": {
+        "label": "Show in File Tree"
       },
       "username": {
         "label": "Username",
@@ -277,6 +315,24 @@
       "connecting": "Connecting...",
       "testing": "Testing...",
       "resetConnection": "Reset Connection"
+    },
+    "update": {
+      "label": "Check for Updates",
+      "currentVersion": "Current Version",
+      "latestVersion": "Latest Version",
+      "check": "Check for Updates",
+      "checking": "Checking...",
+      "download": "Download Update",
+      "downloading": "Downloading...",
+      "downloadProgress": "Download Progress",
+      "noUpdate": "Already up to date",
+      "upToDate": "Current version is up to date",
+      "checkFailed": "Failed to check for updates",
+      "downloadFailed": "Failed to download update",
+      "info": "About updates:",
+      "info1": "Update packages are downloaded from GitHub Releases",
+      "info2": "It is recommended to save all unsaved changes before downloading",
+      "info3": "The application needs to be restarted after the update is complete"
     }
   },
   "dialog": {
@@ -299,6 +355,10 @@
     "deleteFile": {
       "title": "Delete File",
       "message": "Are you sure you want to delete {msg}?"
+    },
+    "clearAll": {
+      "title": "Clear All",
+      "message": "Are you sure you want to delete all?"
     },
     "newVersion": {
       "title": "Create New Version",
@@ -340,6 +400,10 @@
       "message": "Please enter a folder name"
     }
   },
+  "dragDrop": {
+    "dropHere": "Drop to import files",
+    "supportFiles": "Supports files and folders"
+  },
   "notify": {
     "errors": {
       "unknownError": "An unknown error occurred",
@@ -362,19 +426,29 @@
       "typeError": "Type error",
       "fileHandleNotFound": "File handle not found",
       "browserFileSystemError": "Browser file system error",
+      "checkSettingOrNetwork": "Check settings or network connection",
       "missingCredentials": "Username and password cannot be empty",
       "webdavRequestFailed": "WebDAV request failed",
-      "invalidReponse": "Invalid response"
+      "invalidResponse": "Invalid response",
+      "accountAlreadyExists": "Account already exists",
+      "webdavLoadFailed": "WebDAV load failed",
+      "webdavLoadFailedMessage": "Failed to load WebDAV file tree. This may be due to network issues."
+    },
+    "actions": {
+      "retry": "Retry",
+      "removeFromTree": "Remove from tree"
     },
     "success": {
-      "ok": "Success",
+      "label": "Success",
       "save": "Saved successfully",
       "createVersion": "Version created successfully",
       "deleteFile": "File deleted successfully",
       "connectionSuccess": "Connected successfully!"
     },
     "warning": {
-      "deleteFile": "Deleting this file will permanently remove it and it cannot be recovered."
+      "label": "Warning",
+      "deleteFile": "Deleting this file will permanently remove it and it cannot be recovered.",
+      "deleteConfirm": "Are you sure you want to delete {msg}?"
     },
     "info": {
       "newTabEffect": "Takes effect when a new tab is opened"

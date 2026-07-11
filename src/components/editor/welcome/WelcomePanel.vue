@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useFileTree } from '@/composable/useFileTree';
-import { useRecentStore } from '@/stores/recentStore';
+import { useFile } from '@/composable/useFile';
+import { useRecentStore } from '@/stores/recentFileStore';
 import type { AppFileInfo } from '@/types/appTypes';
 import { getFilename } from '@/utils/pathUtil';
 import IconCustomPin from "~icons/custom/pin"
 import IconCustomPinFill from "~icons/custom/pin-fill"
 import { Close } from "@element-plus/icons-vue"
 const recentStore = useRecentStore();
-const { openFolder, openFile, openRecentFile } = useFileTree()
+const { openFolder, openFile, openRecentFile } = useFile()
 
 </script>
 

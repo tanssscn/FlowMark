@@ -12,7 +12,7 @@ import type { PropType } from 'vue'
 import panzoom from '@panzoom/panzoom'
 import type { PanzoomObject } from '@panzoom/panzoom'
 import type { EditorTab } from '@/types/appTypes';
-import { useFileStore } from '@/stores/fileStore'
+import { useFileStore } from '@/stores/fileTreeStore'
 import { closeImageSource, createFileSrc } from '@/utils/pathUtil';
 import { useEventListener } from '@vueuse/core';
 

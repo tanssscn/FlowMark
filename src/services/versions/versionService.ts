@@ -1,4 +1,3 @@
-import crypto from 'crypto-js';
 import type { FileSystemAdapter } from './type';
 import { getDeviceInfo } from '../deviceService';
 import { BrowserFs } from './browserFs';
@@ -39,7 +38,9 @@ export class VersionService {
    * 获取文件的版本目录路径
    */
   private async getVersionDir(filePath: string): Promise<string> {
-    const hashHex = crypto.SHA256(filePath).toString().substring(0, 11);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(filePath))
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 17);
     const versionDir = getJoin(this.rootPath, hashHex);
     if (!await this.fs.exists(versionDir)) {
       await this.fs.mkdir(versionDir)
@@ -48,6 +49,7 @@ export class VersionService {
   }
   private async getMetaFilePath(filePath: string): Promise<string> {
     const versionDir = await this.getVersionDir(filePath);
+    console.log(versionDir, this.metadataFileName)
     return `${versionDir}/${this.metadataFileName}`;
   }
   /**
@@ -81,6 +83,7 @@ export class VersionService {
   private async saveMetadata(filePath: string, metadata: VersionHistory): Promise<void> {
     const metadataPath = await this.getMetaFilePath(filePath);
     const content = JSON.stringify(metadata);
+    console.log(metadataPath, content)
     await this.fs.writeFile(metadataPath, content);
   }
   /**
@@ -106,15 +109,13 @@ export class VersionService {
 
     metadata.entries.push(newVersion);
     if (maxNum && metadata.entries.length > maxNum) {
-      const numToDelete = metadata.entries.splice(0, metadata.entries.length - maxNum)
-      // 异步删除旧版本文件
-      Promise.all(numToDelete.map(v => this.getVersionFilePath(filePath, v.id).then((path) => this.fs.unlink(path))));
+      const numToDelete = metadata.entries.splice(0, metadata.entries.length - maxNum);
+      await Promise.all(numToDelete.map(v =>
+        this.getVersionFilePath(filePath, v.id).then((path) => this.fs.unlink(path))
+      ));
     }
-    console.log(`Creating new version ${versionId} for ${versionFile}`);
-    // 保存元数据和版本文件
     await this.fs.writeFile(versionFile, content);
-    // 元数据可以异步保存，不影响版本文件
-    this.saveMetadata(filePath, metadata);
+    await this.saveMetadata(filePath, metadata);
 
     return metadata.entries;
   }
@@ -124,6 +125,7 @@ export class VersionService {
    */
   public async listVersions(filePath: string, depth?: number): Promise<VersionInfo[]> {
     const metadata = await this.loadMetadata(filePath);
+    console.log(metadata.entries, filePath)
     return metadata.entries
   }
 
@@ -173,7 +175,16 @@ export class VersionService {
 
     return metadata.entries;
   }
-
+  /**
+   * 删除所有版本
+   */
+  public async deleteVersions(filePath: string): Promise<void> {
+    const metadata = await this.loadMetadata(filePath);
+    await Promise.all(metadata.entries.map(v =>
+      this.getVersionFilePath(filePath, v.id).then((path) => this.fs.unlink(path))
+    ));
+    await this.saveMetadata(filePath, { source: filePath, entries: [] });
+  }
 
 }
 export const versionService = new VersionService();
