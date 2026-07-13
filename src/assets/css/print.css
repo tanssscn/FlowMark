@@ -1,32 +1,67 @@
 @media print {
   body * {
     visibility: hidden;
-    /* left: 0 !important; */
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
   }
 
   .nonprintable {
     display: none;
   }
 
-  /* 只显示打印容器及其内容 */
+  .el-splitter,
+  .el-splitter-panel,
+  .editor-wrap,
+  .el-scrollbar,
+  .el-scrollbar__wrap,
+  .el-scrollbar__view {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    width: auto !important;
+    position: static !important;
+  }
+
   .ProseMirror,
   .ProseMirror * {
     visibility: visible;
     position: static;
     width: auto;
     height: auto;
+    overflow: visible !important;
+    max-height: none !important;
   }
 
   .ProseMirror {
-    margin: 0 auto !important;
-    /* 左右外边距自动 */
-    padding: 0 !important;
+    /* margin: 0 auto !important; */
+    /* padding: 0 !important; */
     border: none;
     width: 100% !important;
-    height: auto;
+    height: auto !important;
     overflow: visible !important;
     z-index: 999 !important;
-    /* 悬停时临时提高层级 */
+    page-break-inside: auto;
+  }
+
+  .ProseMirror p,
+  .ProseMirror h1,
+  .ProseMirror h2,
+  .ProseMirror h3,
+  .ProseMirror h4,
+  .ProseMirror h5,
+  .ProseMirror h6,
+  .ProseMirror ul,
+  .ProseMirror ol,
+  .ProseMirror li,
+  .ProseMirror blockquote,
+  .ProseMirror pre {
+    page-break-inside: avoid;
+  }
+
+  .ProseMirror h1,
+  .ProseMirror h2 {
+    page-break-after: avoid;
   }
 
   .print-panel {

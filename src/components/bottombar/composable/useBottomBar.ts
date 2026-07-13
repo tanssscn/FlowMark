@@ -2,6 +2,7 @@ import { computed } from 'vue'
 import { useWindowStore } from '@/stores/windowStore'
 import { useI18n } from 'vue-i18n'
 import type { SidePanel } from '@/types/appTypes'
+import { rebuildMenu } from '@/components/header/composable/client/tauriMenu'
 
 export function useBottomBar() {
   const { t } = useI18n()
@@ -18,6 +19,7 @@ export function useBottomBar() {
   const switchPanel = (panel: SidePanel) => {
     if (panel === activePanel.value) {
       uiStore.toggleSidebar()
+      rebuildMenu()
     } else {
       uiStore.switchSidebarPanel(panel)
     }

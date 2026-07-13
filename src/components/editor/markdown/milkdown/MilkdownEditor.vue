@@ -33,4 +33,12 @@ onMounted(() => {
 :deep(.ProseMirror) {
   height: 100% !important;
 }
+
+@media print {
+  :deep(.ProseMirror) {
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+}
 </style>
