@@ -416,6 +416,12 @@
       "message": "请输入文件夹名"
     }
   },
+  "welcome": {
+    "title": "欢迎使用 FlowMark Markdown 编辑器",
+    "description": "一款现代化的 Markdown 编辑工具，支持本地和 WebDAV 云端编辑",
+    "recentFiles": "最近文件",
+    "clearHistory": "清空历史记录"
+  },
   "dragDrop": {
     "dropHere": "松开鼠标以导入文件",
     "supportFiles": "支持导入文件和文件夹"

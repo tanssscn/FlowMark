@@ -45,6 +45,7 @@ vi.mock('@/services/files/fileService', () => ({
 vi.mock('@/services/files/local/localFileService', () => ({
   localFileService: {
     openLocalFile: vi.fn(),
+    openLocalFolder: vi.fn(),
   },
 }))
 
@@ -117,7 +118,7 @@ describe('useFile', () => {
   describe('openFolder', () => {
     it('should load file tree when folder is selected', async () => {
       const mockEntry = { path: '/test/folder', name: 'folder', isDir: true, storageLocation: 'local' }
-      vi.mocked(localFileService.openLocalFile).mockResolvedValue(mockEntry)
+      vi.mocked(localFileService.openLocalFolder).mockResolvedValue(mockEntry)
 
       const { openFolder } = useFile()
       await openFolder()
@@ -128,7 +129,7 @@ describe('useFile', () => {
 
     it('should not load file tree when already exists', async () => {
       const mockEntry = { path: '/test/folder', name: 'folder', isDir: true, storageLocation: 'local' }
-      vi.mocked(localFileService.openLocalFile).mockResolvedValue(mockEntry)
+      vi.mocked(localFileService.openLocalFolder).mockResolvedValue(mockEntry)
       fileStore.get = vi.fn().mockReturnValue(mockEntry)
 
       const { openFolder } = useFile()
@@ -138,7 +139,7 @@ describe('useFile', () => {
     })
 
     it('should do nothing when cancelled', async () => {
-      vi.mocked(localFileService.openLocalFile).mockResolvedValue(null)
+      vi.mocked(localFileService.openLocalFolder).mockResolvedValue(null)
 
       const { openFolder } = useFile()
       await openFolder()

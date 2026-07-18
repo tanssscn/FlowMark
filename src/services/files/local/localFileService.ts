@@ -57,13 +57,32 @@ export class LocalFileService {
     title?: string;
     filters?: { name: string; extensions: string[] }[];
     defaultPath?: string;
-    multiple?: boolean;
-    directory?: boolean;
-  }): Promise<string[] | string | null> {
+  }): Promise<string | null> {
     if (this._isBrowser) {
       return null;
     }
     return await tauriLocalFileService.openFileDialog(options);
+  }
+
+  async openFileDialogMultiple(options?: {
+    title?: string;
+    filters?: { name: string; extensions: string[] }[];
+    defaultPath?: string;
+  }): Promise<string[] | null> {
+    if (this._isBrowser) {
+      return null;
+    }
+    return await tauriLocalFileService.openFileDialogMultiple(options);
+  }
+
+  async openFolderDialog(options?: {
+    title?: string;
+    defaultPath?: string;
+  }): Promise<string | null> {
+    if (this._isBrowser) {
+      return null;
+    }
+    return await tauriLocalFileService.openFolderDialog(options);
   }
 
   async saveFileDialog(options?: {
@@ -73,17 +92,28 @@ export class LocalFileService {
   }): Promise<string | null> {
     return await this.getService().saveFileDialog(options);
   }
-  /**
-  * 打开文件选择对话框
-  */
+
   async openLocalFile(options?: {
     title?: string;
     filters?: { name: string; extensions: string[] }[];
     defaultPath?: string;
-    multiple?: boolean;
-    directory?: boolean;
-  }): Promise<FileEntry | FileEntry[] | null> {
+  }): Promise<FileEntry | null> {
     return await this.getService().openFile(options);
+  }
+
+  async openLocalFiles(options?: {
+    title?: string;
+    filters?: { name: string; extensions: string[] }[];
+    defaultPath?: string;
+  }): Promise<FileEntry[] | null> {
+    return await this.getService().openFiles(options);
+  }
+
+  async openLocalFolder(options?: {
+    title?: string;
+    defaultPath?: string;
+  }): Promise<FileEntry | null> {
+    return await this.getService().openFolder(options);
   }
 
   async writeFile(fileInfo: Pick<FileEntry, 'path'>, file: File | Blob | ArrayBuffer): Promise<void> {

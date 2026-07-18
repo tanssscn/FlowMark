@@ -73,11 +73,8 @@ const tabChange = (id: string) => {
 <template>
   <div class="editor-container">
     <!-- 直接显示当前活动的编辑器组件 -->
-    <component v-if="tabStore.state?.id" :is="conponentMap[tabStore.state.type]" :tab="tabStore.state"
+    <component :is="conponentMap[tabStore.state?.type ?? TabType.Welcome]" :tab="tabStore.state"
       :ref="(el: any) => setChildRef(el, tabStore.state?.id || '')" />
-    <!-- 如果没有打开的 tab，显示欢迎页面 -->
-    <WelcomePanel v-else />
-
     <!-- 查找替换组件 -->
     <SearchReplace />
     <TableSelector v-model="windowStore.windowState.showTableSelect"

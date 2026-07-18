@@ -152,6 +152,7 @@ export function useEdit() {
       if (!fileInfo) {
         tabStore.closeTab()
       }
+      setWindowTitle()
     } catch {
       tabStore.closeTab()
     }
@@ -172,6 +173,13 @@ export function useEdit() {
       throw new ErrorStatus(statusCode.FILE_NOT_FOUND)
     }
   }
+  /**
+   * 关闭当前标签页
+   * 如果有未保存的更改，会提示用户是否保存
+   * 如果用户选择保存，会调用 saveFile 函数
+   * 如果用户选择不保存，会关闭标签页
+   * @returns 
+   */
   const closeTab = async () => {
     const tab = tabStore.currentTab;
     if (!tab) return;
@@ -182,13 +190,12 @@ export function useEdit() {
       })
       if (result) {
         await milkdownManager.getEditor(tab.id)?.saveFile()
-        return
       }
     }
     tabStore.closeTab();
+    setWindowTitle()
   }
   const setWindowTitle = async () => {
-    console.log('setWindowTitle');
     await windowServer.setWindowTitle(tabStore.state?.title || '');
   }
   const setUnsavedWindowTitle = async () => {

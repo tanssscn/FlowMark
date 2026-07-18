@@ -74,6 +74,7 @@ export function useWindow() {
       }
     })
   }
+
   async function initMenu() {
     if ((!isBrowser)) {
       await initTauriMenu()

@@ -426,6 +426,12 @@
       "message": "Please enter a folder name"
     }
   },
+  "welcome": {
+    "title": "Welcome to FlowMark Markdown Editor",
+    "description": "A modern Markdown editing tool that supports local and WebDAV cloud editing",
+    "recentFiles": "Recent Files",
+    "clearHistory": "Clear History"
+  },
   "dragDrop": {
     "dropHere": "Drop to import files",
     "supportFiles": "Supports files and folders"

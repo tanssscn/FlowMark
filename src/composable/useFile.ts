@@ -57,10 +57,8 @@ export function useFile() {
    * 打开文件夹，有弹窗
    */
   async function openFolder() {
-    localFileService.openLocalFile({
+    localFileService.openLocalFolder({
       title: t('menu.FileMenu.openFolder'),
-      directory: true,
-      multiple: false,
     }).then((fileEntry) => {
       if (fileEntry) {
         const _fileInfo = fileStore.get(fileEntry.path)
@@ -84,8 +82,6 @@ export function useFile() {
         { name: 'Text', extensions: ['txt', 'TXT'] },
         { name: 'All Files', extensions: ['*'] },
       ],
-      multiple: false,
-      directory: false,
     }).then((fileEntry) => {
       if (fileEntry) {
         const _fileInfo = fileStore.get(fileEntry.path)
@@ -210,6 +206,8 @@ export function useFile() {
         recentStore.clearAll()
         rebuildMenu()
       }
+    }).catch((error) => {
+      console.error('Failed to clear recent files:', error)
     })
   }
   return {

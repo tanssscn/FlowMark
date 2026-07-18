@@ -135,7 +135,7 @@ export class TauriLocalFileService {
         const stats = await stat(fullPath, {
           baseDir: BaseDirectory.AppData,
         });
-        return this.mapToAppFileInfo(fullPath, stats);
+        return await this.mapToAppFileInfo(fullPath, stats);
       })
     );
 
@@ -154,7 +154,7 @@ export class TauriLocalFileService {
         baseEntry.children.map(async (child) => {
           if (child.isDir) {
             // 如果是目录，递归读取
-            return this.readDirectory({ path: child.path });
+            return await this.readDirectory({ path: child.path });
           }
           // 如果是文件，直接返回
           return child;
@@ -175,47 +175,105 @@ export class TauriLocalFileService {
   }
 
   /**
-   * 打开文件选择对话框
+   * 打开单个文件选择对话框
    */
   async openFileDialog(options?: {
     title?: string;
     filters?: { name: string; extensions: string[] }[];
     defaultPath?: string;
-    multiple?: boolean;
-    directory?: boolean;
   }): Promise<string | null> {
     const { open } = await import('@tauri-apps/plugin-dialog');
     return await open({
       title: options?.title || 'Select File',
       filters: options?.filters,
       defaultPath: options?.defaultPath,
-      multiple: options?.multiple,
-      directory: options?.directory,
+      multiple: false,
+      directory: false,
     });
   }
 
+  /**
+   * 打开多文件选择对话框
+   */
+  async openFileDialogMultiple(options?: {
+    title?: string;
+    filters?: { name: string; extensions: string[] }[];
+    defaultPath?: string;
+  }): Promise<string[] | null> {
+    const { open } = await import('@tauri-apps/plugin-dialog');
+    const result = await open({
+      title: options?.title || 'Select Files',
+      filters: options?.filters,
+      defaultPath: options?.defaultPath,
+      multiple: true,
+      directory: false,
+    });
+    if (result === null) return null;
+    return Array.isArray(result) ? result : [result];
+  }
+
+  /**
+   * 打开文件夹选择对话框
+   */
+  async openFolderDialog(options?: {
+    title?: string;
+    defaultPath?: string;
+  }): Promise<string | null> {
+    const { open } = await import('@tauri-apps/plugin-dialog');
+    return await open({
+      title: options?.title || 'Select Folder',
+      defaultPath: options?.defaultPath,
+      multiple: false,
+      directory: true,
+    })
+  }
+
+  /**
+   * 打开单个文件并返回 FileEntry
+   */
   async openFile(options?: {
     title?: string;
     filters?: { name: string; extensions: string[] }[];
     defaultPath?: string;
-    multiple?: boolean;
-    directory?: boolean;
-  }): Promise<FileEntry | FileEntry[] | null> {
-    const path = await tauriLocalFileService.openFileDialog(options)
+  }): Promise<FileEntry | null> {
+    const path = await this.openFileDialog(options)
     if (path) {
-      if (options?.directory) {
-        return this.readDirectory({ path: path })
-      } else if (Array.isArray(path)) {
-        const results: FileEntry[] = []
-        for (const p of path) {
-          const stats = await stat(p)
-          results.push(await this.mapToAppFileInfo(p, stats))
-        }
-        return results
-      } else {
-        const stats = await stat(path)
-        return this.mapToAppFileInfo(path, stats)
+      const stats = await stat(path)
+      return await this.mapToAppFileInfo(path, stats)
+    }
+    return null
+  }
+
+  /**
+   * 打开多个文件并返回 FileEntry[]
+   */
+  async openFiles(options?: {
+    title?: string;
+    filters?: { name: string; extensions: string[] }[];
+    defaultPath?: string;
+  }): Promise<FileEntry[] | null> {
+    const paths = await this.openFileDialogMultiple(options)
+    if (paths && paths.length > 0) {
+      const results: FileEntry[] = []
+      for (const p of paths) {
+        const stats = await stat(p)
+        results.push(await this.mapToAppFileInfo(p, stats))
       }
+      return results
+    }
+    return null
+  }
+
+  /**
+   * 打开文件夹并返回 FileEntry
+   */
+  async openFolder(options?: {
+    title?: string;
+    defaultPath?: string;
+  }): Promise<FileEntry | null> {
+    const path = await this.openFolderDialog(options)
+    if (path) {
+      return await this.readDirectory({ path: path })
     }
     return null
   }
@@ -237,7 +295,7 @@ export class TauriLocalFileService {
     const stats = await stat(fileInfo.path, {
       baseDir: BaseDirectory.AppData,
     })
-    return this.mapToAppFileInfo(fileInfo.path, stats);
+    return await this.mapToAppFileInfo(fileInfo.path, stats);
   }
   /**
    * 将 Tauri 的 AppFileInfo 映射到应用的 AppFileInfo 类型
