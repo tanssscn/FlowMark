@@ -1,0 +1,70 @@
+name: 'publish'
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest' # 构建 Apple Silicon (M1/M2/M3) 版本
+            args: '--target aarch64-apple-darwin'
+          - platform: 'ubuntu-22.04' # 构建 Linux x64 版本
+            args: ''
+          - platform: 'windows-latest' # 构建 Windows x64 版本
+            args: ''
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v7
+      
+      # 安装 pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11 # 你可以指定具体的版本号，比如 8 或 9
+          
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+        # 注意：这里使用了 libwebkit2gtk-4.1-dev，这是 Tauri v2 需要的版本[citation:2][citation:4]
+
+      - name: setup node
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: 'pnpm' # 根据你的包管理器修改为 npm 或 pnpm
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: install frontend dependencies
+        run: pnpm install # 根据你的包管理器修改
+
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        with:
+          tagName: app-v__VERSION__
+          releaseName: 'App v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
