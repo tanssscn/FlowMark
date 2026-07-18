@@ -80,14 +80,12 @@ const pageMap = {
 
 <template>
   <van-config-provider :theme="vantTheme" class="h-full">
-    <div v-if="isInitialized" class="relative h-full overflow-hidden">
+    <div v-if="isInitialized" class="relative h-full overflow-hidden mobile-app">
       <transition name="slide" mode="out-in">
         <component :is="pageMap[currentPage]" :key="currentPage" />
       </transition>
 
-      <transition name="panel-slide">
-        <MobileSidePanel v-if="activePanel" />
-      </transition>
+      <MobileSidePanel v-if="activePanel" />
     </div>
     <div v-else class="flex items-center justify-center h-full">
       <van-loading size="32px" />
@@ -109,18 +107,5 @@ const pageMap = {
 .slide-leave-to {
   transform: translateX(-30%);
   opacity: 0;
-}
-
-.panel-slide-enter-active,
-.panel-slide-leave-active {
-  transition: transform 0.25s ease-out;
-}
-
-.panel-slide-enter-from {
-  transform: translateX(100%);
-}
-
-.panel-slide-leave-to {
-  transform: translateX(100%);
 }
 </style>

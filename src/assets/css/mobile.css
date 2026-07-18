@@ -5,33 +5,29 @@ html {
   background-color: var(--mobile-bg-color, #ffffff);
 }
 
-div,
-p,
-span,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-ul,
-ol,
-li,
-section,
-article,
-header,
-footer,
-main,
-aside,
-nav,
-form,
-table,
-tr,
-td,
-th {
-  background-color: var(--mobile-bg-color, #ffffff);
-  color: var(--mobile-text-color, #1f2937);
+.mobile-app {
+
+  div,
+  ul,
+  ol,
+  li,
+  section,
+  article,
+  header,
+  footer,
+  main,
+  aside,
+  nav,
+  form,
+  table,
+  tr,
+  td,
+  th {
+    background-color: var(--mobile-bg-color, #ffffff);
+    color: var(--mobile-text-color, #1f2937);
+  }
 }
+
 
 input,
 textarea,

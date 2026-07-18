@@ -54,21 +54,37 @@ export class BrowserFileService {
   }
 
   /**
-   * 通过文件选择器打开文件
+   * 通过文件选择器打开单个文件
    */
   async openFile(options?: {
     title?: string;
     filters?: { name: string; extensions: string[] }[];
     defaultPath?: string;
-    multiple?: boolean;
-    directory?: boolean;
-  }): Promise<FileEntry | FileEntry[] | null> {
-    if (options?.directory) {
-      return await this.openFolderFromPicker();
-    } else {
-      return await this.openFileFromPicker(options?.multiple ?? false);
-    }
+  }): Promise<FileEntry | null> {
+    return await this.openFileFromPicker(false) as FileEntry | null;
   }
+
+  /**
+   * 通过文件选择器打开多个文件
+   */
+  async openFiles(options?: {
+    title?: string;
+    filters?: { name: string; extensions: string[] }[];
+    defaultPath?: string;
+  }): Promise<FileEntry[] | null> {
+    return await this.openFileFromPicker(true) as FileEntry[] | null;
+  }
+
+  /**
+   * 通过文件夹选择器打开文件夹
+   */
+  async openFolder(options?: {
+    title?: string;
+    defaultPath?: string;
+  }): Promise<FileEntry | null> {
+    return await this.openFolderFromPicker();
+  }
+
   private async openFolderFromPicker(): Promise<FileEntry | null> {
     try {
       // @ts-ignore - 实验性API

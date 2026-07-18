@@ -37,10 +37,8 @@ export function useMobileFile() {
    */
   async function addFiles() {
     try {
-      const result = await localFileService.openLocalFile({
+      const result = await localFileService.openLocalFiles({
         title: t('fileTree.openFile'),
-        multiple: true,
-        directory: false,
         filters: [
           { name: 'Markdown', extensions: ['md', 'markdown'] },
           { name: 'PDF', extensions: ['pdf'] },
@@ -51,10 +49,9 @@ export function useMobileFile() {
 
       if (!result) return
 
-      const fileEntries = Array.isArray(result) ? result : [result]
       let addedCount = 0
 
-      for (const fileEntry of fileEntries) {
+      for (const fileEntry of result) {
         const existing = fileStore.get(fileEntry.path)
         if (existing) {
           continue
@@ -65,7 +62,7 @@ export function useMobileFile() {
 
       if (addedCount === 0) {
         dialogService.warning(t('notify.errors.fileExists'))
-      } else if (addedCount === fileEntries.length) {
+      } else if (addedCount === result.length) {
         dialogService.success(t('notify.success.label'))
       } else {
         dialogService.success(t('mobile.fileTree.addedPartial', { count: addedCount }))

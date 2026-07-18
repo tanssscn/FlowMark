@@ -65,6 +65,10 @@ const extractOutline = async (fileInfo: any) => {
     pageInput.value = 1
 
     const outline = await pdfDocument.getOutline()
+    if (!outline || outline.length === 0) {
+      tabStore.updateOutline(props.tab.id, [])
+      return
+    }
     const outlineItems = await convertOutlineToItems(outline)
     tabStore.updateOutline(props.tab.id, outlineItems)
   } catch (error) {
