@@ -22,12 +22,14 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      
       # 安装 pnpm
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 11 # 你可以指定具体的版本号，比如 8 或 9
+          
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
@@ -36,7 +38,7 @@ jobs:
         # 注意：这里使用了 libwebkit2gtk-4.1-dev，这是 Tauri v2 需要的版本[citation:2][citation:4]
 
       - name: setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: 'pnpm' # 根据你的包管理器修改为 npm 或 pnpm
@@ -54,7 +56,7 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install # 根据你的包管理器修改
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
