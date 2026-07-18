@@ -62,13 +62,12 @@ export class BrowserFileService {
     defaultPath?: string;
     multiple?: boolean;
     directory?: boolean;
-  }): Promise<FileEntry | null> {
+  }): Promise<FileEntry | FileEntry[] | null> {
     if (options?.directory) {
       return await this.openFolderFromPicker();
     } else {
-      return await this.openFileFromPicker();
+      return await this.openFileFromPicker(options?.multiple ?? false);
     }
-
   }
   private async openFolderFromPicker(): Promise<FileEntry | null> {
     try {
@@ -82,28 +81,36 @@ export class BrowserFileService {
       throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }
   }
-  private async openFileFromPicker(): Promise<FileEntry | null> {
+  private async openFileFromPicker(multiple: boolean = false): Promise<FileEntry | FileEntry[] | null> {
     try {
       // @ts-ignore - 实验性API
-      const [handle] = await window.showOpenFilePicker({
+      const handles = await window.showOpenFilePicker({
         types: [{
           description: 'Markdown Files',
           accept: {
             'text/markdown': ['.md', '.markdown']
           }
         }],
-        multiple: false
+        multiple: multiple
       });
 
-      const file = await handle.getFile();
-      const path = file.name; // 浏览器环境下只能用文件名作为路径标识
+      if (handles.length === 0) {
+        return null;
+      }
 
-      this.fileHandles.set(path, handle);
+      const results: FileEntry[] = [];
+      for (const handle of handles) {
+        const file = await handle.getFile();
+        const path = file.name;
 
-      return this.mapToAppFileInfo(path, file);
+        this.fileHandles.set(path, handle);
+        results.push(this.mapToAppFileInfo(path, file));
+      }
+
+      return multiple ? results : results[0];
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
-        return null; // 用户取消了选择
+        return null;
       }
       throw new ErrorStatus(statusCode.BROWSER_FILE_SYSTEM_ERROR);
     }

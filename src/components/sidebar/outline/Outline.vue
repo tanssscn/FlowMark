@@ -5,9 +5,9 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { milkdownManager } from "@/services/milkdownManager";
 import { Expand, Fold } from '@element-plus/icons-vue'
+import { TabType } from '@/types/appTypes'
 
 const tabStore = useTabStore()
-
 const { t } = useI18n()
 
 const expandedKeys = ref<string[]>([])
@@ -16,6 +16,7 @@ const treeProps = {
   label: 'text',
   children: 'children'
 }
+
 const outline = computed(() => {
   const tab = tabStore.state
   if (tab?.id === tabStore.outline.tabId) {
@@ -23,36 +24,53 @@ const outline = computed(() => {
   }
   return []
 })
+
 const handleNodeClick = (data: OutlineItem) => {
-  milkdownManager.scrollTo(data.id)
+  const tab = tabStore.state
+  if (!tab) return
+
+  if (tab.type === TabType.Markdown) {
+    milkdownManager.scrollTo(data.id)
+  } else if (tab.type === TabType.PDF) {
+    scrollToPdfDestination(data)
+  }
 }
+
+const scrollToPdfDestination = (item: OutlineItem) => {
+  const event = new CustomEvent('pdf-scroll-to', {
+    detail: item,
+    bubbles: true,
+    composed: true
+  })
+  document.dispatchEvent(event)
+}
+
 const expandAll = () => {
   expandedKeys.value = getAllIdsReduce(outline.value as any[])
 }
-/**
- * 收集所有节点 ID，包括子节点 ID
- * @param nodes 
- */
+
 const getAllIdsReduce = (nodes: any[]): string[] =>
   nodes.reduce((acc: string[], node) => {
     return [...acc, node.id, ...(node.children ? getAllIdsReduce(node.children) : [])];
   }, []);
-// const collapseAll = () => {
-//   console.log(expandedKeys.value)
-//   expandedKeys.value = []
-// }
+
+const collapseAll = () => {
+  expandedKeys.value = []
+}
+
 const buttons = computed(() => [
   {
     label: t('outline.expandAll'),
     icon: Expand,
     click: expandAll,
   },
-  // {
-  //   label: t('outline.collapseAll'),
-  //   icon: Fold,
-  //   click: collapseAll,
-  // },
+  {
+    label: t('outline.collapseAll'),
+    icon: Fold,
+    click: collapseAll,
+  },
 ])
+
 </script>
 
 <template>

@@ -3,6 +3,32 @@
     "title": "FlowMark",
     "exit": "Exit"
   },
+  "mobile": {
+    "fileTree": {
+      "addFile": "Add File",
+      "select": "Select",
+      "cancelSelect": "Cancel",
+      "selectAll": "Select All",
+      "delete": "Delete",
+      "remove": "Remove",
+      "openFile": "Open File",
+      "copyPath": "Copy Path",
+      "share": "Share",
+      "revealInFinder": "Reveal in Finder",
+      "pathCopied": "Path copied to clipboard",
+      "local": "Local",
+      "emptyTitle": "No Files Yet",
+      "emptyDesc": "Tap [Add File] above to get started",
+      "emptyFormats": "Supports PDF, Markdown, Images, etc.",
+      "removeTitle": "Remove Files",
+      "removeConfirm": "Remove {count} file(s) from the list? Files will not be deleted.",
+      "deleteTitle": "Delete Files",
+      "deleteConfirm": "Permanently delete {count} file(s)? This cannot be undone.",
+      "selectedCount": "{count} selected",
+      "addedPartial": "Added {count} file(s) successfully",
+      "deletePartial": "Deleted {count} file(s) successfully"
+    }
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

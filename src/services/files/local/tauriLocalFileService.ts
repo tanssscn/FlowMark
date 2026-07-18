@@ -193,23 +193,31 @@ export class TauriLocalFileService {
       directory: options?.directory,
     });
   }
+
   async openFile(options?: {
     title?: string;
     filters?: { name: string; extensions: string[] }[];
     defaultPath?: string;
     multiple?: boolean;
     directory?: boolean;
-  }): Promise<FileEntry | null> {
+  }): Promise<FileEntry | FileEntry[] | null> {
     const path = await tauriLocalFileService.openFileDialog(options)
     if (path) {
       if (options?.directory) {
         return this.readDirectory({ path: path })
+      } else if (Array.isArray(path)) {
+        const results: FileEntry[] = []
+        for (const p of path) {
+          const stats = await stat(p)
+          results.push(await this.mapToAppFileInfo(p, stats))
+        }
+        return results
       } else {
         const stats = await stat(path)
-        return this.mapToAppFileInfo(path, stats);
+        return this.mapToAppFileInfo(path, stats)
       }
     }
-    return null;
+    return null
   }
   /**
    * 打开文件保存对话框
@@ -234,6 +242,17 @@ export class TauriLocalFileService {
   /**
    * 将 Tauri 的 AppFileInfo 映射到应用的 AppFileInfo 类型
    */
+  private decodeFilename(name: string): string {
+    try {
+      const decoded = decodeURIComponent(name);
+      if (decoded !== name && /%[0-9A-Fa-f]{2}/.test(name)) {
+        return decoded;
+      }
+    } catch {
+    }
+    return name;
+  }
+
   private async mapToAppFileInfo(
     path: string,
     stats: FileInfo
@@ -242,7 +261,7 @@ export class TauriLocalFileService {
     const name = await basename(path);
     return {
       path,
-      name,
+      name: this.decodeFilename(name),
       lastModified: stats.mtime?.getTime() ?? 0,
       storageLocation: 'local',
       isDir: stats.isDirectory,

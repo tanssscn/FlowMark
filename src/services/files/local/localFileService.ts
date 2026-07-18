@@ -82,7 +82,7 @@ export class LocalFileService {
     defaultPath?: string;
     multiple?: boolean;
     directory?: boolean;
-  }): Promise<FileEntry | null> {
+  }): Promise<FileEntry | FileEntry[] | null> {
     return await this.getService().openFile(options);
   }
 

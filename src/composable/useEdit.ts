@@ -6,15 +6,15 @@ import { useVersion } from '@/components/sidebar/version/composable/useVersion';
 import { useFileStore } from '@/stores/fileTreeStore';
 import { dialogService } from '@/services/dialog/dialogService';
 import { useDebounceFn } from '@vueuse/core';
-import i18n from '@/i18n';
 import { milkdownManager } from '@/services/milkdownManager';
-const { t } = i18n.global
 import { Mutex } from 'async-mutex';
 import { ErrorStatus } from '@/services/codeService';
 import { statusCode } from '@/utils/statusCodes';
 import { getExtname, getFilename } from '@/utils/pathUtil';
 import { windowServer } from '@/services/window/windowService';
 const fileLocks = new Map<string, Mutex>();
+import i18n from '@/i18n';
+const { t } = i18n.global
 
 /**
  * 函数闭包中的状态不会被销毁

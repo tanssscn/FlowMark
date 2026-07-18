@@ -101,8 +101,6 @@
         }
       ]
     },
-    "core:menu:default",
-    "window-state:default",
-    "process:default"
+    "core:menu:default"
   ]
 }

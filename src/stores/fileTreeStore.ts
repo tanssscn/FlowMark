@@ -65,13 +65,12 @@ export const useFileStore = defineStore('file', () => {
         return false;
       }
       // 检查路径冲突：如果新加载的树包含现有根路径，替换掉现有树
-      // 现有/root/a/b/c    
+      // 现有/root/a/b/c
       // 新要加载的/root/a/b（包含现有路径
       const conflictingRootIndex = fileTree.value.findIndex(
         root => root.path.startsWith(fileEntry.path)
       );
       fileEntry.isRoot = true;
-      fileEntry.name += `(${fileEntry.path})`
       if (conflictingRootIndex < 0) {
         fileState.treeRoot[fileEntry.path] = fileEntry;
       }
@@ -81,7 +80,6 @@ export const useFileStore = defineStore('file', () => {
     refresh(fileEntry: FileEntry) {
       if (fileState.treeRoot[fileEntry.path]) {
         fileEntry.isRoot = true;
-        fileEntry.name += `(${fileEntry.path})`
       }
       deleteFile(fileEntry.path)
       set([fileEntry])

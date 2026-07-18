@@ -132,12 +132,26 @@ export function getDirname(path: string): string {
   }
   return path.substring(0, lastSlash);
 }
+function decodeIfEncoded(str: string): string {
+  try {
+    const decoded = decodeURIComponent(str);
+    if (decoded !== str && /%[0-9A-Fa-f]{2}/.test(str)) {
+      return decoded;
+    }
+  } catch {
+  }
+  return str;
+}
+
 // 获取文件名（不含路径）
 export function getFilename(path: string): string {
+  let filename: string;
   if (isAbsolute(path)) {
-    return basename(path);
+    filename = basename(path);
+  } else {
+    filename = normalizedPath(path).replace(/^.*\//, '');
   }
-  return normalizedPath(path).replace(/^.*\//, '');
+  return decodeIfEncoded(filename);
 }
 // 获取文件名的“主体”部分（不含扩展名）
 export function getStem(path: string): string {

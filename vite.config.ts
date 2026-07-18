@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver, VantResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -17,11 +17,13 @@ export default defineConfig({
     AutoImport({
       resolvers: [
         ElementPlusResolver(),
+        VantResolver()
       ],
     }),
     Components({
       resolvers: [
         ElementPlusResolver(),
+        VantResolver(),
         IconsResolver({
           prefix: 'icon',
           customCollections: ['custom']
@@ -43,6 +45,9 @@ export default defineConfig({
     alias: {
       '@/': new URL('./src/', import.meta.url).pathname,
     },
+  },
+  build: {
+    sourcemap: false,
   },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

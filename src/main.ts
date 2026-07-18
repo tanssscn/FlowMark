@@ -6,6 +6,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import './assets/css/tailwind.css'
 import './assets/css/base.css'
 import './assets/css/print.css'
+import './assets/css/mobile.css'
 import './assets/css/milkdown/dark.css'
 import './assets/css/milkdown/light.css'
 // Import Milkdown styles
@@ -17,6 +18,9 @@ import 'element-plus/theme-chalk/base.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 // Import entire Element Plus CSS since we're using the component registration
 import 'element-plus/dist/index.css'
+import 'vant/es/style/base.css'
+import 'vant/es/style/css-variables.css'
+import 'vant/es/style/normalize.css'
 
 import i18n from './i18n'
 // 创建应用实例

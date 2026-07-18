@@ -1,0 +1,104 @@
+/* 移动端全局样式 */
+body,
+html {
+  color: var(--mobile-text-color, #1f2937);
+  background-color: var(--mobile-bg-color, #ffffff);
+}
+
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+section,
+article,
+header,
+footer,
+main,
+aside,
+nav,
+form,
+table,
+tr,
+td,
+th {
+  background-color: var(--mobile-bg-color, #ffffff);
+  color: var(--mobile-text-color, #1f2937);
+}
+
+input,
+textarea,
+select {
+  background-color: var(--mobile-bg-color, #ffffff);
+  color: var(--mobile-text-color, #1f2937);
+  border-color: var(--mobile-border-color, #e5e7eb);
+}
+
+/* 禁止文字选择（UI 元素） */
+.mobile-app,
+.mobile-navbar,
+.tab-bar,
+.fab {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 允许编辑器内文字选择 */
+.mobile-editor .editor-content,
+.mobile-editor .ProseMirror {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* 移除移动端点击高亮 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 触控友好的滚动 */
+.mobile-app {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* 编辑器在移动端的适配 */
+.mobile-editor .editor-content .editor-wrap,
+.mobile-editor .editor-content .milkdown {
+  min-height: calc(100vh - 44px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+}
+
+/* 移动端通知位置适配：底部安全区域偏移（Element Plus Notification） */
+@media (max-width: 768px) {
+  .el-notification.right {
+    right: 16px !important;
+    top: auto !important;
+    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .el-notification.left {
+    left: 16px !important;
+    top: auto !important;
+    bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .el-notification {
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+/* 防止移动端输入时页面缩放 */
+@media (max-width: 768px) {
+
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

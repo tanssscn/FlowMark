@@ -3,16 +3,19 @@ import { TauriPlatform } from './tauriDialog'
 import { ElementPlatform } from './browserDialog'
 import i18n from '@/i18n'
 import { ErrorStatus } from '../codeService'
+import { getDeviceInfo } from '../deviceService'
 const { t } = i18n.global
 
 class DialogService {
   private platform: DialogPlatform
   private queue: NotifyOptions[] = []
   private isProcessing = false
+  private isMobile: boolean
 
   constructor() {
     // 根据环境选择平台
     this.platform = this.detectPlatform()
+    this.isMobile = getDeviceInfo().isMobile
   }
 
   private detectPlatform(): DialogPlatform {
@@ -21,6 +24,13 @@ class DialogService {
       return new TauriPlatform()
     }
     return new ElementPlatform()
+  }
+
+  private applyMobilePosition(options: NotifyOptions): NotifyOptions {
+    if (this.isMobile && !options.position) {
+      return { ...options, position: 'bottom-right' }
+    }
+    return options
   }
 
   private async processQueue() {
@@ -40,7 +50,7 @@ class DialogService {
   }
 
   private addToQueue(options: NotifyOptions) {
-    this.queue.push(options)
+    this.queue.push(this.applyMobilePosition(options))
     this.processQueue()
   }
 

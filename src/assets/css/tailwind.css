@@ -3,9 +3,15 @@
 @layer base {
   :root {
     color-scheme: light;
+    --mobile-bg-color: #ffffff;
+    --mobile-text-color: #1f2937;
+    --mobile-border-color: #e5e7eb;
   }
-  
-  .dark {
+
+  .dark, .van-theme-dark {
     color-scheme: dark;
+    --mobile-bg-color: #1a1a1a;
+    --mobile-text-color: #f5f5f5;
+    --mobile-border-color: #374151;
   }
-} 
+}

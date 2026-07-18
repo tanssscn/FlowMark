@@ -3,6 +3,32 @@
     "title": "FlowMark",
     "exit": "退出"
   },
+  "mobile": {
+    "fileTree": {
+      "addFile": "添加文件",
+      "select": "选择",
+      "cancelSelect": "取消选择",
+      "selectAll": "全选",
+      "delete": "删除",
+      "remove": "移除",
+      "openFile": "打开文件",
+      "copyPath": "复制路径",
+      "share": "分享文件",
+      "revealInFinder": "在文件管理器中显示",
+      "pathCopied": "路径已复制到剪贴板",
+      "local": "本地",
+      "emptyTitle": "还没有文件",
+      "emptyDesc": "点击上方 [添加文件] 按钮",
+      "emptyFormats": "支持 PDF、Markdown、图片等格式",
+      "removeTitle": "移除文件",
+      "removeConfirm": "确定要从列表移除 {count} 个文件吗？文件不会被删除。",
+      "deleteTitle": "删除文件",
+      "deleteConfirm": "确定要永久删除 {count} 个文件吗？此操作不可恢复。",
+      "selectedCount": "已选择 {count} 个",
+      "addedPartial": "成功添加 {count} 个文件",
+      "deletePartial": "成功删除 {count} 个文件"
+    }
+  },
   "common": {
     "save": "保存",
     "cancel": "取消",

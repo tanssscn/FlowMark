@@ -89,4 +89,18 @@ const tabChange = (id: string) => {
   height: 100%;
   position: relative;
 }
+
+@media screen and (max-width: 1000px) {
+  :deep(.milkdown) {
+    .ProseMirror {
+      padding: 0 calc(1vw + 40px) !important;
+    }
+  }
+
+  :deep(.milkdown-block-handle) {
+    .operation-item:nth-child(2):last-child {
+      display: none;
+    }
+  }
+}
 </style>
