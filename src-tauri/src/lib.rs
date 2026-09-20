@@ -29,6 +29,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_process::init()) // 确保这一行存在
         .plugin(tauri_plugin_persisted_scope::init());
 
     #[cfg(not(any(target_os = "android", target_os = "ios")))]

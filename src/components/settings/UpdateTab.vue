@@ -43,7 +43,7 @@ const downloadUpdate = async () => {
       downloadProgress.value = progress
     })
   } catch (error) {
-    dialogService.error(t('settings.update.downloadFailed'))
+    dialogService.error(t('settings.update.downloadFailed') + error)
     isDownloading.value = false
   }
 }
