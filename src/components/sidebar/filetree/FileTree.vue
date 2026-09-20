@@ -128,10 +128,10 @@ const buttons = computed(() => [
 </script>
 
 <template>
-  <div>
+  <div class="h-full min-h-0 flex flex-col">
     <SidePanelHeader v-bind="$attrs" :title="t('fileTree.label')" :buttons="buttons" />
     <el-button v-show="fileStore.state.loading" v-loading="true" link />
-    <el-scrollbar class="h-full pr-3!">
+    <el-scrollbar class="flex-1 min-h-0 pr-3!">
       <el-tree ref="treeRef" :data="fileStore.fileTree" :props="treeProps" draggable :allow-drag="allowDrag"
         :allow-drop="allowDrop" :highlight-current="true" node-key="path" @node-click="handleNodeClick"
         @node-contextmenu="showContextMenu" @node-drag-start="handleDragStart" @node-drag-end="handleDragEnd"

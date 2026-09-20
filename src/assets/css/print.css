@@ -39,6 +39,8 @@
     border: none;
     width: 100% !important;
     height: auto !important;
+    /* 还原编辑态为“光标居中”添加的底部滚动留白，避免打印出半页空白 */
+    padding-bottom: 60px !important;
     overflow: visible !important;
     z-index: 999 !important;
     page-break-inside: auto;

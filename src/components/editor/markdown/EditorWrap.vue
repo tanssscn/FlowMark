@@ -112,8 +112,21 @@ defineExpose({
 </script>
 <style>
 .editor-wrap,
-.editor-wrap .milkdown,
-.editor-wrap.cm-editor {
+.editor-wrap .milkdown {
   min-height: calc(100vh - 10px) !important;
+}
+
+/* 源码模式的 CodeMirror 是 el-splitter-panel 内 el-scrollbar 的直接内容。
+   注意：Crepe 的代码块与行内公式同样内嵌 CodeMirror（.milkdown-code-block .cm-editor），
+   所以 .cm-* 规则必须限定在顶层源码编辑器上，否则每个代码块里都会多出半屏留白。 */
+.editor-wrap .el-splitter-panel > .el-scrollbar .cm-editor {
+  min-height: calc(100vh - 10px) !important;
+}
+
+/* 编辑区底部保留约半屏的滚动留白，使文档末尾的光标可以滚动到视口垂直居中位置 */
+/* CodeMirror 由内部 .cm-scroller 负责滚动，留白需加在 .cm-content 上 */
+.editor-wrap .ProseMirror,
+.editor-wrap .el-splitter-panel > .el-scrollbar .cm-content {
+  padding-bottom: 50vh !important;
 }
 </style>
