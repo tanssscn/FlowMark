@@ -30,10 +30,12 @@ const handleMouseLeave = () => {
 
 <template>
   <div class="side-panel h-full flex flex-col" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 min-h-0 overflow-hidden">
       <component :is="currentComponent" class="h-full" :buttonShow="isHovering" />
     </div>
-    <BottomBar v-show="isHovering" />
+    <!-- 始终保留底栏占位，仅切换可见性，避免内容在悬停时被挤压/遮盖 -->
+    <BottomBar class="bottom-bar-placeholder transition-opacity duration-200"
+      :class="isHovering ? 'opacity-100' : 'opacity-0 pointer-events-none'" />
   </div>
 </template>
 

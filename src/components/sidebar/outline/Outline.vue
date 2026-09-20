@@ -74,29 +74,31 @@ const buttons = computed(() => [
 </script>
 
 <template>
-  <SidePanelHeader v-bind="$attrs" :title="t('outline.label')" :buttons="buttons" />
-  <div class="h-full ">
-    <el-scrollbar v-if="outline.length > 0" class="flex-1 h-full">
-      <el-tree :data="outline" :props="treeProps" :expand-on-click-node="false" :default-expanded-keys="expandedKeys"
-        :default-expand-all="true" node-key="id" @node-click="handleNodeClick" class="h-full">
-        <template #default="{ node, data }">
-          <div class="flex items-center w-full">
-            <span class="truncate" :class="{
-              'font-bold': data.level === 1,
-              'font-semibold': data.level === 2,
-              'font-medium': data.level === 3,
-              'font-normal': data.level > 3,
-            }" :style="{
-              fontSize: `${Math.max(16 - data.level, 12)}px`
-            }">
-              {{ node.label }}
-            </span>
-          </div>
-        </template>
-      </el-tree>
-    </el-scrollbar>
-    <div v-else class="flex-1 flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
-      <el-empty :description="t('outline.empty') || 'No headings found'" :image-size="80" />
+  <div class="h-full min-h-0 flex flex-col">
+    <SidePanelHeader v-bind="$attrs" :title="t('outline.label')" :buttons="buttons" />
+    <div class="flex-1 min-h-0">
+      <el-scrollbar v-if="outline.length > 0" class="h-full">
+        <el-tree :data="outline" :props="treeProps" :expand-on-click-node="false" :default-expanded-keys="expandedKeys"
+          :default-expand-all="true" node-key="id" @node-click="handleNodeClick" class="h-full">
+          <template #default="{ node, data }">
+            <div class="flex items-center w-full">
+              <span class="truncate" :class="{
+                'font-bold': data.level === 1,
+                'font-semibold': data.level === 2,
+                'font-medium': data.level === 3,
+                'font-normal': data.level > 3,
+              }" :style="{
+                fontSize: `${Math.max(16 - data.level, 12)}px`
+              }">
+                {{ node.label }}
+              </span>
+            </div>
+          </template>
+        </el-tree>
+      </el-scrollbar>
+      <div v-else class="h-full flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm">
+        <el-empty :description="t('outline.empty') || 'No headings found'" :image-size="80" />
+      </div>
     </div>
   </div>
 </template>

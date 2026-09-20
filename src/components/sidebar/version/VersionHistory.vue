@@ -1,7 +1,8 @@
 <template>
-  <SidePanelHeader v-bind="$attrs" :title="t('version.label')" :buttons="buttons" />
+  <div class="h-full min-h-0 flex flex-col">
+    <SidePanelHeader v-bind="$attrs" :title="t('version.label')" :buttons="buttons" />
 
-  <div v-show="tabStore.activeSession" class="h-full flex flex-col overflow-hidden">
+    <div v-show="tabStore.activeSession" class="flex-1 min-h-0 flex flex-col overflow-hidden">
     <!-- 空状态 -->
     <div v-if="versions.length === 0" class="flex-1 flex flex-col items-center justify-center p-4">
       <el-icon>
@@ -30,6 +31,7 @@
       @close="contextMenu.visible = false" @compareWithCurrent="compareWithCurrent" />
     <version-compare ref="versionCompareRef" v-model="compareDialogVisible" @restoreVersion="_restoreVersion"
       @close="compareDialogVisible = false" />
+    </div>
   </div>
 </template>
 
