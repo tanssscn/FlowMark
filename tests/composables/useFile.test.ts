@@ -39,6 +39,7 @@ vi.mock('@/services/files/fileService', () => ({
     delete: vi.fn(),
     create: vi.fn(),
     copyAcrossStorage: vi.fn(),
+    moveAcrossStorage: vi.fn(),
   },
 }))
 
@@ -314,16 +315,29 @@ describe('useFile', () => {
   })
 
   describe('move', () => {
-    it('should move file', async () => {
+    it('should move file (moveAcrossStorage) instead of copying it', async () => {
       const oldFileInfo = { path: '/source/file.md', isDir: false, storageLocation: 'local' }
       const newFileInfo = { path: '/dest/file.md', storageLocation: 'local' }
 
       const { move } = useFile()
       await move(oldFileInfo, newFileInfo)
 
-      expect(fileService.copyAcrossStorage).toHaveBeenCalled()
+      // 拖拽必须是移动：同存储走原生 rename，不能调用 copyAcrossStorage（会残留源文件）
+      expect(fileService.moveAcrossStorage).toHaveBeenCalledWith(oldFileInfo, newFileInfo)
+      expect(fileService.copyAcrossStorage).not.toHaveBeenCalled()
       expect(fileStore.refresh).toHaveBeenCalledTimes(2)
       expect(tabStore.updatePath).toHaveBeenCalledWith('/source/file.md', '/dest/file.md')
+    })
+
+    it('should move directory and refresh both parents', async () => {
+      const oldFileInfo = { path: '/source/docs', isDir: true, storageLocation: 'local' }
+      const newFileInfo = { path: '/dest/docs', storageLocation: 'local' }
+
+      const { move } = useFile()
+      await move(oldFileInfo, newFileInfo)
+
+      expect(fileService.moveAcrossStorage).toHaveBeenCalledWith(oldFileInfo, newFileInfo)
+      expect(fileStore.refresh).toHaveBeenCalledTimes(2)
     })
   })
 

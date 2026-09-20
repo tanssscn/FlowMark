@@ -129,7 +129,14 @@ export function fileTree(renameState: RenameState, contextMenu: ContextMenuState
         targetPath = `${dirPath}${draggingNode.data.name}`
       }
 
-      await move({ path: draggingNode.data.path, storageLocation: draggingNode.data.storageLocation, isDir: draggingNode.data.isDir },
+      const sourcePath = draggingNode.data.path
+      // 目标路径与源路径相同（在同级内上下拖动、或拖回自己所在的目录），无需做文件操作
+      if (targetPath === sourcePath) {
+        event.preventDefault()
+        return
+      }
+
+      await move({ path: sourcePath, storageLocation: draggingNode.data.storageLocation, isDir: draggingNode.data.isDir },
         { path: targetPath, storageLocation: dropNode.data.storageLocation })
       event.preventDefault() // 阻止默认行为
     } catch (error) {

@@ -182,10 +182,17 @@ export function useFile() {
     await fileService.create(fileInfo)
     refresh(fileInfo, true)
   }
+  /**
+   * 移动文件或文件夹（文件树拖拽排序/改变层级）
+   * @param oldFileInfo 源文件信息
+   * @param newFileInfo 目标文件信息
+   */
   async function move(
     oldFileInfo: Pick<FileEntry, 'path' | 'storageLocation' | 'isDir'>,
     newFileInfo: Pick<FileEntry, 'path' | 'storageLocation'>) {
-    await fileService.copyAcrossStorage(oldFileInfo, newFileInfo)
+    // 必须用 moveAcrossStorage：同存储走原生 rename（真正移动），
+    // 跨存储才退化为「复制 + 删除源文件」；用 copyAcrossStorage 会变成复制
+    await fileService.moveAcrossStorage(oldFileInfo, newFileInfo)
     const fileInfo = { ...newFileInfo, isDir: oldFileInfo.isDir }
     refresh(fileInfo, true)
     refresh(oldFileInfo, true)
