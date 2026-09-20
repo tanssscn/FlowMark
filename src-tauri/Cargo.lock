@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "FlowMark"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "log",
  "serde",
@@ -598,7 +598,7 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
 name = "cfg_aliases"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
 
